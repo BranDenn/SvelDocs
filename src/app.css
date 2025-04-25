@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--font-inter: 'Inter', var(--default-font-family);
+
+	--color-background: var(--color-zinc-200);
+
+	--color-border: var(--color-zinc-300);
+
+	--color-primary: var(--color-zinc-700);
+	--color-secondary: var(--color-zinc-600);
+
+	--color-accent: var(--color-amber-500);
+
+	--spacing-header: 3rem;
+	--spacing-sidebar: 18rem;
+}
+
+@layer utilities {
+	.container {
+		@apply mx-auto max-w-7xl;
+	}
+}
+
+@layer base {
+	.dark {
+		--color-background: var(--color-zinc-900);
+
+		--color-border: var(--color-zinc-700);
+
+		--color-primary: var(--color-zinc-300);
+		--color-secondary: var(--color-zinc-400);
+	}
+	* {
+		@apply border-border;
+	}
+
+	a,
+	button {
+		@apply cursor-pointer;
+	}
+
+	body {
+		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
+	}
+
+	mark {
+		@apply text-accent bg-transparent underline;
+	}
+}
