@@ -13,8 +13,7 @@
 
 <aside
 	class={cn(
-		'top-0 h-[calc(100dvh-var(--spacing-header)-1px)]',
-		'w-sidebar sticky overflow-hidden relative',
+		'h-[calc(100dvh-var(--spacing-header)-1px)] w-sidebar sticky top-[calc(var(--spacing-header)+1px)]',
 		className,
 	)}
 >	

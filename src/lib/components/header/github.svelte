@@ -1,6 +1,6 @@
 <a
 	aria-label="GitHub repository"
-	href="https://github.com/tailwindlabs/tailwindcss"
+	href="/"
 	class="fill-secondary hover:fill-primary p-1 transition-colors"
 >
 	<svg viewBox="0 0 20 20" class="size-5">

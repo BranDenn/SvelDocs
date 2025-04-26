@@ -7,12 +7,12 @@
 @theme {
 	--font-inter: 'Inter', var(--default-font-family);
 
-	--color-background: var(--color-zinc-200);
+	--color-background: var(--color-zinc-50);
 	--color-foreground: var(--color-zinc-100);
 
-	--color-border: var(--color-zinc-300);
+	--color-border: var(--color-zinc-200);
 
-	--color-primary: var(--color-zinc-700);
+	--color-primary: var(--color-zinc-800);
 	--color-secondary: var(--color-zinc-600);
 
 	--color-accent: var(--color-amber-500);
@@ -29,12 +29,12 @@
 
 @layer base {
 	.dark {
-		--color-background: var(--color-zinc-900);
-		--color-foreground: var(--color-zinc-800);
+		--color-background: var(--color-zinc-950);
+		--color-foreground: var(--color-zinc-900);
 
-		--color-border: var(--color-zinc-700);
+		--color-border: var(--color-zinc-800);
 
-		--color-primary: var(--color-zinc-300);
+		--color-primary: var(--color-zinc-200);
 		--color-secondary: var(--color-zinc-400);
 	}
 	* {
@@ -47,10 +47,20 @@
 	}
 
 	body {
-		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
+		@apply bg-background text-primary font-inter min-h-dvh flex flex-col;
+	}
+
+	kbd {
+		@apply font-inter;
 	}
 
 	mark {
 		@apply text-accent bg-transparent underline;
 	}
+
+	.scrollbar {
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-border) transparent;
+	}
+
 }
