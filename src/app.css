@@ -8,6 +8,7 @@
 	--font-inter: 'Inter', var(--default-font-family);
 
 	--color-background: var(--color-zinc-200);
+	--color-foreground: var(--color-zinc-100);
 
 	--color-border: var(--color-zinc-300);
 
@@ -22,13 +23,14 @@
 
 @layer utilities {
 	.container {
-		@apply mx-auto max-w-7xl;
+		@apply mx-auto max-w-[1440px];
 	}
 }
 
 @layer base {
 	.dark {
 		--color-background: var(--color-zinc-900);
+		--color-foreground: var(--color-zinc-800);
 
 		--color-border: var(--color-zinc-700);
 

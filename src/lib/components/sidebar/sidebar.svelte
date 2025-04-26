@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
+	import { cn } from '$lib';
 
 	interface PROPS {
 		class?: ClassValue;
@@ -11,11 +12,11 @@
 </script>
 
 <aside
-	class={[
+	class={cn(
+		'top-0 h-[calc(100dvh-var(--spacing-header)-1px)]',
+		'w-sidebar sticky overflow-hidden relative',
 		className,
-		'top-[calc(var(--spacing-header)+1px)] h-[calc(100dvh-var(--spacing-header)-1px)]',
-		'w-sidebar sticky overflow-y-auto p-4'
-	]}
->
+	)}
+>	
 	{@render children?.()}
 </aside>
