@@ -15,9 +15,9 @@
 	--color-primary: var(--color-zinc-800);
 	--color-secondary: var(--color-zinc-600);
 
-	--color-accent: var(--color-amber-500);
+	--color-accent: var(--color-emerald-600);
 
-	--spacing-header: 3rem;
+	--spacing-header: 3.5rem;
 	--spacing-sidebar: 18rem;
 }
 
@@ -36,6 +36,8 @@
 
 		--color-primary: var(--color-zinc-200);
 		--color-secondary: var(--color-zinc-400);
+
+		--color-accent: var(--color-emerald-400);
 	}
 	* {
 		@apply border-border;

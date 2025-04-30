@@ -23,10 +23,12 @@
     </div>
 
     <nav class="px-8 flex flex-col grow text-sm gap-8">
-        {#each Object.entries(NAVIGATION) as [group, navs]}
+        {#each NAVIGATION as nav}
             <div class="flex flex-col">
-                <h1 class="font-semibold mb-2">{group}</h1>
-                {#each navs as {title, href, icon}}
+                {#if nav.group_href} 
+                    <h1 class="font-semibold mb-2">{nav.group}</h1> 
+                {/if}
+                {#each nav.items as {title, href, icon}}
                     <Link {title} {href} {icon} />
                 {/each}
             </div>
