@@ -25,7 +25,7 @@
     <nav class="px-8 flex flex-col grow text-sm gap-8">
         {#each NAVIGATION as nav}
             <div class="flex flex-col">
-                {#if nav.group_href} 
+                {#if nav.show} 
                     <h1 class="font-semibold mb-2">{nav.group}</h1> 
                 {/if}
                 {#each nav.items as {title, href, icon}}

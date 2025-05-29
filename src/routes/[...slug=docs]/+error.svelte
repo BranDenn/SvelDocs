@@ -6,4 +6,7 @@
 	<title>Error {page.status} - SvelDocs</title>
 </svelte:head>
 
-<h1>{page.status}: {page.error?.message}</h1>
+<div class="h-full grid content-center text-center">
+	<h1 class="text-lg">Error {page.status}</h1>
+	{page.error?.message}
+</div>
