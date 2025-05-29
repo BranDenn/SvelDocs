@@ -7,7 +7,6 @@ export const SETTINGS : BaseSettings = {
     NAV_STYLE: "button",
     SEARCH_BAR_LOCATION: "sidebar",
     COLLAPSIBLE_NAV_GROUPS: false,
-    SHOW_NAV_ICONS: true,
 }
 
 // --- CHANGEABLE NAVIGATION ---
@@ -18,7 +17,9 @@ export const NAVIGATION : NavGroup[] = [
         { title: 'Quick Start', icon: Rocket },
         { title: 'Configuration' }
     ),
-    Group("Customization").Items(),
+    Group("Customization").Items(
+        { title: 'Themes' },
+    ),
     Group("Features").Items(),
     Group("Credits").Items(),
 ]

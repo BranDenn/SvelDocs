@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from "$app/state";
-    import { SETTINGS } from "$settings"
     import type { NavItem } from "$lib/docs";
 
     let { title, href, icon: Icon } :  NavItem = $props()
@@ -16,7 +15,7 @@
 </a> -->
 
 <a href={href} class={["border-l py-1.5 px-4", isActive ? "text-accent font-bold border-accent [&>svg]" : "text-secondary hover:text-primary hover:border-secondary", Icon && "flex items-center gap-2"]}>
-    {#if Icon && SETTINGS.SHOW_NAV_ICONS}
+    {#if Icon}
         <Icon class={["size-4", isActive && "stroke-[2.5]"]} />
     {/if}
     {title}

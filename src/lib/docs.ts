@@ -4,7 +4,6 @@ export interface BaseSettings {
     NAV_STYLE: "button" | "left-border" | null,
     SEARCH_BAR_LOCATION : "sidebar" | "header",
     COLLAPSIBLE_NAV_GROUPS : boolean;
-    SHOW_NAV_ICONS: boolean;
 	COMPANY_NAME?: string; // The name of the company, used in the footer
 }
 
