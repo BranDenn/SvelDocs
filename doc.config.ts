@@ -4,9 +4,9 @@ import Rocket from "@lucide/svelte/icons/rocket"
 
 // --- CHANGABLE SETTINGS ---
 export const SETTINGS : BaseSettings = {
-    NAV_STYLE: "button",
+    NAV_STYLE: "left-border",
     SEARCH_BAR_LOCATION: "sidebar",
-    COLLAPSIBLE_NAV_GROUPS: false,
+    COLLAPSIBLE_NAV_GROUPS: true,
 }
 
 // --- CHANGEABLE NAVIGATION ---
@@ -17,9 +17,7 @@ export const NAVIGATION : NavGroup[] = [
         { title: 'Quick Start', icon: Rocket },
         { title: 'Configuration' }
     ),
-    Group("Customization").Items(
-        { title: 'Themes' },
-    ),
+    Group("Customization").Items(),
     Group("Features").Items(),
     Group("Credits").Items(),
 ]
