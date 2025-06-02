@@ -1,17 +1,21 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { NavMap } from '$lib/docs';
+import { NavMap, loadNavMap } from '$lib/docs';
+import { NAVIGATION } from '$settings';
 
 export const load: PageLoad = async ({ url }) => {
 
+	if (NavMap.size <= 0) loadNavMap(NAVIGATION)
+
+	const navItem = NavMap.get(url.pathname);
+
     // ensure url exists
-    if (!NavMap.has(url.pathname)) return error(404, "This page does not exist.")
+    if (!navItem) return error(404, "This page does not exist.")
 
     // try to load the markdown file based off the url
 	try {
-		const file_name: string | undefined = url.pathname.split('/').at(-1);
-		const group_folder: string | undefined = url.pathname.split('/').at(-2);
-		const md = await import(`$lib/markdown/${group_folder}/${file_name}.md`);
+		const file_name = navItem.title.toLowerCase().replaceAll(' ', '-');
+		const md = await import(`$lib/markdown/${navItem.folder}/${file_name}.md`);
 
 		return {
 			component: md.default,

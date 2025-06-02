@@ -8,7 +8,7 @@
 @theme {
 	--font-inter: 'Inter', var(--default-font-family);
 	--spacing-header: 3.5rem;
-	--spacing-sidebar: 18rem;
+	--spacing-sidebar: 16rem;
 
 	/* light mode colors */
 	--color-background: var(--color-zinc-50);

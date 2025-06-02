@@ -13,7 +13,7 @@
 
 <aside
 	class={cn(
-		'h-[calc(100dvh-var(--spacing-header)-1px)] w-sidebar sticky top-[calc(var(--spacing-header)+1px)]',
+		'h-[calc(100dvh-var(--spacing-header)-1px)] min-w-sidebar sticky top-[calc(var(--spacing-header)+1px)]',
 		className,
 	)}
 >	

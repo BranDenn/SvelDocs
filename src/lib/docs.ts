@@ -18,13 +18,19 @@ export interface BaseSettings {
 	 */
     SEARCH_BAR_LOCATION : "sidebar" | "header",
 	/**
-	 * Whether or not the groups in the navigation sidebar should be collapsible when pressed.
+	 * Whether or not the groups in the navigation sidebar should be collapsible.
 	 */
     COLLAPSIBLE_NAV_GROUPS : boolean;
 	/**
 	 * The company name used in the footer of the page.
 	 */
 	COMPANY_NAME?: string;
+	/**
+	 * Whether or not the main page should redirect to the /docs route by default.
+	 * - If `true`, the main page will redirect to `/docs`.
+	 * - If `false`, the main page will not redirect.
+	 */
+	REDIRECT?: boolean
 }
 
 /**
@@ -100,7 +106,7 @@ export class NavGroup {
 	 */
 	Items(...args: NavItem[]) { 
 		if (args.length <= 0) {
-			const glob = import.meta.glob(`$lib/markdown/*/*.md`, { eager: true });
+			const glob = import.meta.glob(`/src/lib/markdown/*/*.md`, { eager: true });
 			const paths = Object.keys(glob);
 			
 			args = paths.flatMap((path: string) => {
@@ -126,7 +132,7 @@ export class NavGroup {
 }
 
 /**
-* Helper function to quicker create {@link NavGroup NavGroups}.
+* Helper function to create {@link NavGroup NavGroups} quicker.
 */
 export function Group(g: string, params?: NavGroupParams) : NavGroup {
 	return new NavGroup(g, params)
@@ -138,12 +144,14 @@ export function Group(g: string, params?: NavGroupParams) : NavGroup {
 export class NavMapItem {
 	group: string;
 	title: string;
+	folder: string;
 	prev?: string;
 	next?: string;
 
-	constructor(g: string, title: string) {
+	constructor(g: string, t: string, f: string) {
 		this.group = g;
-		this.title = title;
+		this.title = t;
+		this.folder = f;
 	}
 }
 
@@ -158,7 +166,7 @@ export const NavMap: Map<string, NavMapItem> = new Map();
 export function loadNavMap(NAVIGATION: NavGroup[]) {
 	NAVIGATION.forEach(group => {
 		group.items.forEach(item => {
-			NavMap.set(item.href as string, new NavMapItem(group.group, item.title));
+			NavMap.set(item.href as string, new NavMapItem(group.group, item.title, group.folder));
 		})
 	});
 

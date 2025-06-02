@@ -56,9 +56,6 @@
                     {/each}
                 {/if}
             
-
-                
-
             </div>
         {/each}
     </nav>

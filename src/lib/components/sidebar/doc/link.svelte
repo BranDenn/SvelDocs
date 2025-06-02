@@ -14,7 +14,7 @@
     {title}
 </a> -->
 
-<a href={href} class={["border-l py-1.5 px-4", isActive ? "text-accent font-bold border-accent [&>svg]" : "text-secondary hover:text-primary hover:border-secondary", Icon && "flex items-center gap-2"]}>
+<a href={href} class={["border-l py-1.5 px-4 transition-all", isActive ? "text-accent font-bold border-accent [&>svg]" : "text-secondary hover:text-primary hover:border-secondary", Icon && "flex items-center gap-2"]}>
     {#if Icon}
         <Icon class={["size-4", isActive && "stroke-[2.5]"]} />
     {/if}
