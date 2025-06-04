@@ -8,7 +8,8 @@
 @theme {
 	--font-inter: 'Inter', var(--default-font-family);
 	--spacing-header: 3.5rem;
-	--spacing-sidebar: 16rem;
+	--spacing-sidebar-nav: 18rem;
+	--spacing-sidebar-toc: 14rem;
 
 	/* light mode colors */
 	--color-background: var(--color-zinc-50);
@@ -16,7 +17,7 @@
 	--color-border: var(--color-zinc-200);
 	--color-primary: var(--color-zinc-800);
 	--color-secondary: var(--color-zinc-600);
-	--color-accent: var(--color-emerald-600);
+	--color-accent: var(--color-orange-600);
 }
 
 @layer base {
@@ -27,7 +28,7 @@
 		--color-border: var(--color-zinc-800);
 		--color-primary: var(--color-zinc-200);
 		--color-secondary: var(--color-zinc-400);
-		--color-accent: var(--color-emerald-400);
+		--color-accent: var(--color-orange-400);
 	}
 }
 
@@ -47,6 +48,10 @@
 		@apply cursor-pointer;
 	}
 
+	html {
+		@apply scroll-pt-[calc(var(--spacing-header)+1px+1rem)];
+	}
+
 	body {
 		@apply bg-background text-primary font-inter min-h-dvh flex flex-col;
 	}
@@ -62,6 +67,26 @@
 	.scrollbar {
 		scrollbar-width: thin;
 		scrollbar-color: var(--color-border) transparent;
+	}
+
+	.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+		@apply mt-8
+	}
+
+	.prose h1 {
+		@apply text-3xl font-medium leading-tight;
+	}
+
+	.prose h2 {
+		@apply text-2xl;
+	}
+
+	.prose h3 {
+		@apply text-xl;
+	}
+
+	.prose p {
+		@apply my-1
 	}
 
 }

@@ -15,13 +15,15 @@
 </svelte:head>
 
 <header class="flex flex-col gap-2">
-    <h1 class="text-sm font-bold text-accent">{group}</h1>
-    <h2 class="text-3xl font-extrabold">{visible_title}</h2>
+    <h1 class="text-sm text-accent font-mono uppercase font-medium">{group}</h1>
+    <h2 class="text-3xl font-medium">{visible_title}</h2>
     {#if description}
-        <p class="text-xl text-secondary">{description}</p>
+        <p class="text-lg text-secondary">{description}</p>
     {/if}
 </header>
 
 <hr class="my-4 border-border" />
 
-{@render data.component()}
+<article id="content" class="prose">
+    {@render data.component()}
+</article>

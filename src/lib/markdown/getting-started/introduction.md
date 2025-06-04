@@ -3,6 +3,13 @@ title: What is SvelDocs?
 description: SvelDocs is a free boilerplate project for creating documentation websites with Svelte 5 and Tailwind CSS 4.
 ---
 
+# H1
+## H2
+### Using some super long text here
+#### H4
+##### H5
+###### H6
+
 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque excepturi cupiditate dolorem est distinctio? Perspiciatis dicta assumenda itaque nostrum aut minus eum ullam, corrupti similique autem ducimus rerum, inventore provident!
 Accusantium maiores perferendis rem odit, veniam autem alias atque eaque provident deleniti culpa quam incidunt quaerat aut nemo fugit exercitationem, recusandae reprehenderit facilis at debitis enim libero ratione? Cumque, reprehenderit.
 Nulla unde tempora ipsam. Eligendi iure error voluptatum autem nemo. Tenetur perferendis ratione, architecto qui officiis minus cumque quasi natus recusandae beatae odio porro similique saepe expedita dicta debitis esse!

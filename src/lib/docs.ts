@@ -139,7 +139,7 @@ export function Group(g: string, params?: NavGroupParams) : NavGroup {
 }
 
 /**
-* Class to be used in the {@link NavMap}.
+* Item to be used in the {@link NavMap}.
 */
 export class NavMapItem {
 	group: string;

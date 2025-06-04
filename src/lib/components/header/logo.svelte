@@ -1,6 +1,6 @@
 <a
 	href="/"
-	class="hover:text-accent flex items-center gap-2 p-1 text-lg font-bold transition-colors"
+	class="justify-self-start hover:text-accent flex items-center gap-2 p-1 text-lg font-bold transition-colors"
 >
 	<svg
 		height="16"

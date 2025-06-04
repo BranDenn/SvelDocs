@@ -8,7 +8,7 @@
 	let { prev, next } = $derived(NavMap.get(page.url.pathname) ?? { prev: null, next: null });
 </script>
 
-<footer class="flex flex-col gap-4 text-sm">
+<footer class="flex flex-col gap-4 text-sm mt-4">
     <div class="flex items-center gap-2 flex-wrap">
         {#if prev}
             {@const { title, group } = NavMap.get(prev) as NavMapItem}

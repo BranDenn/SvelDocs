@@ -22,6 +22,6 @@ export const load: PageLoad = async ({ url }) => {
 			meta: md.metadata
 		};
 	} catch {
-		return error(403, "This content for this page could not be loaded.");
+		return error(403, "The content for this page could not be loaded.");
 	}
 };
