@@ -11,7 +11,7 @@
 <div class="container flex grow">
 	<Sidebar.Nav />
 
-	<div class="flex w-full flex-col gap-4 p-4 transition-[padding] lg:p-8">
+	<div class="flex w-full flex-col gap-4 p-4 transition-[padding] lg:p-8" id="middle">
 		<main class="grow">
 			{@render children?.()}
 		</main>

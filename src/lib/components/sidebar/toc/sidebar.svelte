@@ -8,10 +8,24 @@
 		level: number;
 		text: string;
 		id: string;
+		inView: boolean;
 	}
 
+	// table of contents that is displayed in its sidebar
 	let contents: CONTENT[] = $state([]);
+
+	// the minimum level of the headings for extra padding in the sidebar
 	let minLevel: number = $derived(Math.min(...contents.map((c) => c.level)));
+
+	// gets the first visible content in the table of contents by id
+	let idxInView: number = $derived.by(() => {
+		const idxFound = contents.findIndex((content) => content.inView);
+		if (idxFound > -1) return idxFound;
+		return contents.length - 1;
+	});
+
+	// observer for finding which heading is in view
+	let observer: IntersectionObserver | null = null;
 
 	function updateHeadings() {
 		const content = document.getElementById('content');
@@ -21,28 +35,62 @@
 			...content.querySelectorAll('h1, h2, h3, h4, h5, h6')
 		] as HTMLHeadingElement[];
 
+		if (headings.length < 1) return;
+
+		const offset = document.getElementById('middle')?.offsetTop ?? 0;
+		observer = new IntersectionObserver(intersectionCallback, {
+			rootMargin: `-${offset}px 0px 0px 0px`
+		});
+
 		headings.forEach((heading) => {
 			const text = heading.textContent;
-			if (!text) return;
+			if (!text) return; // skip if heading if it has no text
+
+			// create the id for the heading element based off the text
 			const id = text
 				.toLowerCase()
 				.replace(/[^a-zA-Z0-9\s]/g, '')
 				.replaceAll(' ', '-');
+
+			// get the heading level
 			const level = parseInt(heading.tagName[1]);
+
+			// set the id of the heading element
 			heading.id = id;
-			contents.push({ level, text, id });
+
+			// add the heading element to the observing to change its inView key
+			if (observer) observer.observe(heading);
+
+			// push heading details to contents array
+			contents.push({ level, text, id, inView: false });
+		});
+	}
+
+	function intersectionCallback(entries: IntersectionObserverEntry[]) {
+		entries.forEach((entry) => {
+			// find content index
+			const idx = contents.findIndex((c) => c.id === entry.target.id);
+			// set inView value
+			if (idx > -1) contents[idx].inView = entry.isIntersecting;
 		});
 	}
 
 	$effect(() => {
+		// navigating.complete recalls this effect before and after navigation
 		navigating.complete;
 
+		// call function without triggering this $effect function
 		untrack(updateHeadings);
 
+		// cleanup
 		return () => {
+			if (observer) observer.disconnect();
+			observer = null;
 			contents = [];
 		};
 	});
+
+	navigating;
 </script>
 
 <Sidebar
@@ -62,11 +110,14 @@
 				On this page
 			</div>
 			<div class="text-secondary text-sm">
-				{#each contents as { text, id, level }}
-					{@const pl = level - minLevel + 0.5 + 'rem'}
+				{#each contents as { text, id, level }, idx}
+					{@const pl = level - minLevel + 1 + 'rem'}
 					<a
 						href="#{id}"
-						class="hover:text-primary block border-l py-1 pr-4 transition-colors"
+						class={[
+							'block border-l py-1 pr-4 transition-colors',
+							idx === idxInView ? 'border-primary text-primary' : 'hover:text-primary'
+						]}
 						style="padding-left: {pl}">{text}</a
 					>
 				{/each}
