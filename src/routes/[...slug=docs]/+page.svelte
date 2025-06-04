@@ -1,29 +1,29 @@
 <script lang="ts">
-    import { page } from "$app/state";
-    import { NavMap } from "$lib/docs";
-    
-    let { data } = $props();
+	import { page } from '$app/state';
+	import { NavMap } from '$lib/docs';
 
-    let { title, group } = $derived(NavMap.get(page.url.pathname) ?? { title: null, group: null });
-    let visible_title = $derived(data.meta && data.meta.title ? data.meta.title : title);
-    let description = $derived(data.meta && data.meta.description ? data.meta.description : "");
+	let { data } = $props();
+
+	let { title, group } = $derived(NavMap.get(page.url.pathname) ?? { title: null, group: null });
+	let visible_title = $derived(data.meta && data.meta.title ? data.meta.title : title);
+	let description = $derived(data.meta && data.meta.description ? data.meta.description : '');
 </script>
 
 <svelte:head>
 	<title>{title} - SvelDocs</title>
-    <meta name="description" content={description} />
+	<meta name="description" content={description} />
 </svelte:head>
 
 <header class="flex flex-col gap-2">
-    <h1 class="text-sm text-accent font-mono uppercase font-medium">{group}</h1>
-    <h2 class="text-3xl font-medium">{visible_title}</h2>
-    {#if description}
-        <p class="text-lg text-secondary">{description}</p>
-    {/if}
+	<h1 class="text-accent text-sm font-bold">{group}</h1>
+	<h2 class="text-3xl font-extrabold">{visible_title}</h2>
+	{#if description}
+		<p class="text-secondary text-lg">{description}</p>
+	{/if}
 </header>
 
-<hr class="my-4 border-border" />
+<hr class="border-border my-4" />
 
 <article id="content" class="prose">
-    {@render data.component()}
+	{@render data.component()}
 </article>

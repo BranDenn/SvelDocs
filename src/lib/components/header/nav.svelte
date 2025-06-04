@@ -6,17 +6,20 @@
 	import { SETTINGS } from '$settings';
 </script>
 
-<nav class={[
-	"h-header container justify-between flex items-center px-4 gap-4", 
-	SETTINGS.SEARCH_BAR_LOCATION === "header" && "md:grid md:grid-cols-3"]}>
+<nav
+	class={[
+		'h-header container flex items-center justify-between gap-4 px-4',
+		SETTINGS.SEARCH_BAR_LOCATION === 'header' && 'md:grid md:grid-cols-3'
+	]}
+>
 	<Logo />
 
-	{#if SETTINGS.SEARCH_BAR_LOCATION === "header"}
-		<SearchBox class="justify-end w-64 justify-self-center py-1"/>
+	{#if SETTINGS.SEARCH_BAR_LOCATION === 'header'}
+		<SearchBox class="w-64 justify-end justify-self-center py-1" />
 	{/if}
 
 	<div class="flex items-center gap-2 justify-self-end">
-		<SearchBox mode="mobile"/>
+		<SearchBox mode="mobile" />
 		<ThemeSwitch />
 		<Github />
 	</div>

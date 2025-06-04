@@ -10,12 +10,12 @@ const mdsvexOptions = {
 const config = {
 	extensions: ['.svelte', '.md'],
 	preprocess: [vitePreprocess(), mdsvex(mdsvexOptions)],
-	kit: { adapter: adapter(),
+	kit: {
+		adapter: adapter(),
 		alias: {
-			$settings: "doc.config.ts"
+			$settings: 'doc.config.ts'
 		}
-	},
-	
+	}
 };
 
 export default config;

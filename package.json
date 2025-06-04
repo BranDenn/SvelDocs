@@ -37,9 +37,7 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.503.0",
-		"bits-ui": "^1.8.0",
-		"gray-matter": "^4.0.3",
-		"marked": "^15.0.12",
+		"bits-ui": "^2.4.1",
 		"mode-watcher": "^1.0.7",
 		"tailwind-merge": "^3.3.0"
 	}

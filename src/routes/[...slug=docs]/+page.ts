@@ -4,15 +4,14 @@ import { NavMap, loadNavMap } from '$lib/docs';
 import { NAVIGATION } from '$settings';
 
 export const load: PageLoad = async ({ url }) => {
-
-	if (NavMap.size <= 0) loadNavMap(NAVIGATION)
+	if (NavMap.size <= 0) loadNavMap(NAVIGATION);
 
 	const navItem = NavMap.get(url.pathname);
 
-    // ensure url exists
-    if (!navItem) return error(404, "This page does not exist.")
+	// ensure url exists
+	if (!navItem) return error(404, 'This page does not exist.');
 
-    // try to load the markdown file based off the url
+	// try to load the markdown file based off the url
 	try {
 		const file_name = navItem.title.toLowerCase().replaceAll(' ', '-');
 		const md = await import(`$lib/markdown/${navItem.folder}/${file_name}.md`);
@@ -22,6 +21,6 @@ export const load: PageLoad = async ({ url }) => {
 			meta: md.metadata
 		};
 	} catch {
-		return error(403, "The content for this page could not be loaded.");
+		return error(403, 'The content for this page could not be loaded.');
 	}
 };

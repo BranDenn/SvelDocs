@@ -6,9 +6,7 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	server: {
 		fs: {
-			allow: [
-				'doc.config.ts',
-			],
-		},
-	},
+			allow: ['doc.config.ts']
+		}
+	}
 });

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Footer from '$lib/components/footer/footer.svelte';
 	import Header from '$lib/components/header';
-	import * as Sidebar from '$lib/components/sidebar'
+	import * as Sidebar from '$lib/components/sidebar';
 
 	let { children } = $props();
 </script>
@@ -11,7 +11,7 @@
 <div class="container flex grow">
 	<Sidebar.Nav />
 
-	<div class="flex p-4 lg:p-8 flex-col grow gap-4 transition-[padding]">
+	<div class="flex w-full flex-col gap-4 p-4 transition-[padding] lg:p-8">
 		<main class="grow">
 			{@render children?.()}
 		</main>

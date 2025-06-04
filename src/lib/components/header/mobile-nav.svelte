@@ -14,7 +14,7 @@
 
 	{#if title && group}
 		<span class="text-secondary text-sm">{group}</span>
-		<ChevronRight class="size-4 text-secondary"/>
+		<ChevronRight class="text-secondary size-4" />
 		<span class="text-sm">{title}</span>
 	{/if}
 </div>
