@@ -2,11 +2,13 @@
 	import Footer from '$lib/components/footer/footer.svelte';
 	import Header from '$lib/components/header';
 	import * as Sidebar from '$lib/components/sidebar';
+	import { SearchDialog } from '$lib/components/search';
 
 	let { children } = $props();
 </script>
 
 <Header />
+<SearchDialog />
 
 <div class="container flex grow">
 	<Sidebar.Nav />

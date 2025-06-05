@@ -6,7 +6,7 @@
 	import { SETTINGS } from '$settings';
 	import { slide } from 'svelte/transition';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
-	import SearchBox from '$lib/components/search/search-box.svelte';
+	import{ SearchBox } from '$lib/components/search';
 </script>
 
 <Sidebar
