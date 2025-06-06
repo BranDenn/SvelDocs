@@ -3,8 +3,12 @@ import type { PageLoad } from './$types';
 import { NavMap, loadNavMap } from '$lib/docs';
 import { NAVIGATION } from '$settings';
 
-export const load: PageLoad = async ({ url }) => {
-	if (NavMap.size <= 0) loadNavMap(NAVIGATION);
+export const load: PageLoad = async ({ url, fetch }) => {
+	if (NavMap.size <= 0) {
+		const response = await fetch('/api/docs');
+		const data = await response.json()
+		loadNavMap(NAVIGATION, data);
+	}
 
 	const navItem = NavMap.get(url.pathname);
 

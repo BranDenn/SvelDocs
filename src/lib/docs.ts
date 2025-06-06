@@ -1,4 +1,6 @@
 import type { Component } from 'svelte';
+import fm from 'front-matter';
+import { marked } from 'marked';
 
 /**
  * Interface for the base settings of the documentation site to be set in the `doc.config.ts` file.
@@ -147,13 +149,23 @@ export class NavMapItem {
 	group: string;
 	title: string;
 	folder: string;
+	icon?: Component;
+
+	mdTitle?: string ;
+	mdDescription?: string;
+	mdContent?: string;
+
 	prev?: string;
 	next?: string;
 
-	constructor(g: string, t: string, f: string) {
+	constructor(g: string, t: string, f: string, i: Component | undefined, docData: Doc ) {
 		this.group = g;
 		this.title = t;
 		this.folder = f;
+		this.icon = i
+		this.mdTitle = docData.mdTitle
+		this.mdDescription = docData.mdDescription
+		this.mdContent = docData.mdContent
 	}
 }
 
@@ -165,10 +177,12 @@ export const NavMap: Map<string, NavMapItem> = new Map();
 /**
  * Initializes the {@link NavMap} based off of the {@link NavGroup} list defined in the `doc.config.ts` file.
  */
-export function loadNavMap(NAVIGATION: NavGroup[]) {
-	NAVIGATION.forEach((group) => {
-		group.items.forEach((item) => {
-			NavMap.set(item.href as string, new NavMapItem(group.group, item.title, group.folder));
+export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[] ) {
+	NAVIGATION.forEach((group, i) => {
+		group.items.forEach((item, j) => {
+			const navMapItem : NavMapItem = new NavMapItem(group.group, item.title, group.folder, item.icon, docData[i + j])
+			NavMap.set(item.href as string, navMapItem);
+			console.log(navMapItem)
 		});
 	});
 
@@ -185,3 +199,12 @@ export function loadNavMap(NAVIGATION: NavGroup[]) {
 		previousMapPair = pair;
 	}
 }
+
+export type Doc = {
+	group: string;
+	title: string;
+	slug?: string;
+	mdTitle?: string;
+	mdDescription?: string;
+	mdContent?: string;
+} 

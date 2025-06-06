@@ -3,8 +3,12 @@
 	import Header from '$lib/components/header';
 	import * as Sidebar from '$lib/components/sidebar';
 	import { SearchDialog } from '$lib/components/search';
+	import { setContext } from 'svelte';
 
 	let { children } = $props();
+
+	let open = $state({ current: false })
+	setContext('search-dialog', open) 
 </script>
 
 <Header />
