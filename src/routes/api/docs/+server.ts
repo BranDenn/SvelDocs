@@ -5,39 +5,42 @@ import type { Doc } from '$lib/docs';
 
 export const prerender = true;
 
+interface Module {
+	default?: any;
+	metadata?: {
+		title: string;
+		description: string;
+	};
+}
+
 export async function GET() {
-    const modules = import.meta.glob('$lib/markdown/*/*.md', { eager: true });
-    let docs : Doc[] = []
+	const modules = import.meta.glob('$lib/markdown/*/*.md', { eager: true });
+	let docs: Doc[] = [];
 
-    NAVIGATION.forEach((navGroup) => {
-        navGroup.items.forEach((navItem) => {
-            const group = navGroup.group
-            const folder = navGroup.folder
-            const title = navItem.title
+	NAVIGATION.forEach((navGroup) => {
+		navGroup.items.forEach((navItem) => {
+			const group = navGroup.group;
+			const folder = navGroup.folder;
+			const title = navItem.title;
 
-            let data : Doc = {
-                group,
-                title,
-                slug: navItem.href
-            }
+			let data: Doc = {
+				group,
+				title
+			};
 
-            const file_name = title.toLowerCase().replaceAll(' ', '-');
-            const module = modules[`/src/lib/markdown/${folder}/${file_name}.md`]
+			const file_name = title.toLowerCase().replaceAll(' ', '-');
+			const module = modules[`/src/lib/markdown/${folder}/${file_name}.md`] as Module;
 
-            if (module) {
-                if (module.metadata) {
-                    data.mdTitle = module.metadata?.title
-                    data.mdDescription = module.metadata?.description
-                }
-                if (module.default) {
-                    data.mdContent = render(module.default).body
-                }
-                
-            }
-        
-            docs.push(data)
-        });
-    });
+			data.mdTitle = module?.metadata?.title;
+			data.mdDescription = module?.metadata?.description;
+			if (module?.default) {
+				const content = render(module.default).body.replace(/<\/?[^>]+(>|$)/g, '');
+				if (content) data.mdContent = content;
+			}
 
-    return json(docs);
+			docs.push(data);
+		});
+	});
+
+	return json(docs);
 }

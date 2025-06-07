@@ -2,7 +2,7 @@
 	import Logo from './logo.svelte';
 	import ThemeSwitch from './theme-switch.svelte';
 	import Github from './github.svelte';
-	import { SearchBox } from '$lib/components/search'
+	import { SearchBox } from '$lib/components/search';
 	import { SETTINGS } from '$settings';
 </script>
 

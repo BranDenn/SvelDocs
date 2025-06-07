@@ -7,8 +7,8 @@
 
 	let { children } = $props();
 
-	let open = $state({ current: false })
-	setContext('search-dialog', open) 
+	let open = $state({ current: false });
+	setContext('search-dialog', open);
 </script>
 
 <Header />

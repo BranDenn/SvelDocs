@@ -1,6 +1,4 @@
 import type { Component } from 'svelte';
-import fm from 'front-matter';
-import { marked } from 'marked';
 
 /**
  * Interface for the base settings of the documentation site to be set in the `doc.config.ts` file.
@@ -28,11 +26,9 @@ export interface BaseSettings {
 	 */
 	COMPANY_NAME?: string;
 	/**
-	 * Whether or not the main page should redirect to the /docs route by default.
-	 * - If `true`, the main page will redirect to `/docs`.
-	 * - If `false`, the main page will not redirect.
+	 * Specify a route to redirect to instead of the main page. For example `/docs` could be the main route.
 	 */
-	REDIRECT?: boolean;
+	REDIRECT_URL?: string;
 }
 
 /**
@@ -107,30 +103,49 @@ export class NavGroup {
 	 * @param args - A variable number of {@link NavItem} objects to be added to the group. Leave empty to initialize the items automatically by reading the markdown folder associated.
 	 */
 	Items(...args: NavItem[]) {
+		// if there are no items, then initialize from markdown files
 		if (args.length <= 0) {
+			// get all markdown files
 			const glob = import.meta.glob(`/src/lib/markdown/*/*.md`, { eager: true });
+
+			// get only the keys (file paths)
 			const paths = Object.keys(glob);
 
+			// return all the markdown files for that specific group
 			args = paths.flatMap((path: string) => {
+				// clean the path to get just the `group/filename`
 				const cleanedPath = path.replace('/src/lib/markdown/', '').replace('.md', '');
 				const [group, title] = cleanedPath.split('/');
+
+				// if the group folder does not equal the folder name, return nothing
 				if (group !== this.folder) return [];
-				const titleParts = title
+
+				// capatalize first letters of the title since folders mostly likely are not capatalized
+				// for example `quick-start` should be `Quick Start`
+				const formatedTitle = title
 					.split('-')
-					.map((part) => part.charAt(0).toUpperCase() + part.slice(1));
-				return { title: titleParts.join(' ') } as NavItem;
+					.map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+					.join(' ');
+
+				return { title: formatedTitle };
 			});
 		}
 
+		// set the hrefs if not entered
 		args.forEach((arg) => {
-			const slug: string = (this.group_href ? `${this.group}/` : '') + arg.title;
-			const href: string = `/docs/${slug}`.replaceAll(' ', '-').toLowerCase();
+			// ignore if the href was manually entered in the settings
+			if (arg.href) return;
 
-			arg.href = arg.href ?? href;
+			// create the slug based off of group_href setting
+			const slug: string = (this.group_href ? `${this.group}/` : '') + arg.title;
+			// create and set the full href
+			arg.href = `/docs/${slug}`.replaceAll(' ', '-').toLowerCase();
 		});
 
+		// set the class items and these arg items
 		this.items = args;
 
+		// return self to ensure navigation settings still is this class
 		return this;
 	}
 }
@@ -151,21 +166,21 @@ export class NavMapItem {
 	folder: string;
 	icon?: Component;
 
-	mdTitle?: string ;
+	mdTitle?: string;
 	mdDescription?: string;
 	mdContent?: string;
 
 	prev?: string;
 	next?: string;
 
-	constructor(g: string, t: string, f: string, i: Component | undefined, docData: Doc ) {
+	constructor(g: string, t: string, f: string, i: Component | undefined, docData: Doc) {
 		this.group = g;
 		this.title = t;
 		this.folder = f;
-		this.icon = i
-		this.mdTitle = docData.mdTitle
-		this.mdDescription = docData.mdDescription
-		this.mdContent = docData.mdContent
+		this.icon = i;
+		this.mdTitle = docData.mdTitle;
+		this.mdDescription = docData.mdDescription;
+		this.mdContent = docData.mdContent;
 	}
 }
 
@@ -177,12 +192,17 @@ export const NavMap: Map<string, NavMapItem> = new Map();
 /**
  * Initializes the {@link NavMap} based off of the {@link NavGroup} list defined in the `doc.config.ts` file.
  */
-export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[] ) {
+export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[]) {
 	NAVIGATION.forEach((group, i) => {
 		group.items.forEach((item, j) => {
-			const navMapItem : NavMapItem = new NavMapItem(group.group, item.title, group.folder, item.icon, docData[i + j])
+			const navMapItem: NavMapItem = new NavMapItem(
+				group.group,
+				item.title,
+				group.folder,
+				item.icon,
+				docData[i + j]
+			);
 			NavMap.set(item.href as string, navMapItem);
-			console.log(navMapItem)
 		});
 	});
 
@@ -203,8 +223,10 @@ export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[] ) {
 export type Doc = {
 	group: string;
 	title: string;
-	slug?: string;
+} & MdData;
+
+export interface MdData {
 	mdTitle?: string;
 	mdDescription?: string;
 	mdContent?: string;
-} 
+}

@@ -38,9 +38,7 @@
 	"dependencies": {
 		"@lucide/svelte": "^0.503.0",
 		"bits-ui": "^2.4.1",
-		"flexsearch": "^0.8.204",
-		"front-matter": "^4.0.2",
-		"marked": "^15.0.12",
+		"flexsearch": "0.8.1",
 		"mode-watcher": "^1.0.7",
 		"tailwind-merge": "^3.3.0"
 	}

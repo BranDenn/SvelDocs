@@ -6,7 +6,7 @@ import { NAVIGATION } from '$settings';
 export const load: PageLoad = async ({ url, fetch }) => {
 	if (NavMap.size <= 0) {
 		const response = await fetch('/api/docs');
-		const data = await response.json()
+		const data = await response.json();
 		loadNavMap(NAVIGATION, data);
 	}
 

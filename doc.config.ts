@@ -8,7 +8,7 @@ export const SETTINGS: BaseSettings = {
 	NAV_STYLE: 'left-border',
 	SEARCH_BAR_LOCATION: 'sidebar',
 	COLLAPSIBLE_NAV_GROUPS: true,
-	REDIRECT: true
+	REDIRECT_URL: '/docs'
 };
 
 // --- CHANGEABLE NAVIGATION ---

@@ -1,75 +1,93 @@
-import { Index } from 'flexsearch';
+import Flexsearch from 'flexsearch';
 import { NavMap } from '$lib/docs';
 import type { Component } from 'svelte';
 
-const searchIndex = new Index({ tokenize: "full"})
+// create flex search index
+const searchIndex = new Flexsearch.Index({ tokenize: 'full' });
 
-export function createSearchIndex() {
-	NavMap.values().forEach(async ({ group, title, folder, mdTitle, mdDescription, mdContent }, i) => {
-		const data = [group, title, folder, mdTitle ?? '', mdDescription ?? '', mdContent?.replace(/<\/?[^>]+(>|$)/g, '') ?? '']
-		const search = data.join(' ')
-		searchIndex.add(i, search)
-	});
+/**
+ * Adds search indexes to the FlexSearch from the NavMap.
+ */
+export function createSearchIndex(): void {
+	NavMap.values().forEach(
+		async ({ group, title, folder, mdTitle, mdDescription, mdContent }, i) => {
+			const data = [group, title, folder, mdTitle ?? '', mdDescription ?? '', mdContent ?? ''];
+			const search = data.join(' ');
+			searchIndex.add(i, search);
+		}
+	);
 }
 
+/**
+ * Result that is retured in the serach results map object
+ */
 interface Result {
 	href: string;
 	icon?: Component;
 	title: string;
 	description: string;
 }
-export function getSearchResults(searchText: string) {
+
+/**
+ * Returns a Map of the seach reults found from the entered text.
+ */
+export function getSearchResults(searchText: string): Map<any, Result[]> {
 	const match = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	const indexResults = searchIndex.search(match)
+	const groupedResults: Map<any, Result[]> = new Map();
 
-	console.log(indexResults)
+	if (!match) return groupedResults;
 
-	const groupedResults : Map<any, Result[]> = new Map()
-	const navMap = Array.from(NavMap.entries())
+	const indexResults: number[] = searchIndex.search(match, { limit: 20 });
+	const navMap = Array.from(NavMap.entries());
 
 	indexResults.forEach((i) => {
-		console.log(navMap)
+		const [href, navItem] = navMap[i];
 
-		const [href, navItem] = navMap[i as number]
+		const group = textWithMark(navItem.group, match);
+		if (!groupedResults.has(group)) groupedResults.set(group, []);
 
-		const group = textWithMark(navItem.group, match)
-		if (!groupedResults.has(group)) groupedResults.set(group, [])
+		const fullTitle = navItem.title + (navItem.mdTitle ? ` (${navItem.mdTitle})` : '');
+		const fullContent = (navItem.mdDescription ?? '') + (navItem.mdContent ?? '');
 
-		const fullTitle = navItem.title + (navItem.mdTitle ? ` (${navItem.mdTitle})` : '')
-		const fullContent = (navItem.mdDescription ?? '') + (navItem.mdContent ?? '')
-
-		groupedResults.get(group)?.push(
-		{ 
+		groupedResults.get(group)?.push({
 			href,
 			icon: navItem.icon,
 			title: textWithMark(fullTitle, match),
 			description: strippedContent(fullContent, match)
-		})
-	})
+		});
+	});
 
-	return groupedResults
+	return groupedResults;
 }
 
+/**
+ * Adds a <mark> html tag between found content.
+ */
 function textWithMark(text: string, match: string) {
 	const regex = new RegExp(match, 'gi');
 	return text.replaceAll(regex, (match) => `<mark>${match}</mark>`);
 }
 
-function strippedContent(text: string, match: string) {
+/**
+ * Strips content and adds ellipses if over the character limit.
+ */
+function strippedContent(
+	text: string,
+	match: string,
+	totalCharacters: number = 80,
+	maxFront: number = 20
+) {
 	const regex = new RegExp(match, 'gi');
-	const found_position: number = text.search(regex);
-
-	// ensure there will always be a total amount of characters to display
-	let characters_remaining: number = 80;
+	const foundPosition: number = text.search(regex);
 
 	// subtract 20 characters from front
-	const start = Math.max(0, found_position - 20);
+	const start = Math.max(0, foundPosition - maxFront);
 
 	// subtract from start to get remaining characters
-	characters_remaining -= found_position - start;
+	totalCharacters -= foundPosition - start;
 
 	// add remaining characters to get end position
-	const end = found_position + characters_remaining;
+	const end: number = foundPosition + totalCharacters;
 
 	// if there was more content at the beginning, then have leading ...
 	let new_content = start > 0 ? '... ' : '';
@@ -79,7 +97,7 @@ function strippedContent(text: string, match: string) {
 	if (text.length > end) new_content += ' ...';
 
 	// if the content was not found then return stripped text WITHOUT markers
-	if (found_position < 0) return new_content;
+	if (foundPosition < 0) return new_content;
 
 	// if the content was found then return stripped text WITH markers
 	return textWithMark(new_content, match);

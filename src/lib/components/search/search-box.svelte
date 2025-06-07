@@ -9,11 +9,11 @@
 	let { class: className, mode = 'desktop' }: { class?: ClassValue; mode?: 'desktop' | 'mobile' } =
 		$props();
 
-	const open : OPEN = getContext('search-dialog')
+	const open: OPEN = getContext('search-dialog');
 </script>
 
 <button
-	onclick={() => open.current = !open.current}
+	onclick={() => (open.current = !open.current)}
 	class={cn(
 		mode === 'desktop' &&
 			'bg-foreground hover:border-accent/50 hidden w-full items-center gap-2 rounded-lg border p-2 text-sm text-xs font-medium md:flex',
