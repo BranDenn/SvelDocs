@@ -14,9 +14,6 @@
 	// table of contents that is displayed in its sidebar
 	let contents: CONTENT[] = $state([]);
 
-	// the minimum level of the headings for extra padding in the sidebar
-	let minLevel: number = $derived(Math.min(...contents.map((c) => c.level)));
-
 	// gets the first visible content in the table of contents by id
 	let idxInView: number = $derived.by(() => {
 		const idxFound = contents.findIndex((content) => content.inView);
@@ -37,12 +34,16 @@
 
 		if (headings.length < 1) return;
 
-		const offset = document.getElementById('middle')?.offsetTop ?? 0;
+		const offset = document.getElementById('middle')?.offsetTop;
 		observer = new IntersectionObserver(intersectionCallback, {
-			rootMargin: `-${offset}px 0px 0px 0px`
+			rootMargin: `-${offset ? offset + 1 : 0 }px 0px 0px 0px`
 		});
 
+		const tempContents : CONTENT[] = []
+
 		headings.forEach((heading) => {
+			if (heading.classList.contains('toc-ignore')) return
+
 			const text = heading.textContent;
 			if (!text) return; // skip if heading if it has no text
 
@@ -53,8 +54,33 @@
 			if (observer) observer.observe(heading);
 
 			// push heading details to contents array
-			contents.push({ level, text, id: heading.id, inView: false });
+			tempContents.push({ level, text, id: heading.id, inView: false });
 		});
+
+		normalizeHeadings(tempContents)
+		contents = tempContents
+	}
+
+	function normalizeHeadings(arr: CONTENT[]) {
+		if (arr.length < 1) return
+
+		// get all the heading levels
+		const levels = arr.map(({level}) => level)
+
+		// sort levels so they are in order
+		const sortedLevels = [...new Set(levels)].sort((a, b) => a - b)
+
+		// create map to reference
+		const levelMap = new Map();
+
+		// loop through sorted levels and remap headings
+		// for example [1, 3, 5, 6] would result in [1, 2, 3, 4]
+		sortedLevels.forEach((level, index) => levelMap.set(level, index + 1))
+
+		for (let i = 0; i < arr.length; i++) {
+			arr[i].level = levelMap.get(arr[i].level)
+		}
+
 	}
 
 	function intersectionCallback(entries: IntersectionObserverEntry[]) {
@@ -100,7 +126,7 @@
 			</div>
 			<div class="text-secondary text-sm">
 				{#each contents as { text, id, level }, idx}
-					{@const pl = level - minLevel + 1 + 'rem'}
+					{@const pl = level * 1 + 'rem'}
 					<a
 						href="#{id}"
 						class={[

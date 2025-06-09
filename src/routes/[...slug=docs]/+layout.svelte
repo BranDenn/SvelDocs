@@ -14,7 +14,7 @@
 <Header />
 <SearchDialog />
 
-<div class="container flex">
+<div class="container flex grow">
 	<Sidebar.Nav />
 
 	<!-- must have min-w-0 to ensure middle content does not push sidebars -->

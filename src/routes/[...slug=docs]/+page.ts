@@ -13,6 +13,8 @@ import { remarkAlert } from 'remark-github-blockquote-alert'
 import { unified } from 'unified';
 import fm from 'front-matter'
 
+export const prerender = true
+
 export const load: PageLoad = async ({ url, fetch }) => {
 	if (NavMap.size <= 0) {
 		const response = await fetch('/api/docs');

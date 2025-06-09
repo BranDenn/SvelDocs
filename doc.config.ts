@@ -15,7 +15,7 @@ export const SETTINGS: BaseSettings = {
 // this is neccessary to put group names
 export const NAVIGATION: NavGroup[] = [
 	Group('Getting Started', { show: false, group_href: false }).Items(
-		{ title: 'Introduction', icon: BookOpenCheck, href: '/docs' },
+		{ title: 'Introduction', icon: BookOpenCheck, href: SETTINGS.REDIRECT_URL },
 		{ title: 'Quick Start', icon: Rocket },
 		{ title: 'Configuration', icon: Settings }
 	),
