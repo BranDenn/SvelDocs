@@ -24,10 +24,10 @@
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-svelte": "^3.9.1",
 		"globals": "^16.2.0",
-		"mdsvex": "^0.12.6",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.6.12",
+		"shiki": "^3.6.0",
 		"svelte": "^5.33.14",
 		"svelte-check": "^4.2.1",
 		"tailwindcss": "^4.1.8",
@@ -39,7 +39,11 @@
 		"@lucide/svelte": "^0.503.0",
 		"bits-ui": "^2.4.1",
 		"flexsearch": "0.8.1",
+		"front-matter": "^4.0.2",
+		"mdsvex": "^0.12.6",
 		"mode-watcher": "^1.0.7",
+		"remark-gfm": "^4.0.1",
+		"remove-markdown": "^0.6.2",
 		"tailwind-merge": "^3.3.0"
 	}
 }

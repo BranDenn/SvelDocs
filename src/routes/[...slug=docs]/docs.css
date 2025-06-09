@@ -1,0 +1,100 @@
+@reference "../../app.css";
+
+@layer base{
+	.shiki, .shiki span {
+		background-color: var(--color-foreground) !important;
+	}
+
+	.dark .shiki,
+	.dark .shiki span {
+		color: var(--shiki-dark) !important;
+	}
+
+    #content {
+        /* all */
+        * {
+            @apply mt-4;
+        } 
+
+        /* headers */
+        *:is(h1, h2, h3, h4, h5, h6) {
+            @apply mt-8 font-bold;
+        }
+        h1 {
+            @apply text-4xl;
+        }
+        h2 { 
+            @apply text-3xl; 
+        }
+        h3 {
+            @apply text-2xl;
+        }
+        h4 {
+            @apply text-xl;
+        }
+        h5 {
+            @apply text-lg;
+        }
+
+
+        /* paragraph */
+        p {
+            @apply text-secondary leading-8;
+        }
+
+        /* code */
+        pre {
+            @apply rounded-md border p-4 shadow-xs overflow-x-auto text-sm;
+        }
+        :not(pre) code {
+            @apply rounded border p-1 shadow-xs text-sm bg-foreground;
+        }
+
+        /* lists */
+        ul:not(.contains-task-list) {
+            @apply list-disc pl-4;
+        }
+
+        ol:not(.contains-task-list) {
+            @apply list-decimal pl-4;
+        }
+
+        /* table */
+        /* table {
+            @apply w-full text-left shadow-xs rounded-md border border-separate bg-foreground text-sm border-spacing-0;
+        }
+        table * {
+            @apply m-0
+        }
+        td, th {
+            @apply border-l border-t p-2;
+        }
+        th {
+            border-top: none;
+        }
+        td:first-child, th:first-child {
+            border-left: none;
+        } */
+        table {
+            @apply w-full text-left;
+        }
+        tbody tr {
+            @apply border-t;
+        }
+        th, td {
+            @apply p-2;
+        }
+        
+        /* quotes */
+        blockquote {
+            @apply italic border-l-4 pl-4 font-medium;
+        }
+        blockquote p::before {
+            content: '"';
+        }
+        blockquote p::after {
+            content: '"';
+        }
+
+    }
+}

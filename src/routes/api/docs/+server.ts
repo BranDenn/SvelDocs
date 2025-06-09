@@ -1,20 +1,13 @@
 import { json } from '@sveltejs/kit';
-import { render } from 'svelte/server';
 import { NAVIGATION } from '$settings';
 import type { Doc } from '$lib/docs';
+import removeMd from 'remove-markdown';
+import fm from 'front-matter';
 
 export const prerender = true;
 
-interface Module {
-	default?: any;
-	metadata?: {
-		title: string;
-		description: string;
-	};
-}
-
 export async function GET() {
-	const modules = import.meta.glob('$lib/markdown/*/*.md', { eager: true });
+	const modules = import.meta.glob('$lib/markdown/*/*.md', { eager: true, query: 'raw' });
 	let docs: Doc[] = [];
 
 	NAVIGATION.forEach((navGroup) => {
@@ -29,12 +22,20 @@ export async function GET() {
 			};
 
 			const file_name = title.toLowerCase().replaceAll(' ', '-');
-			const module = modules[`/src/lib/markdown/${folder}/${file_name}.md`] as Module;
+			const module = modules[`/src/lib/markdown/${folder}/${file_name}.md`];
 
-			data.mdTitle = module?.metadata?.title;
-			data.mdDescription = module?.metadata?.description;
 			if (module?.default) {
-				const content = render(module.default).body.replace(/<\/?[^>]+(>|$)/g, '');
+				const frontMatter = fm(module.default);
+				if ('attributes' in frontMatter) {
+					const attributes = frontMatter.attributes as Object;
+					if ('title' in attributes) data.mdTitle = attributes.title as string;
+					if ('description' in attributes) data.mdDescription = attributes.description as string;
+				}
+				let content = removeMd(frontMatter.body);
+				// content = content.replace(/(\r\n|\r|\n)+/g, '\n');
+				content = content.replace(/[\r\t\f\v\n ]+/g, ' ');
+				content = content.replaceAll('\n ', '\n');
+				content = content.trim();
 				if (content) data.mdContent = content;
 			}
 

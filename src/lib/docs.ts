@@ -193,16 +193,19 @@ export const NavMap: Map<string, NavMapItem> = new Map();
  * Initializes the {@link NavMap} based off of the {@link NavGroup} list defined in the `doc.config.ts` file.
  */
 export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[]) {
-	NAVIGATION.forEach((group, i) => {
-		group.items.forEach((item, j) => {
+	let index: number = 0;
+
+	NAVIGATION.forEach((group) => {
+		group.items.forEach((item) => {
 			const navMapItem: NavMapItem = new NavMapItem(
 				group.group,
 				item.title,
 				group.folder,
 				item.icon,
-				docData[i + j]
+				docData[index]
 			);
 			NavMap.set(item.href as string, navMapItem);
+			index += 1;
 		});
 	});
 

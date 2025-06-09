@@ -39,6 +39,15 @@
 }
 
 @layer base {
+	/* ensure hrefs to elements are not hidden by the header when clicking them */
+	html {
+		@apply scroll-pt-[calc(var(--spacing-header)+1px+1rem)];
+	}
+
+	body {
+		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
+	}
+
 	* {
 		@apply border-border;
 	}
@@ -48,53 +57,16 @@
 		@apply cursor-pointer;
 	}
 
-	html {
-		@apply scroll-pt-[calc(var(--spacing-header)+1px+1rem)];
-	}
-
-	body {
-		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
-	}
-
-	kbd {
-		@apply font-inter;
-	}
-
 	mark {
 		@apply text-accent bg-transparent underline;
+	}
+
+	input[type='search']::-webkit-search-cancel-button {
+		@apply cursor-pointer;
 	}
 
 	.scrollbar {
 		scrollbar-width: thin;
 		scrollbar-color: var(--color-border) transparent;
-	}
-
-	.prose h1,
-	.prose h2,
-	.prose h3,
-	.prose h4,
-	.prose h5,
-	.prose h6 {
-		@apply mt-8 font-bold;
-	}
-
-	.prose h1 {
-		@apply text-3xl leading-tight;
-	}
-
-	.prose h2 {
-		@apply text-2xl;
-	}
-
-	.prose h3 {
-		@apply text-xl;
-	}
-
-	.prose p {
-		@apply text-secondary mt-4 leading-8;
-	}
-
-	input[type='search']::-webkit-search-cancel-button {
-		@apply cursor-pointer;
 	}
 }

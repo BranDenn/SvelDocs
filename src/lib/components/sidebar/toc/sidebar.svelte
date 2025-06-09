@@ -93,9 +93,7 @@
 	navigating;
 </script>
 
-<Sidebar
-	class="scrollbar min-w-sidebar-toc hidden flex-col overflow-y-auto overscroll-contain xl:flex"
->
+<Sidebar class="scrollbar min-w-sidebar-toc hidden flex-col overflow-y-auto xl:flex">
 	<div class="from-background sticky top-0 bg-linear-to-b p-4"></div>
 	<div class="flex grow flex-col gap-4 px-4 font-medium">
 		<div

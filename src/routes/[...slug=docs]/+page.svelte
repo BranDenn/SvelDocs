@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './docs.css';
 	import { page } from '$app/state';
 	import { NavMap } from '$lib/docs';
 
