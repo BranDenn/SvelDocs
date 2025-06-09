@@ -1,18 +1,21 @@
 @reference "../../app.css";
 
 @layer base{
-	.shiki, .shiki span {
-		background-color: var(--color-foreground) !important;
-	}
+        code[data-theme*=" "],
+        code[data-theme*=" "] span {
+            color: var(--shiki-light);
+            background-color: var(--shiki-light-bg);
+        }
+        
+        .dark code[data-theme*=" "],
+        .dark code[data-theme*=" "] span {
+            color: var(--shiki-dark);
+            background-color: var(--shiki-dark-bg);
+        }
 
-	.dark .shiki,
-	.dark .shiki span {
-		color: var(--shiki-dark) !important;
-	}
-
-    #content {
+    .prose {
         /* all */
-        * {
+        > * {
             @apply mt-4;
         } 
 
@@ -42,21 +45,67 @@
             @apply text-secondary leading-8;
         }
 
+        /* links */
+        *:not(h1, h2, h3, h4, h5, h6) a {
+            @apply text-accent underline;
+        }
+
         /* code */
-        pre {
-            @apply rounded-md border p-4 shadow-xs overflow-x-auto text-sm;
+        /* pre {
+            @apply rounded-md shadow-xs overflow-x-auto text-sm p-4;
         }
         :not(pre) code {
             @apply rounded border p-1 shadow-xs text-sm bg-foreground;
+        } */
+        
+        [data-rehype-pretty-code-figure] {
+            @apply rounded-md shadow-xs border overflow-hidden;
+        }
+        [data-rehype-pretty-code-title] {
+            @apply p-2 font-bold border-b text-sm;
+        }
+        [data-rehype-pretty-code-caption] {
+            @apply p-2 text-secondary border-t text-sm;
+        }
+        pre {
+            @apply bg-foreground overflow-auto py-4 text-sm;
+        }
+        > pre {
+            @apply p-4 border rounded-md shadow-xs;
+        }
+        p > code {
+            @apply p-1 border rounded shadow-xs bg-foreground;
+        }
+        [data-line] {
+            @apply inline-block pl-4;
+        }
+        [data-line]:hover {
+            @apply !bg-background/50;
+        }
+        [data-line-numbers] {
+            counter-reset: line;
+        }
+        [data-line-numbers] > [data-line]::before {
+            counter-increment: line;
+            content: counter(line);
+            @apply text-secondary pr-4;
+        }
+        [data-highlighted-line] {
+            @apply !bg-accent/10;
         }
 
         /* lists */
+        ul > *, ol > * {
+            @apply mt-4;
+        }
         ul:not(.contains-task-list) {
             @apply list-disc pl-4;
         }
-
         ol:not(.contains-task-list) {
             @apply list-decimal pl-4;
+        }
+        .task-list-item > input[type="checkbox"] {
+            @apply mr-1 bg-white;
         }
 
         /* table */

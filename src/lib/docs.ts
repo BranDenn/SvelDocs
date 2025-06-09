@@ -106,7 +106,7 @@ export class NavGroup {
 		// if there are no items, then initialize from markdown files
 		if (args.length <= 0) {
 			// get all markdown files
-			const glob = import.meta.glob(`/src/lib/markdown/*/*.md`, { eager: true });
+			const glob = import.meta.glob(`/src/lib/markdown/*/*.md`, { eager: true, query: "raw" });
 
 			// get only the keys (file paths)
 			const paths = Object.keys(glob);

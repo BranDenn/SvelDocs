@@ -46,23 +46,14 @@
 			const text = heading.textContent;
 			if (!text) return; // skip if heading if it has no text
 
-			// create the id for the heading element based off the text
-			const id = text
-				.toLowerCase()
-				.replace(/[^a-zA-Z0-9\s]/g, '')
-				.replaceAll(' ', '-');
-
 			// get the heading level
 			const level = parseInt(heading.tagName[1]);
-
-			// set the id of the heading element
-			heading.id = id;
 
 			// add the heading element to the observing to change its inView key
 			if (observer) observer.observe(heading);
 
 			// push heading details to contents array
-			contents.push({ level, text, id, inView: false });
+			contents.push({ level, text, id: heading.id, inView: false });
 		});
 	}
 

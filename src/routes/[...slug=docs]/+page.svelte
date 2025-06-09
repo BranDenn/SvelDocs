@@ -25,6 +25,6 @@
 
 <hr class="border-border my-4" />
 
-<article id="content" class="prose">
-	{@render data.component()}
+<article id="content" class="prose scrollbar">
+	{@html data.html}
 </article>

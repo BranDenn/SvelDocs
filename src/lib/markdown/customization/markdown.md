@@ -4,7 +4,7 @@ description: Customizing the markdown content.
 
 ## TS
 
-```ts {1-3,4}
+```ts {1-2,4} title="Title"
 let t = 'variable name';
 t += ' some new test';
 
@@ -13,7 +13,7 @@ const test: number = 5;
 
 ## CSS
 
-```css title="..."
+```css title="Title" caption="Caption" showLineNumbers
 @layer base {
 	.dark {
 		/* dark mode colors */
@@ -27,7 +27,7 @@ const test: number = 5;
 }
 ```
 
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
 
 # 1
 
