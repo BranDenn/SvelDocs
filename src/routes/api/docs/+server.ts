@@ -25,7 +25,7 @@ export async function GET() {
 
 			try {
 				const file_name = title.toLowerCase().replaceAll(' ', '-');
-				const md = await import(`/src/lib/markdown/${folder}/${file_name}.md?raw`);
+				const md = await import(/* @vite-ignore */ `/src/lib/markdown/${folder}/${file_name}.md?raw`);
 
 				const { content, data } = matter(md.default);
 

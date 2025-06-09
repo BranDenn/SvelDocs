@@ -9,6 +9,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
+import { remarkAlert } from 'remark-github-blockquote-alert'
 import { unified } from 'unified';
 import fm from 'front-matter'
 
@@ -34,8 +35,9 @@ export const load: PageLoad = async ({ url, fetch }) => {
 		const html = (
 			await unified()
 				.use(remarkParse)
+				.use(remarkGfm)
+				.use(remarkAlert, { legacyTitle: false})
 				.use(remarkRehype, { allowDangerousHtml: true })
-				.use(rehypeStringify, { allowDangerousHtml: true })
 				.use(rehypeSlug)
 				.use(rehypeAutolinkHeadings, { behavior: 'wrap' })
 				.use(rehypePrettyCode, {
@@ -46,7 +48,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
 					keepBackground: false,
 					grid: true
 				})
-				.use(remarkGfm)
+				.use(rehypeStringify, { allowDangerousHtml: true })
 				.process(body)
 		).toString();
 

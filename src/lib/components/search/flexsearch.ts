@@ -10,8 +10,8 @@ const searchIndex = new Flexsearch.Index({ tokenize: 'full' });
  */
 export function createSearchIndex(): void {
 	NavMap.values().forEach(
-		async ({ group, title, folder, mdTitle, mdDescription, mdContent }, i) => {
-			const data = [group, title, folder, mdTitle ?? '', mdDescription ?? '', mdContent ?? ''];
+		async ({ group, title, mdTitle, mdDescription, mdContent }, i) => {
+			const data = [group, title, mdTitle ?? '', mdDescription ?? '', mdContent ?? ''];
 			const search = data.join(' ');
 			searchIndex.add(i, search);
 		}
@@ -32,12 +32,13 @@ interface Result {
  * Returns a Map of the seach reults found from the entered text.
  */
 export function getSearchResults(searchText: string): Map<any, Result[]> {
-	const match = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	let match = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+	match = match.replace(/\s+/g, ' ').trim();
 	const groupedResults: Map<any, Result[]> = new Map();
 
-	if (!match) return groupedResults;
+	if (!match) return groupedResults
 
-	const indexResults: number[] = searchIndex.search(match, { limit: 20 });
+	const indexResults = searchIndex.search(match) as number[];
 	const navMap = Array.from(NavMap.entries());
 
 	indexResults.forEach((i) => {
