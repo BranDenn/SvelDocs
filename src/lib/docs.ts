@@ -1,3 +1,4 @@
+import type { MdFm } from '$settings';
 import type { Component } from 'svelte';
 
 /**
@@ -59,23 +60,23 @@ type NavGroupParams = Partial<Omit<NavGroup, 'items' | 'group' | 'Items'>>;
  */
 export class NavGroup {
 	/**
-	 * The name of the group. This is used to categorize navigation items.
+	 * The name of the group. This is used to categorize navigation items.\
 	 * - If `show` is enabled, this group text is displayed in the navigation sidebar.
 	 * - If `group_href` is enabled, this group name is used in the link.
 	 */
 	group: string;
 	/**
-	 * The corresponding markdown folder location for the group.
+	 * The corresponding markdown folder location for the group.\
 	 * This defaults to `$lib/markdown/{group}` but the {group} can be overridden in the constructor.
 	 */
 	folder: string;
 	/**
-	 * Determines if the group text will be shown in the navigation sidebar.
+	 * Determines if the group text will be shown in the navigation sidebar.\
 	 * This defaults to `true` but can be overridden in the constructor.
 	 */
 	show: boolean;
 	/**
-	 * Determines if the group will name will used in the link.
+	 * Determines if the group will name will used in the link.\
 	 * This defaults to `true` but can be overridden in the constructor.
 	 * - If `true`, the link will be formated as `/docs/{group}/{title}`.
 	 * - If `false`, the link will be formated as `/docs/{title}`.
@@ -100,13 +101,14 @@ export class NavGroup {
 
 	/**
 	 * Function to create or add nav items.
-	 * @param args - A variable number of {@link NavItem} objects to be added to the group. Leave empty to initialize the items automatically by reading the markdown folder associated.
+	 * @param args - A variable number of {@link NavItem} objects to be added to the group.\
+	 * Leave empty to initialize the items automatically by reading the markdown folder associated.
 	 */
 	Items(...args: NavItem[]) {
 		// if there are no items, then initialize from markdown files
 		if (args.length <= 0) {
 			// get all markdown files
-			const glob = import.meta.glob(`/src/lib/markdown/*/*.md`, { eager: true, query: "raw" });
+			const glob = import.meta.glob(`/src/lib/markdown/*/*.md`, { eager: true, query: 'raw' });
 
 			// get only the keys (file paths)
 			const paths = Object.keys(glob);
@@ -166,9 +168,7 @@ export class NavMapItem {
 	folder: string;
 	icon?: Component;
 
-	mdTitle?: string;
-	mdDescription?: string;
-	mdContent?: string;
+	markdown?: Markdown;
 
 	prev?: string;
 	next?: string;
@@ -178,14 +178,19 @@ export class NavMapItem {
 		this.title = t;
 		this.folder = f;
 		this.icon = i;
-		this.mdTitle = docData.mdTitle;
-		this.mdDescription = docData.mdDescription;
-		this.mdContent = docData.mdContent;
+		this.markdown = docData.markdown;
 	}
 }
 
+export async function getMarkdownText(folder: string, title: string): Promise<string> {
+	const fileName = title.toLowerCase().replaceAll(' ', '-');
+	const md = await import(/* @vite-ignore */ `/src/lib/markdown/${folder}/${fileName}.md?raw`);
+	return md.default;
+}
+
 /**
- * Map of all the individual navigation items. This is required for next/previous links in the page, as well as referencing the item based off of the URL pathname.
+ * Map of all the individual navigation items.\
+ * This is required for next/previous links in the page, as well as referencing the item based off of the URL pathname.
  */
 export const NavMap: Map<string, NavMapItem> = new Map();
 
@@ -226,10 +231,9 @@ export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[]) {
 export type Doc = {
 	group: string;
 	title: string;
-} & MdData;
+	markdown?: Markdown;
+};
 
-export interface MdData {
-	mdTitle?: string;
-	mdDescription?: string;
-	mdContent?: string;
-}
+export type Markdown = MdFm & {
+	content?: string;
+};

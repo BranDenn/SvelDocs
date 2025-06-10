@@ -1,118 +1,111 @@
 @reference "../../app.css";
 
-@layer base{
-        code[data-theme*=" "],
-        code[data-theme*=" "] span {
-            color: var(--shiki-light);
-            background-color: var(--shiki-light-bg);
-        }
-        
-        .dark code[data-theme*=" "],
-        .dark code[data-theme*=" "] span {
-            color: var(--shiki-dark);
-            background-color: var(--shiki-dark-bg);
-        }
+@layer base {
+	code[data-theme*=' '],
+	code[data-theme*=' '] span {
+		color: var(--shiki-light);
+		background-color: var(--shiki-light-bg);
+	}
 
-    .prose {
-        /* all */
-        > * {
-            @apply mt-4;
-        } 
+	.dark code[data-theme*=' '],
+	.dark code[data-theme*=' '] span {
+		color: var(--shiki-dark);
+		background-color: var(--shiki-dark-bg);
+	}
 
-        /* headers */
-        :is(h1, h2, h3, h4, h5, h6) {
-            @apply font-bold;
-        }
-        h1 {
-            @apply text-4xl mt-12;
-        }
-        h2 { 
-            @apply text-3xl mt-10; 
-        }
-        h3 {
-            @apply text-2xl mt-8;
-        }
-        h4 {
-            @apply text-xl mt-6;
-        }
-        h5 {
-            @apply text-lg mt-4;
-        }
-        h6 {
-            @apply text-base mt-2;
-        }
+	.prose {
+		/* all */
+		> * {
+			@apply mt-4;
+		}
 
+		/* headers */
+		:is(h1, h2, h3, h4, h5, h6) {
+			@apply font-bold;
+		}
+		h1 {
+			@apply mt-12 text-4xl;
+		}
+		h2 {
+			@apply mt-10 text-3xl;
+		}
+		h3 {
+			@apply mt-8 text-2xl;
+		}
+		h4 {
+			@apply mt-6 text-xl;
+		}
+		h5 {
+			@apply mt-4 text-lg;
+		}
+		h6 {
+			@apply mt-2 text-base;
+		}
 
-        /* paragraph */
-        p {
-            @apply text-secondary leading-8;
-        }
+		/* paragraph */
+		p {
+			@apply text-secondary leading-8;
+		}
 
-        /* links */
-        *:not(h1, h2, h3, h4, h5, h6) a {
-            @apply text-accent underline;
-        }
+		/* links */
+		*:not(h1, h2, h3, h4, h5, h6) a {
+			@apply text-accent underline;
+		}
 
-        /* code */
-        /* pre {
-            @apply rounded-md shadow-xs overflow-x-auto text-sm p-4;
-        }
-        :not(pre) code {
-            @apply rounded border p-1 shadow-xs text-sm bg-foreground;
-        } */
-        
-        [data-rehype-pretty-code-figure] {
-            @apply rounded-md shadow-xs border overflow-hidden;
-        }
-        [data-rehype-pretty-code-title] {
-            @apply p-2 font-bold border-b text-sm;
-        }
-        [data-rehype-pretty-code-caption] {
-            @apply p-2 text-secondary border-t text-sm;
-        }
-        pre {
-            @apply bg-foreground overflow-auto py-4 text-sm;
-        }
-        > pre {
-            @apply p-4 border rounded-md shadow-xs;
-        }
-        p > code {
-            @apply p-1 border rounded shadow-xs bg-foreground;
-        }
-        [data-line] {
-            @apply inline-block pl-4;
-        }
-        [data-line]:hover {
-            @apply !bg-primary/10;
-        }
-        [data-line-numbers] {
-            counter-reset: line;
-        }
-        [data-line-numbers] > [data-line]::before {
-            counter-increment: line;
-            content: counter(line);
-            @apply text-secondary pr-4;
-        }
-        [data-highlighted-line] {
-            @apply !bg-accent/10;
-        }
+		/* code */
+		[data-rehype-pretty-code-figure] {
+			@apply overflow-hidden rounded-md border shadow-xs;
+		}
+		[data-rehype-pretty-code-title] {
+			@apply border-b p-2 text-sm font-bold;
+		}
+		[data-rehype-pretty-code-caption] {
+			@apply text-secondary border-t p-2 text-sm;
+		}
+		pre {
+			@apply bg-foreground overflow-auto py-4 text-sm;
+		}
+		> pre {
+			@apply rounded-md border p-4 shadow-xs;
+		}
+		p > code {
+			@apply bg-foreground rounded border p-1 shadow-xs;
+		}
+		[data-line] {
+			@apply inline-block pl-4;
+		}
+		[data-line]:hover {
+			@apply !bg-primary/10;
+		}
+		[data-line-numbers] {
+			counter-reset: line;
+		}
+		[data-line-numbers] > [data-line]::before {
+			counter-increment: line;
+			content: counter(line);
+			@apply text-secondary pr-4;
+		}
+		[data-highlighted-line] {
+			@apply !bg-accent/10;
+		}
 
-        /* lists */
-        ul > *, ol > * {
-            @apply mt-4 text-secondary;
-        }
-        ul:not(.contains-task-list) {
-            @apply list-disc pl-4;
-        }
-        ol:not(.contains-task-list) {
-            @apply list-decimal pl-4;
-        }
-        .task-list-item > input[type="checkbox"] {
-            @apply mr-1 bg-white;
-        }
+		/* lists */
+		ul > *,
+		ol > * {
+			@apply text-secondary mt-4;
+		}
+		ul:not(.contains-task-list) {
+			@apply list-disc pl-4;
+		}
+		ol:not(.contains-task-list) {
+			@apply list-decimal pl-4;
+		}
+		.task-list-item > input[type='checkbox'] {
+			@apply mr-1 bg-white;
+		}
 
-        /* table */
-        /* table {
+		/* table */
+		/* table {
             @apply w-full text-left shadow-xs rounded-md border border-separate bg-foreground text-sm border-spacing-0;
         }
         table * {
@@ -127,48 +120,49 @@
         td:first-child, th:first-child {
             border-left: none;
         } */
-        table {
-            @apply w-full text-left;
-        }
-        tbody tr {
-            @apply border-t;
-        }
-        th, td {
-            @apply p-2;
-        }
-        
-        /* quotes */
-        blockquote {
-            @apply italic border-l-4 pl-4 font-medium;
-        }
-        blockquote p::before {
-            content: '"';
-        }
-        blockquote p::after {
-            content: '"';
-        }
+		table {
+			@apply w-full text-left;
+		}
+		tbody tr {
+			@apply border-t;
+		}
+		th,
+		td {
+			@apply p-2;
+		}
 
-        /* alerts */
-        .markdown-alert-title {
-            @apply flex items-center gap-2 text-inherit font-medium;
-        }
-        .markdown-alert {
-            @apply border-l-4 pl-4 fill-current border-current bg-current/5 rounded py-2; 
-        }
-        .markdown-alert-note {
-            @apply text-blue-500;
-        }
-        .markdown-alert-tip {
-            @apply text-green-500;
-        }
-        .markdown-alert-important {
-            @apply text-purple-500;
-        }
-        .markdown-alert-warning {
-            @apply text-yellow-500;
-        }
-        .markdown-alert-caution {
-            @apply text-red-500;
-        }
-    }
+		/* quotes */
+		blockquote {
+			@apply border-l-4 pl-4 font-medium italic;
+		}
+		blockquote p::before {
+			content: '"';
+		}
+		blockquote p::after {
+			content: '"';
+		}
+
+		/* alerts */
+		.markdown-alert-title {
+			@apply flex items-center gap-2 font-medium text-inherit;
+		}
+		.markdown-alert {
+			@apply rounded border-l-4 border-current bg-current/5 fill-current py-2 pl-4;
+		}
+		.markdown-alert-note {
+			@apply text-blue-500;
+		}
+		.markdown-alert-tip {
+			@apply text-green-500;
+		}
+		.markdown-alert-important {
+			@apply text-purple-500;
+		}
+		.markdown-alert-warning {
+			@apply text-yellow-500;
+		}
+		.markdown-alert-caution {
+			@apply text-red-500;
+		}
+	}
 }

@@ -1,11 +1,11 @@
 import { json } from '@sveltejs/kit';
-import { NAVIGATION } from '$settings';
-import type { Doc } from '$lib/docs';
-import matter from 'gray-matter';
-import remarkStringify from 'remark-stringify'
+import { NAVIGATION, type MdFm } from '$settings';
+import { type Doc, getMarkdownText } from '$lib/docs';
+import remarkStringify from 'remark-stringify';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import stripMarkdown from 'strip-markdown';
+import fm from 'front-matter';
 
 export const prerender = true;
 
@@ -24,23 +24,16 @@ export async function GET() {
 			};
 
 			try {
-				const file_name = title.toLowerCase().replaceAll(' ', '-');
-				const md = await import(/* @vite-ignore */ `/src/lib/markdown/${folder}/${file_name}.md?raw`);
+				const markdown = await getMarkdownText(folder, title);
+				const { attributes, body } = fm<MdFm>(markdown);
 
-				const { content, data } = matter(md.default);
-
-				if (data.title) docData.mdTitle = data.title
-				if (data.description) docData.mdDescription = data.description
+				docData.markdown = attributes;
 
 				const text = (
-					await unified()
-						.use(remarkParse)
-						.use(stripMarkdown)
-						.use(remarkStringify)
-						.process(content)
-				).toString()
+					await unified().use(remarkParse).use(stripMarkdown).use(remarkStringify).process(body)
+				).toString();
 
-				if (text) docData.mdContent = text.replace(/\s+/g, ' ').trim()
+				docData.markdown.content = text.replace(/\s+/g, ' ').trim();
 			} catch {}
 
 			docs.push(docData);

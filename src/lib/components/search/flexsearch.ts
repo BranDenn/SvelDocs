@@ -9,13 +9,11 @@ const searchIndex = new Flexsearch.Index({ tokenize: 'full' });
  * Adds search indexes to the FlexSearch from the NavMap.
  */
 export function createSearchIndex(): void {
-	NavMap.values().forEach(
-		async ({ group, title, mdTitle, mdDescription, mdContent }, i) => {
-			const data = [group, title, mdTitle ?? '', mdDescription ?? '', mdContent ?? ''];
-			const search = data.join(' ');
-			searchIndex.add(i, search);
-		}
-	);
+	NavMap.values().forEach(async ({ group, title, mdTitle, mdDescription, mdContent }, i) => {
+		const data = [group, title, mdTitle ?? '', mdDescription ?? '', mdContent ?? ''];
+		const search = data.join(' ');
+		searchIndex.add(i, search);
+	});
 }
 
 /**
@@ -32,11 +30,11 @@ interface Result {
  * Returns a Map of the seach reults found from the entered text.
  */
 export function getSearchResults(searchText: string): Map<any, Result[]> {
-	let match = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+	let match = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	match = match.replace(/\s+/g, ' ').trim();
 	const groupedResults: Map<any, Result[]> = new Map();
 
-	if (!match) return groupedResults
+	if (!match) return groupedResults;
 
 	const indexResults = searchIndex.search(match) as number[];
 	const navMap = Array.from(NavMap.entries());

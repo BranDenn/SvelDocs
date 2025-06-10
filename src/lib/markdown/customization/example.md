@@ -6,10 +6,15 @@ description: Examples of markdown and their result.
 
 ```markdown title=".md"
 # h1 Heading
+
 ## h2 Heading
+
 ### h3 Heading
+
 #### h4 Heading
+
 ##### h5 Heading
+
 ###### h6 Heading
 ```
 
@@ -23,13 +28,13 @@ description: Examples of markdown and their result.
 ## Styling Text
 
 ```markdown title=".md"
-This is **bold text** (or __bold text__)
+This is **bold text** (or **bold text**)
 
-This is *italic text* (or _italic text_)
+This is _italic text_ (or _italic text_)
 
 This is ~strikethrough text~ (or ~~strikethrough text~~)
 
-This is ***bold & italic text***
+This is **_bold & italic text_**
 
 This is <sub>subscript text</sub>
 
@@ -40,11 +45,11 @@ This is <ins>underline text<ins>
 
 This is **bold text**
 
-This is *italic text*
+This is _italic text_
 
 This is ~strikethrough text~
 
-This is ***bold & italic text***
+This is **_bold & italic text_**
 
 This is <sub>subscript text</sub>
 
@@ -53,6 +58,7 @@ This is <sup>supercript text<sup>
 This is <ins>underline text<ins>
 
 ## Links
+
 ```markdown title=".md"
 This is a [link](https://sveldocs.com)
 ```
@@ -60,6 +66,7 @@ This is a [link](https://sveldocs.com)
 This is a [link](/)
 
 ## Line Breaks
+
 ```markdown title=".md"
 This is a\
 line break
@@ -69,18 +76,25 @@ This is a\
 line break
 
 ## Lists
+
 ##### Unordered List
+
 ```markdown title=".md"
 - First
-+ Second
-* Third
+
+* Second
+
+- Third
 ```
 
 - First
-+ Second
-* Third
+
+* Second
+
+- Third
 
 ##### Ordered List
+
 ```markdown title=".md"
 1. First
 2. Second
@@ -92,17 +106,19 @@ line break
 3. Third
 
 ##### Nested List
+
 ```markdown title=".md"
 1. First
    - Second
-     * Third
+     - Third
 ```
 
 1. First
    - Second
-     * Third
+     - Third
 
 ##### Task List
+
 ```markdown title=".md"
 - [x] Complete
 - [ ] Pending
@@ -112,7 +128,9 @@ line break
 - [ ] Pending
 
 ## Quote Blocks
+
 ##### Quoting Text
+
 ```markdown title=".md"
 > This is a quote block example
 ```
@@ -120,6 +138,7 @@ line break
 > This a quote block example
 
 ##### Quoting Code
+
 ```markdown title=".md"
 This is `quoted code`
 ```
@@ -127,33 +146,37 @@ This is `quoted code`
 This is `quoted code`
 
 ##### Quoting Code Blocks
-`````markdown title=".md"
+
+````markdown title=".md"
 This is a
-```ts
-var str : string = "hello world"
-console.log(str)
-```
-`````
 
 ```ts
-var str : string = "hello world"
-console.log(str)
+var str: string = 'hello world';
+console.log(str);
+```
+````
+
+```ts
+var str: string = 'hello world';
+console.log(str);
 ```
 
 ## Tables
+
 ```markdown title=".md"
 | Left-aligned | Center-aligned | Right-aligned |
-| :---         |     :---:      |          ---: |
-| 1            | 2              | 3             |
-| 4            | 5              | 6             |
+| :----------- | :------------: | ------------: |
+| 1            |       2        |             3 |
+| 4            |       5        |             6 |
 ```
 
 | Left-aligned | Center-aligned | Right-aligned |
-| :---         |     :---:      |          ---: |
-| 1            | 2              | 3             |
-| 4            | 5              | 6             |
+| :----------- | :------------: | ------------: |
+| 1            |       2        |             3 |
+| 4            |       5        |             6 |
 
 ## Footnotes
+
 ```markdown title=".md"
 Footnote[^first].
 
@@ -163,6 +186,7 @@ Footnote[^second].
 
 [^second]: This links to the Footnote 2
 ```
+
 Footnote[^first].
 
 Footnote[^second].
