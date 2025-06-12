@@ -1,18 +1,19 @@
-import Flexsearch from 'flexsearch';
+import { Index } from 'flexsearch';
 import { NavMap } from '$lib/docs';
 import type { Component } from 'svelte';
 
 // create flex search index
-const searchIndex = new Flexsearch.Index({ tokenize: 'full' });
+const searchIndex = new Index({ tokenize: 'full' });
 
 /**
  * Adds search indexes to the FlexSearch from the NavMap.
  */
 export function createSearchIndex(): void {
-	NavMap.values().forEach(async ({ group, title, mdTitle, mdDescription, mdContent }, i) => {
-		const data = [group, title, mdTitle ?? '', mdDescription ?? '', mdContent ?? ''];
-		const search = data.join(' ');
-		searchIndex.add(i, search);
+	NavMap.values().forEach(async ({ group, title, markdown }, i) => {
+		let data = [group, title];
+		if (markdown) Object.values(markdown).forEach((value) => data.push(value))
+		console.log(data)
+		searchIndex.add(i, data.join(' '));
 	});
 }
 
@@ -36,7 +37,7 @@ export function getSearchResults(searchText: string): Map<any, Result[]> {
 
 	if (!match) return groupedResults;
 
-	const indexResults = searchIndex.search(match) as number[];
+	const indexResults = searchIndex.search(match, { limit: 10 }) as number[];
 	const navMap = Array.from(NavMap.entries());
 
 	indexResults.forEach((i) => {
@@ -45,8 +46,8 @@ export function getSearchResults(searchText: string): Map<any, Result[]> {
 		const group = textWithMark(navItem.group, match);
 		if (!groupedResults.has(group)) groupedResults.set(group, []);
 
-		const fullTitle = navItem.title + (navItem.mdTitle ? ` (${navItem.mdTitle})` : '');
-		const fullContent = (navItem.mdDescription ?? '') + (navItem.mdContent ?? '');
+		const fullTitle = navItem.title + (navItem.markdown?.title ? ` (${navItem.markdown?.title})` : '');
+		const fullContent = (navItem.markdown?.description ?? '') + (navItem.markdown?.description ?? '');
 
 		groupedResults.get(group)?.push({
 			href,
