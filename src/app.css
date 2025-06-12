@@ -45,11 +45,15 @@
 	}
 
 	body {
-		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
+		@apply bg-background text-primary flex min-h-dvh flex-col font-inter;
 	}
 
 	* {
 		@apply border-border;
+	}
+
+	kbd {
+		@apply font-[inherit];
 	}
 
 	a,
