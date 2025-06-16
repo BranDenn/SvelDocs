@@ -47,7 +47,7 @@ export function getSearchResults(searchText: string): Map<any, Result[]> {
 		if (!groupedResults.has(group)) groupedResults.set(group, []);
 
 		const fullTitle = navItem.title + (navItem.markdown?.title ? ` (${navItem.markdown?.title})` : '');
-		const fullContent = (navItem.markdown?.description ?? '') + (navItem.markdown?.description ?? '');
+		const fullContent = (navItem.markdown?.description ?? '') + (navItem.markdown?.content ?? '');
 
 		groupedResults.get(group)?.push({
 			href,

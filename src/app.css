@@ -23,9 +23,9 @@
 @layer base {
 	.dark {
 		/* dark mode colors */
-		--color-background: var(--color-zinc-950);
-		--color-foreground: var(--color-zinc-900);
-		--color-border: var(--color-zinc-800);
+		--color-background: var(--color-zinc-900);
+		--color-foreground: var(--color-zinc-800);
+		--color-border: var(--color-zinc-700);
 		--color-primary: var(--color-zinc-200);
 		--color-secondary: var(--color-zinc-400);
 		--color-accent: var(--color-blue-400);
