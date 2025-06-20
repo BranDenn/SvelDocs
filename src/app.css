@@ -45,7 +45,7 @@
 	}
 
 	body {
-		@apply bg-background text-primary flex min-h-dvh flex-col font-inter;
+		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
 	}
 
 	* {

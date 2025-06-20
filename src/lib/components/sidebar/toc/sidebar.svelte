@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { navigating } from '$app/state';
-	import { untrack } from 'svelte';
 	import Sidebar from '../sidebar.svelte';
 	import TableOfContents from '@lucide/svelte/icons/table-of-contents';
+	import { cn } from '$lib';
+	import { afterNavigate, onNavigate } from '$app/navigation';
 
 	interface CONTENT {
 		level: number;
@@ -15,11 +16,7 @@
 	let contents: CONTENT[] = $state([]);
 
 	// gets the first visible content in the table of contents by id
-	let idxInView: number = $derived.by(() => {
-		const idxFound = contents.findIndex((content) => content.inView);
-		if (idxFound > -1) return idxFound;
-		return contents.length - 1;
-	});
+	let firstVisibleIndex = $derived(contents.findIndex((c) => c.inView));
 
 	// observer for finding which heading is in view
 	let observer: IntersectionObserver | null = null;
@@ -57,29 +54,26 @@
 			tempContents.push({ level, text, id: heading.id, inView: false });
 		});
 
-		normalizeHeadings(tempContents);
-		contents = tempContents;
+		contents = normalizeHeadingLevels(tempContents);
 	}
 
-	function normalizeHeadings(arr: CONTENT[]) {
-		if (arr.length < 1) return;
+	function normalizeHeadingLevels(headings: CONTENT[]): CONTENT[] {
+		const result: CONTENT[] = [];
+		const stack: number[] = [];
 
-		// get all the heading levels
-		const levels = arr.map(({ level }) => level);
+		for (const heading of headings) {
+			// Remove deeper or same-level parents
+			while (stack.length > 0 && heading.level <= stack[stack.length - 1]) stack.pop();
+			stack.push(heading.level);
 
-		// sort levels so they are in order
-		const sortedLevels = [...new Set(levels)].sort((a, b) => a - b);
-
-		// create map to reference
-		const levelMap = new Map();
-
-		// loop through sorted levels and remap headings
-		// for example [1, 3, 5, 6] would result in [1, 2, 3, 4]
-		sortedLevels.forEach((level, index) => levelMap.set(level, index + 1));
-
-		for (let i = 0; i < arr.length; i++) {
-			arr[i].level = levelMap.get(arr[i].level);
+			// The visual level is the current stack depth
+			result.push({
+				...heading,
+				level: stack.length
+			});
 		}
+
+		return result;
 	}
 
 	function intersectionCallback(entries: IntersectionObserverEntry[]) {
@@ -91,19 +85,12 @@
 		});
 	}
 
-	$effect(() => {
-		// navigating.complete recalls this effect before and after navigation
-		navigating.complete;
+	afterNavigate(updateHeadings);
 
-		// call function without triggering this $effect function
-		untrack(updateHeadings);
-
-		// cleanup
-		return () => {
-			if (observer) observer.disconnect();
-			observer = null;
-			contents = [];
-		};
+	onNavigate(() => {
+		if (observer) observer.disconnect();
+		observer = null;
+		contents = [];
 	});
 
 	navigating;
@@ -123,16 +110,17 @@
 				<TableOfContents class="size-4 stroke-3" />
 				On this page
 			</div>
+
 			<div class="text-secondary text-sm">
-				{#each contents as { text, id, level }, idx}
-					{@const pl = level * 1 + 'rem'}
+				{#each contents as c, index}
 					<a
-						href="#{id}"
-						class={[
+						href="#{c.id}"
+						class={cn(
 							'block border-l py-1 pr-4 transition-colors',
-							idx === idxInView ? 'border-primary text-primary' : 'hover:text-primary'
-						]}
-						style="padding-left: {pl}">{text}</a
+							c.inView && 'border-primary/50',
+							index === firstVisibleIndex ? 'border-primary text-primary' : 'hover:text-primary'
+						)}
+						style="padding-left: {c.level}rem">{c.text}</a
 					>
 				{/each}
 			</div>

@@ -15,7 +15,7 @@
 			<a href={prev} class="group hover:text-accent mr-auto flex items-center gap-2">
 				<ArrowLeft class="size-4 shrink-0 transition-all group-hover:mr-2" />
 				<span class="transition-colors">{title}</span>
-				<span class="text-secondary hidden sm:block sm:block md:hidden lg:block">{group}</span>
+				<span class="text-secondary hidden sm:block md:hidden lg:block">{group}</span>
 			</a>
 		{/if}
 		{#if next}

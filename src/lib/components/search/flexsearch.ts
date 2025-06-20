@@ -11,8 +11,7 @@ const searchIndex = new Index({ tokenize: 'full' });
 export function createSearchIndex(): void {
 	NavMap.values().forEach(async ({ group, title, markdown }, i) => {
 		let data = [group, title];
-		if (markdown) Object.values(markdown).forEach((value) => data.push(value))
-		console.log(data)
+		if (markdown) Object.values(markdown).forEach((value) => data.push(value));
 		searchIndex.add(i, data.join(' '));
 	});
 }
@@ -46,7 +45,8 @@ export function getSearchResults(searchText: string): Map<any, Result[]> {
 		const group = textWithMark(navItem.group, match);
 		if (!groupedResults.has(group)) groupedResults.set(group, []);
 
-		const fullTitle = navItem.title + (navItem.markdown?.title ? ` (${navItem.markdown?.title})` : '');
+		const fullTitle =
+			navItem.title + (navItem.markdown?.title ? ` (${navItem.markdown?.title})` : '');
 		const fullContent = (navItem.markdown?.description ?? '') + (navItem.markdown?.content ?? '');
 
 		groupedResults.get(group)?.push({

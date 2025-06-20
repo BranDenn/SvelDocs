@@ -27,12 +27,12 @@ OR
 
 Explore the rest of the documentation to see SvelDocs's options and capabilities.
 
-
 ## Inspiration
 
 I found it difficult to find a nice looking and customizable template with all of the features that I wanted for creating documentation, so I decided to make it myself.
 
 Commonly used documentation websites that I used for research include:
+
 - [TailwindCSS](https://tailwindcss.com/docs)
 - [Shadcn UI](https://ui.shadcn.com/docs)
 - [Mintlify](https://mintlify.com/docs)
