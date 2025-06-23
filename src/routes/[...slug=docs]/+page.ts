@@ -45,7 +45,7 @@ export const load: PageLoad = async ({ url, fetch }) => {
 						light: 'github-light',
 						dark: 'github-dark'
 					},
-					keepBackground: false
+					keepBackground: false,
 				})
 				.use(rehypeStringify)
 				.process(body)

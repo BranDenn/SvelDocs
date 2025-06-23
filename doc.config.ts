@@ -39,6 +39,5 @@ export const NAVIGATION: NavGroup[] = [
 		{ title: 'Configuration', icon: Settings }
 	),
 	Group('Customization').Items(),
-	Group('Features').Items(),
-	Group('Credits').Items()
+	Group('Features').Items()
 ];
