@@ -52,7 +52,9 @@
 		@apply border-border;
 	}
 
-	kbd {
+	kbd,
+	code,
+	pre {
 		@apply font-[inherit];
 	}
 

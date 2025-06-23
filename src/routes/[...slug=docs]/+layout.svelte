@@ -9,7 +9,6 @@
 
 	let open = $state({ current: false });
 	setContext('search-dialog', open);
-	
 </script>
 
 <Header />

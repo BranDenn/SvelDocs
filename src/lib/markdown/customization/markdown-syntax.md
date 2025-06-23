@@ -6,15 +6,10 @@ description: Examples of markdown and their result.
 
 ```markdown title=".md"
 # h1 Heading
-
 ## h2 Heading
-
 ### h3 Heading
-
 #### h4 Heading
-
 ##### h5 Heading
-
 ###### h6 Heading
 ```
 
@@ -29,32 +24,20 @@ description: Examples of markdown and their result.
 
 ```markdown title=".md"
 This is **bold text** (or **bold text**)
-
 This is _italic text_ (or _italic text_)
-
 This is ~strikethrough text~ (or ~~strikethrough text~~)
-
 This is **_bold & italic text_**
-
 This is <sub>subscript text</sub>
-
 This is <sup>supercript text<sup>
-
 This is <ins>underline text<ins>
 ```
 
 This is **bold text**
-
 This is _italic text_
-
 This is ~strikethrough text~
-
 This is **_bold & italic text_**
-
 This is <sub>subscript text</sub>
-
 This is <sup>supercript text<sup>
-
 This is <ins>underline text<ins>
 
 ## Links
@@ -81,16 +64,12 @@ line break
 
 ```markdown title=".md"
 - First
-
 * Second
-
 - Third
 ```
 
 - First
-
 * Second
-
 - Third
 
 ##### Ordered List
@@ -179,20 +158,14 @@ console.log(str);
 
 ```markdown title=".md"
 Footnote[^first].
-
 Footnote[^second].
-
 [^first]: This links to the Footnote 1
-
 [^second]: This links to the Footnote 2
 ```
 
 Footnote[^first].
-
 Footnote[^second].
-
 [^first]: This links to the Footnote 1
-
 [^second]: This links to the Footnote 2
 
 ## Alerts

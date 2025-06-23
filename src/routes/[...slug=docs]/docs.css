@@ -23,24 +23,6 @@
 		:is(h1, h2, h3, h4, h5, h6) {
 			@apply font-bold;
 		}
-		h1 {
-			@apply mt-12 text-4xl;
-		}
-		h2 {
-			@apply mt-10 text-3xl;
-		}
-		h3 {
-			@apply mt-8 text-2xl;
-		}
-		h4 {
-			@apply mt-6 text-xl;
-		}
-		h5 {
-			@apply mt-4 text-lg;
-		}
-		h6 {
-			@apply mt-2 text-base;
-		}
 
 		/* paragraph */
 		p {
@@ -50,43 +32,6 @@
 		/* links */
 		*:not(h1, h2, h3, h4, h5, h6) a {
 			@apply text-accent underline;
-		}
-
-		/* code */
-		[data-rehype-pretty-code-figure] {
-			@apply overflow-hidden rounded-md border shadow-xs;
-		}
-		[data-rehype-pretty-code-title] {
-			@apply border-b p-2 text-sm font-bold;
-		}
-		[data-rehype-pretty-code-caption] {
-			@apply text-secondary border-t p-2 text-sm;
-		}
-		pre {
-			@apply bg-foreground overflow-auto py-4 text-sm;
-		}
-		> pre {
-			@apply rounded-md border p-4 shadow-xs;
-		}
-		p > code {
-			@apply bg-foreground rounded border p-1 shadow-xs;
-		}
-		[data-line] {
-			@apply inline-block pl-4;
-		}
-		[data-line]:hover {
-			@apply !bg-primary/10;
-		}
-		[data-line-numbers] {
-			counter-reset: line;
-		}
-		[data-line-numbers] > [data-line]::before {
-			counter-increment: line;
-			content: counter(line);
-			@apply text-secondary pr-4;
-		}
-		[data-highlighted-line] {
-			@apply !bg-accent/10;
 		}
 
 		/* lists */

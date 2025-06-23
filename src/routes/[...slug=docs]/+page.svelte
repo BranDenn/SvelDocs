@@ -22,5 +22,5 @@
 <hr class="border-border my-4" />
 
 <article id="content" class="prose scrollbar">
-	{@html data.html}
+	<data.component />
 </article>

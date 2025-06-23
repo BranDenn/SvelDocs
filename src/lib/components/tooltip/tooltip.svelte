@@ -20,7 +20,7 @@
 			forceMount
 			sideOffset={8}
 			collisionPadding={16}
-			class="bg-foreground rounded border px-2 py-1 text-xs shadow z-50"
+			class="bg-foreground z-50 rounded border px-2 py-1 text-xs shadow"
 		>
 			{#snippet child({ wrapperProps, props, open })}
 				{#if open}

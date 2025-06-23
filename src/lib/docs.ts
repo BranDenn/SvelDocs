@@ -188,6 +188,13 @@ export async function getMarkdownText(folder: string, title: string): Promise<st
 	return md.default;
 }
 
+export async function getMarkdownComponent(folder: string, title: string) {
+	const fileName = title.toLowerCase().replaceAll(' ', '-');
+	const md = await import(/* @vite-ignore */ `/src/lib/markdown/${folder}/${fileName}.md`);
+	console.log('MD:', md);
+	return { component: md.default, metadata: md.metadata };
+}
+
 /**
  * Map of all the individual navigation items.\
  * This is required for next/previous links in the page, as well as referencing the item based off of the URL pathname.
