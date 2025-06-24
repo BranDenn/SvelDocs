@@ -18,7 +18,7 @@
 		mode === 'desktop' &&
 			'bg-foreground hover:border-accent/50 hidden w-full items-center gap-2 rounded-lg border p-2 text-sm text-xs font-medium md:flex',
 		mode === 'mobile' && 'p-1 md:hidden',
-		'text-secondary hover:text-primary transition-colors',
+		'text-secondary hover:text-primary z-50 transition-colors',
 		className
 	)}
 >
