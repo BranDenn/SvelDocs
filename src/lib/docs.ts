@@ -62,7 +62,7 @@ export class NavGroup {
 	/**
 	 * The name of the group. This is used to categorize navigation items.\
 	 * - If `show` is enabled, this group text is displayed in the navigation sidebar.
-	 * - If `group_href` is enabled, this group name is used in the link.
+	 * - If `groupHref` is enabled, this group name is used in the link.
 	 */
 	group: string;
 	/**
@@ -81,7 +81,7 @@ export class NavGroup {
 	 * - If `true`, the link will be formated as `/docs/{group}/{title}`.
 	 * - If `false`, the link will be formated as `/docs/{title}`.
 	 */
-	group_href: boolean;
+	groupHref: boolean;
 	/**
 	 * A list of all the {@link NavItem} links associated with this group.
 	 */
@@ -89,14 +89,14 @@ export class NavGroup {
 
 	/**
 	 * Constructer for the NavGroup class.
-	 * @param g - The name of the group.
+	 * @param groupName - The name of the group.
 	 * @param params - {@link NavGroupParams}
 	 */
-	constructor(g: string, params?: NavGroupParams) {
-		this.group = g;
-		this.folder = params?.folder ?? g.replaceAll(' ', '-').toLowerCase();
+	constructor(groupName: string, params?: NavGroupParams) {
+		this.group = groupName;
+		this.folder = params?.folder ?? groupName.replaceAll(' ', '-').toLowerCase();
 		this.show = params?.show ?? true;
-		this.group_href = params?.group_href ?? true;
+		this.groupHref = params?.groupHref ?? true;
 	}
 
 	/**
@@ -138,8 +138,8 @@ export class NavGroup {
 			// ignore if the href was manually entered in the settings
 			if (arg.href) return;
 
-			// create the slug based off of group_href setting
-			const slug: string = (this.group_href ? `${this.group}/` : '') + arg.title;
+			// create the slug based off of groupHref setting
+			const slug: string = (this.groupHref ? `${this.group}/` : '') + arg.title;
 			// create and set the full href
 			arg.href = `/docs/${slug}`.replaceAll(' ', '-').toLowerCase();
 		});
@@ -155,8 +155,8 @@ export class NavGroup {
 /**
  * Helper function to create {@link NavGroup NavGroups} quicker.
  */
-export function Group(g: string, params?: NavGroupParams): NavGroup {
-	return new NavGroup(g, params);
+export function Group(groupName: string, params?: NavGroupParams): NavGroup {
+	return new NavGroup(groupName, params);
 }
 
 /**

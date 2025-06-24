@@ -35,7 +35,7 @@ The theme is very simple setup of variables in the `src/app.css` file. Here's wh
 }
 ```
 
-The default theme is built off of tailwind variables, but these can be replaced with your rgb values, hex values, etc.
+The default theme is built off of Tailwind variables, but these can be replaced with your rgb values, hex values, etc.
 
 ## Markdown
 

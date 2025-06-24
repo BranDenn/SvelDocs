@@ -19,7 +19,7 @@
 
 	<!-- must have min-w-0 to ensure middle content does not push sidebars -->
 	<div
-		class="flex w-full min-w-0 flex-col gap-4 p-4 wrap-break-word transition-[padding] lg:p-8"
+		class="flex w-full min-w-0 flex-col gap-4 p-4 wrap-break-word transition-[padding] md:p-8"
 		id="middle"
 	>
 		<main class="grow">

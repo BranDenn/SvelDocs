@@ -1,7 +1,6 @@
 import { Group, type NavGroup, type BaseSettings } from '$lib/docs';
 import BookOpenCheck from '@lucide/svelte/icons/book-open-check';
 import Rocket from '@lucide/svelte/icons/rocket';
-import Settings from '@lucide/svelte/icons/settings-2';
 
 // --- MARKDOWN FRONTMATTER ---
 /**
@@ -34,10 +33,9 @@ export const SETTINGS: BaseSettings = {
  * @see {@link NavGroup} for more information
  */
 export const NAVIGATION: NavGroup[] = [
-	Group('Getting Started', { show: false, group_href: false }).Items(
+	Group('Getting Started', { show: false, groupHref: false }).Items(
 		{ title: 'Introduction', icon: BookOpenCheck, href: SETTINGS.REDIRECT_URL },
-		{ title: 'Quick Start', icon: Rocket },
-		{ title: 'Configuration', icon: Settings }
+		{ title: 'Quick Start', icon: Rocket }
 	),
 	Group('Configuration').Items(),
 	Group('Components').Items(),
