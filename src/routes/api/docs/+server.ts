@@ -29,11 +29,12 @@ export async function GET() {
 
 				docData.markdown = attributes;
 
-				const text = (
+				let text = (
 					await unified().use(remarkParse).use(stripMarkdown).use(remarkStringify).process(body)
 				).toString();
 
-				docData.markdown.content = text.replace(/\s+/g, ' ').trim();
+				text = text.replace(/\s+/g, ' ').trim();
+				if (text) docData.markdown.content = text;
 			} catch {}
 
 			docs.push(docData);

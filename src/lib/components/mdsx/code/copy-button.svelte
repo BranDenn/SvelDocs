@@ -2,7 +2,7 @@
 	import Copy from '@lucide/svelte/icons/copy';
 	import Check from '@lucide/svelte/icons/check';
 	import type { ClassValue } from 'svelte/elements';
-	import Tooltip from '$lib/components/tooltip/tooltip.svelte';
+	import Tooltip from '$lib/components/ui/tooltip/tooltip.svelte';
 	import { cn } from '$lib';
 
 	let {

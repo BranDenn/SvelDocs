@@ -22,6 +22,7 @@ export const SETTINGS: BaseSettings = {
 	NAV_STYLE: 'left-border',
 	SEARCH_BAR_LOCATION: 'sidebar',
 	COLLAPSIBLE_NAV_GROUPS: true,
+	COMPANY_NAME: 'Your Company Name',
 	REDIRECT_URL: '/docs'
 };
 
@@ -38,6 +39,7 @@ export const NAVIGATION: NavGroup[] = [
 		{ title: 'Quick Start', icon: Rocket },
 		{ title: 'Configuration', icon: Settings }
 	),
-	Group('Customization').Items(),
-	Group('Features').Items()
+	Group('Configuration').Items(),
+	Group('Components').Items(),
+	Group('Miscellaneous').Items()
 ];

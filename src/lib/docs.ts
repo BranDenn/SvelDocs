@@ -191,7 +191,6 @@ export async function getMarkdownText(folder: string, title: string): Promise<st
 export async function getMarkdownComponent(folder: string, title: string) {
 	const fileName = title.toLowerCase().replaceAll(' ', '-');
 	const md = await import(/* @vite-ignore */ `/src/lib/markdown/${folder}/${fileName}.md`);
-	console.log('MD:', md);
 	return { component: md.default, metadata: md.metadata };
 }
 

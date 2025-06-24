@@ -9,6 +9,6 @@
 	@reference '../../../../app.css';
 
 	:global(p > code) {
-		@apply bg-foreground rounded border px-2 py-1 shadow-xs;
+		@apply bg-foreground rounded border p-1 text-sm shadow-xs;
 	}
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	export { h1, h2, h3, h4, h5, h6, pre, code } from './index';
+	export { h1, h2, h3, h4, h5, h6, pre, code, a } from './index';
 </script>
 
 <script lang="ts">
