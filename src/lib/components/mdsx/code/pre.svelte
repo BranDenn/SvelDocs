@@ -9,7 +9,7 @@
 
 <div class="group relative">
 	<pre
-		class="bg-foreground overflow-auto py-4 text-sm"
+		class="bg-foreground/50 overflow-auto py-4 text-sm"
 		{...restProps}
 		{@attach (node) => (codeContent = node.textContent ?? '')}>{@render children?.()}</pre>
 	{#if codeContent}
@@ -27,16 +27,16 @@
 		@apply overflow-hidden rounded-md border shadow-xs;
 	}
 	:global([data-rehype-pretty-code-title]) {
-		@apply border-b p-2 text-sm font-bold;
+		@apply bg-foreground border-b p-2 text-sm font-bold;
 	}
 	:global([data-rehype-pretty-code-caption]) {
-		@apply text-secondary border-t p-2 text-sm;
+		@apply text-secondary bg-foreground border-t p-2 text-sm;
 	}
 	:global([data-line]) {
 		@apply inline-block pl-4;
 	}
 	:global([data-line]:hover) {
-		@apply !bg-primary/10;
+		@apply !bg-primary/5;
 	}
 	:global([data-line-numbers]) {
 		counter-reset: line;

@@ -44,33 +44,6 @@
 			@apply mr-1 bg-white;
 		}
 
-		/* table */
-		/* table {
-            @apply w-full text-left shadow-xs rounded-md border border-separate bg-foreground text-sm border-spacing-0;
-        }
-        table * {
-            @apply m-0
-        }
-        td, th {
-            @apply border-l border-t p-2;
-        }
-        th {
-            border-top: none;
-        }
-        td:first-child, th:first-child {
-            border-left: none;
-        } */
-		table {
-			@apply w-full text-left;
-		}
-		tbody tr {
-			@apply border-t;
-		}
-		th,
-		td {
-			@apply p-2;
-		}
-
 		/* quotes */
 		blockquote {
 			@apply border-l-4 pl-4 font-medium italic;

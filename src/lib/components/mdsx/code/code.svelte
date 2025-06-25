@@ -8,7 +8,7 @@
 <style lang="postcss">
 	@reference '../../../../app.css';
 
-	:global(p > code) {
-		@apply bg-foreground rounded border p-1 text-sm shadow-xs;
+	:global(:not(pre) > code) {
+		@apply bg-foreground text-primary rounded border px-1 py-0.5 text-sm text-nowrap shadow-xs;
 	}
 </style>

@@ -18,7 +18,7 @@ The theme is very simple setup of variables in the `src/app.css` file. Here's wh
 	--color-foreground: var(--color-zinc-100);
 	--color-border: var(--color-zinc-200);
 	--color-primary: var(--color-zinc-800);
-	--color-secondary: var(--color-zinc-600);
+	--color-secondary: var(--color-zinc-700);
 	--color-accent: var(--color-blue-600);
 }
 
@@ -29,7 +29,7 @@ The theme is very simple setup of variables in the `src/app.css` file. Here's wh
 		--color-foreground: var(--color-zinc-800);
 		--color-border: var(--color-zinc-700);
 		--color-primary: var(--color-zinc-200);
-		--color-secondary: var(--color-zinc-400);
+		--color-secondary: var(--color-zinc-300);
 		--color-accent: var(--color-blue-400);
 	}
 }

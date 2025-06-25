@@ -9,3 +9,7 @@ export { default as pre } from './code/pre.svelte';
 export { default as code } from './code/code.svelte';
 
 export { default as a } from './links/a.svelte';
+
+export { default as table } from './table/table.svelte';
+export { default as th } from './table/th.svelte';
+export { default as td } from './table/td.svelte';
