@@ -27,15 +27,19 @@ interface Result {
 }
 
 /**
- * Returns a Map of the seach reults found from the entered text.
+ * Returns a Map of the seach results found from the entered text.
  */
 export function getSearchResults(searchText: string): Map<any, Result[]> {
+	// clean text
 	let match = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	match = match.replace(/\s+/g, ' ').trim();
+
+	// create a map to group the results
 	const groupedResults: Map<any, Result[]> = new Map();
 
 	if (!match) return groupedResults;
 
+	// return most relevant results
 	const indexResults = searchIndex.search(match, { limit: 10 }) as number[];
 	const navMap = Array.from(NavMap.entries());
 

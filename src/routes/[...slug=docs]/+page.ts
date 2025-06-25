@@ -23,11 +23,13 @@ export const load: PageLoad = async ({ url, fetch }) => {
 	try {
 		const { component } = await getMarkdownComponent(navMapItem.folder, navMapItem.title);
 
+		// remove content as it is not needed in the page data
+		const { content, ...md } = navMapItem.markdown || {};
+
 		return {
 			title: navMapItem.title,
 			group: navMapItem.group,
-			mdTitle: navMapItem.markdown?.title,
-			mdDescription: navMapItem.markdown?.description,
+			md: md,
 			component: component
 		};
 	} catch {

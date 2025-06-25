@@ -7,7 +7,7 @@ description: SvelDocs is a free boilerplate project for creating documentation w
 
 SvelDocs provides you with all of the code for creating modern markdown documentation websites. In fact, this very site is the boilerplate code.
 
-The files are structured for quick iterations and detailed understanding, while still offering easy expansion. SvelDocs provides a settings file with preset options that should fit most needs, but in the chance that something doesnt match your taste, you can always customize the code to your liking.
+The files are structured for quick iterations and detailed understanding, while still offering easy expansion. SvelDocs provides a settings file with preset options that should fit most needs, but in the chance that something does not match your taste, you can always customize the code to your liking.
 
 ## Features
 
@@ -25,7 +25,7 @@ The files are structured for quick iterations and detailed understanding, while 
 
 ## Ready to Dive In?
 
-Head over to the [Quick Start](/docs/quick-start) section to clone the repository and launch your own document.
+Head over to the [Quick Start](/docs/quick-start) section to clone the repository and launch your own documentation.
 
 OR
 

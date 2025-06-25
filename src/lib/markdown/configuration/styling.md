@@ -41,11 +41,11 @@ The default theme is built off of Tailwind variables, but these can be replaced 
 
 Markdown content can be styled in two different ways.
 
-##### mdsx Blueprints (preferred method)
+#### mdsx Blueprints (preferred method)
 
-You can modifiy the msdx blueprint components directly to update their styling. This can be done with the html class attribute, or by adding a style block within that component. To read more about blueprints, head [here](/docs/configuration/markdown).
+You can modifiy the msdx blueprint components directly to update their styling. This can be done with the html class attribute, or by adding a style block within that component. To read more about blueprints, head [here](/docs/configuration/markdown#blueprints).
 
-##### docs.css
+#### docs.css
 
 You can also apply styling within the `src/routes/[...slug=docs]/docs.css` file. This is imported only in the `src/routes/[...slug=docs]/+page.svelte` file. This can be more useful to apply styles to multiple attributes, such as making all headings bold. 
 

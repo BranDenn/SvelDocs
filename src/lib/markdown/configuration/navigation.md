@@ -38,7 +38,7 @@ export const NAVIGATION: NavGroup[] = [
 ];
 ```
 
-##### Structure Explanation
+#### Structure Explanation
 
 As seen in the above example, only 2 items are defined, even though there are more than 2 markdown files.
 
@@ -48,11 +48,11 @@ The group has further parameters that can be configured, for example, the `{ sho
 
 ## API Reference
 
-##### Group
+#### Group
 
 A group is defined as `Group(groupName: string, params?: NavGroupParams)`.
 
-The `groupName` is used for both grouping items in the documentation sidebar, and for routing.
+The `groupName` is used for both grouping items in the documentation sidebar, and for routing.\
 The `params` is an optional parameter for changing some group options.
 
 | Param | Type | Description | Default |
@@ -61,12 +61,12 @@ The `params` is an optional parameter for changing some group options.
 | show? | `boolean` | Whether or not the group name will be shown in the sidebar. | `true`
 | groupHref? | `boolean` | Whether or not the group should be included in the routing. <br>If `true` a route looks like this: `/docs/{groupName}/{itemName}`. <br>If `false` a route looks like this: `/docs/{itemName}`. | `true`
 
-##### Item
+#### Item
 
 The `Item()` function must be called after a `Group()` to load the items. Leaving the parameters empty will load the markdown from the file system automatically. Any number of items can also be passed in as parameters for further control.
 
 | Param | Type | Description | Default |
 | ----- | ---- | ----------- | ------- |
-| title | `string` | the name of the item that is displayed in the sidebar. | `{MarkdownFileName}`
-| icon? | `Component` | the icon that is displayed next to the title. | `undefined`
-| href? | `string` | the route that the item links to. | `/docs/{groupName?}/{title}`<br>`.replaceAll(' ', '-')`<br>`.toLowerCase()`
+| title | `string` | The name of the item that is displayed in the sidebar. | `{MarkdownFileName}`
+| icon? | `Component` | The icon that is displayed next to the title. | `undefined`
+| href? | `string` | The route that the item links to. | `/docs/{groupName?}/{title}`<br>`.replaceAll(' ', '-')`<br>`.toLowerCase()`

@@ -31,7 +31,7 @@
 <div
 	role="alert"
 	class={cn(
-		'grid rounded border-l-4 border-current bg-current/5 fill-current py-2 pl-4',
+		'grid gap-1 rounded border-l-4 border-current bg-current/5 fill-current p-4',
 		Icons[type].class,
 		className
 	)}
@@ -40,5 +40,5 @@
 		<Icon class="size-[1em] stroke-[2.5]"></Icon>
 		{Title}
 	</div>
-	<p>{@render children?.()}</p>
+	<p class="leading-normal">{@render children?.()}</p>
 </div>

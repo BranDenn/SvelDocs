@@ -7,7 +7,7 @@
 	let { children } = $props();
 </script>
 
-<ModeWatcher />
+<ModeWatcher defaultMode="dark" />
 
 <Tooltip.Provider delayDuration={150} disableCloseOnTriggerClick={true}>
 	{@render children()}

@@ -19,8 +19,8 @@ description: Examples of markdown and their result.
 ## h2 Heading
 ### h3 Heading
 #### h4 Heading
-##### h5 Heading
-###### h6 Heading
+#### h5 Heading
+##### h6 Heading
 ```
 
 <H1 class="toc-ignore">h1 Heading</H1>
@@ -72,7 +72,7 @@ line break
 
 ## Lists
 
-##### Unordered List
+#### Unordered List
 
 ```md title=".md"
 - First
@@ -84,7 +84,7 @@ line break
 * Second
 - Third
 
-##### Ordered List
+#### Ordered List
 
 ```md title=".md"
 1. First
@@ -96,7 +96,7 @@ line break
 2. Second
 3. Third
 
-##### Nested List
+#### Nested List
 
 ```md title=".md"
 1. First
@@ -108,7 +108,7 @@ line break
    - Second
      - Third
 
-##### Task List
+#### Task List
 
 ```md title=".md"
 - [x] Complete
@@ -120,7 +120,7 @@ line break
 
 ## Quote Blocks
 
-##### Quoting Text
+#### Quoting Text
 
 ```md title=".md"
 > This is a quote block example
@@ -128,7 +128,7 @@ line break
 
 > This a quote block example
 
-##### Quoting Code
+#### Quoting Code
 
 ```md title=".md"
 This is `quoted code`
@@ -136,7 +136,7 @@ This is `quoted code`
 
 This is `quoted code`
 
-##### Quoting Code Blocks
+#### Quoting Code Blocks
 
 ````md title=".md"
 This is a
