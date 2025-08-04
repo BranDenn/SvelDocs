@@ -184,13 +184,13 @@ export class NavMapItem {
 
 export async function getMarkdownText(folder: string, title: string): Promise<string> {
 	const fileName = title.toLowerCase().replaceAll(' ', '-');
-	const md = await import(/* @vite-ignore */ `/src/lib/markdown/${folder}/${fileName}.md?raw`);
+	const md = await import(`$lib/markdown/${folder}/${fileName}.md?raw`);
 	return md.default;
 }
 
 export async function getMarkdownComponent(folder: string, title: string) {
 	const fileName = title.toLowerCase().replaceAll(' ', '-');
-	const md = await import(/* @vite-ignore */ `/src/lib/markdown/${folder}/${fileName}.md`);
+	const md = await import(`$lib/markdown/${folder}/${fileName}.md`);
 	return { component: md.default, metadata: md.metadata };
 }
 
