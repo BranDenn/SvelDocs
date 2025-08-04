@@ -3,8 +3,6 @@ import type { PageLoad } from './$types';
 import { NavMap, loadNavMap, getMarkdownComponent } from '$lib/docs';
 import { NAVIGATION } from '$settings';
 
-export const prerender = true;
-
 export const load: PageLoad = async ({ url, fetch }) => {
 	// load navmap if it is not already loaded
 	if (NavMap.size <= 0) {

@@ -34,7 +34,7 @@ export const SETTINGS: BaseSettings = {
  */
 export const NAVIGATION: NavGroup[] = [
 	Group('Getting Started', { show: false, groupHref: false }).Items(
-		{ title: 'Introduction', icon: BookOpenCheck, href: SETTINGS.REDIRECT_URL },
+		{ title: 'Introduction', icon: BookOpenCheck, href: '/docs'},
 		{ title: 'Quick Start', icon: Rocket }
 	),
 	Group('Configuration').Items(),
