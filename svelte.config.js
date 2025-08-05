@@ -19,7 +19,7 @@ const config = {
 			$settings: 'doc.config.ts'
 		},
 		paths: {
-			base: process.env.NODE_ENV === "production" ? "/SvelDocs" : ""
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		},
 		prerender: {
 			handleHttpError: 'warn'
