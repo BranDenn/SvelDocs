@@ -4,11 +4,13 @@
 
 	let { href, children, ...restProps }: HTMLAnchorAttributes = $props();
 
-	const isExternal = !href?.startsWith('/') && !href?.startsWith('#');
+	const hasSlash = href?.startsWith('/');
+	const hasHash = href?.startsWith('#');
+	const isExternal = !hasSlash && !hasHash;
 	const target = isExternal ? '_blank' : undefined;
 	const rel = isExternal ? 'noopener noreferrer' : undefined;
 </script>
 
-<a href={isExternal ? href : resolve(`/${href}`)} {target} {rel} {...restProps}>
+<a href={hasSlash ? resolve(`/${href}`) : href} {target} {rel} {...restProps}>
 	{@render children?.()}</a
 >
