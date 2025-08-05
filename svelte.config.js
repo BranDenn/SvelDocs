@@ -19,8 +19,7 @@ const config = {
 			$settings: 'doc.config.ts'
 		},
 		paths: {
-			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH,
-			relative: false
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		},
 		prerender: {
 			handleHttpError: 'warn'
