@@ -30,6 +30,10 @@ export interface BaseSettings {
 	 * Specify a route to redirect to instead of the main page. For example `/docs` could be the main route.
 	 */
 	REDIRECT_URL?: string;
+	/**
+	 * The URL to the GitHub repository for the documentation.
+	 */
+	GITHUB_URL?: string;
 }
 
 /**
