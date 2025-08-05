@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { SETTINGS } from '$settings';
+	import A from '../ui/a/a.svelte';
 </script>
 
-<a
+<A
 	aria-label="GitHub repository"
 	href={SETTINGS.GITHUB_URL}
-	target="_blank"
-	rel="noopener noreferrer"
 	class="fill-secondary hover:fill-primary p-1 transition-colors"
 >
 	<svg viewBox="0 0 20 20" class="size-5">
@@ -15,4 +14,4 @@
 		>
 		</path>
 	</svg>
-</a>
+</A>

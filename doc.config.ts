@@ -1,4 +1,3 @@
-import { resolve } from '$app/paths';
 import { Group, type NavGroup, type BaseSettings } from '$lib/docs';
 import BookOpenCheck from '@lucide/svelte/icons/book-open-check';
 import Rocket from '@lucide/svelte/icons/rocket';
@@ -36,7 +35,7 @@ export const SETTINGS: BaseSettings = {
  */
 export const NAVIGATION: NavGroup[] = [
 	Group('Getting Started', { show: false, groupHref: false }).Items(
-		{ title: 'Introduction', icon: BookOpenCheck, href: resolve('/docs') },
+		{ title: 'Introduction', icon: BookOpenCheck, href: '/docs' },
 		{ title: 'Quick Start', icon: Rocket }
 	),
 	Group('Configuration').Items(),

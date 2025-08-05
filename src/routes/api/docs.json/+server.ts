@@ -17,10 +17,12 @@ export async function GET() {
 			const group = navGroup.group;
 			const folder = navGroup.folder;
 			const title = navItem.title;
+			const href = navItem.href as string;
 
 			let docData: Doc = {
 				group,
-				title
+				title,
+				href
 			};
 
 			try {

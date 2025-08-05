@@ -2,17 +2,24 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { NavMap, loadNavMap, getMarkdownComponent } from '$lib/docs';
 import { NAVIGATION } from '$settings';
+import { resolve } from '$app/paths';
 
-export const load: PageLoad = async ({ url, fetch }) => {
+export const load: PageLoad = async ({ fetch, params }) => {
 	// load navmap if it is not already loaded
 	if (NavMap.size <= 0) {
-		const response = await fetch('/api/docs.json');
-		const data = await response.json();
-		loadNavMap(NAVIGATION, data);
+		try {
+			const response = await fetch(resolve('/api/docs.json'));
+			const data = await response.json();
+			loadNavMap(NAVIGATION, data);
+		} catch (err) {
+			console.error('Failed to load navigation map:', err);
+			return error(500, 'Failed to load navigation map.');
+		}
 	}
 
 	// get the navmap item
-	const navMapItem = NavMap.get(url.pathname);
+	// using params.slug instead of url.pathname to ensure it works with the base path set in svelte.config.js
+	const navMapItem = NavMap.get(`/${params.slug}`);
 
 	// ensure url exists
 	if (!navMapItem) return error(404, 'This page does not exist.');

@@ -1,5 +1,6 @@
 import type { MdFm } from '$settings';
 import type { Component } from 'svelte';
+import { resolve } from '$app/paths';
 
 /**
  * Interface for the base settings of the documentation site to be set in the `doc.config.ts` file.
@@ -241,6 +242,7 @@ export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[]) {
 export type Doc = {
 	group: string;
 	title: string;
+	href: string;
 	markdown?: Markdown;
 };
 
