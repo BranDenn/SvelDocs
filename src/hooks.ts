@@ -1,6 +1,8 @@
 import { resolve } from '$app/paths';
 import type { Reroute } from '@sveltejs/kit';
 
+export const prerender = true;
+
 export const reroute: Reroute = ({ url }) => {
     if (url.pathname === '/[fallback]') return
     if (url.pathname === "/") return
