@@ -1,3 +1,4 @@
+import { resolve } from '$app/paths';
 import { Group, type NavGroup, type BaseSettings } from '$lib/docs';
 import BookOpenCheck from '@lucide/svelte/icons/book-open-check';
 import Rocket from '@lucide/svelte/icons/rocket';
@@ -22,7 +23,7 @@ export const SETTINGS: BaseSettings = {
 	SEARCH_BAR_LOCATION: 'sidebar',
 	COLLAPSIBLE_NAV_GROUPS: true,
 	COMPANY_NAME: 'Your Company Name',
-	REDIRECT_URL: '/docs'
+	// REDIRECT_URL: resolve('/docs')
 };
 
 // --- CHANGEABLE NAVIGATION ---
@@ -34,7 +35,7 @@ export const SETTINGS: BaseSettings = {
  */
 export const NAVIGATION: NavGroup[] = [
 	Group('Getting Started', { show: false, groupHref: false }).Items(
-		{ title: 'Introduction', icon: BookOpenCheck, href: '/docs' },
+		{ title: 'Introduction', icon: BookOpenCheck, href: resolve('/docs') },
 		{ title: 'Quick Start', icon: Rocket }
 	),
 	Group('Configuration').Items(),
