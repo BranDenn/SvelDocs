@@ -16,7 +16,8 @@ const config = {
 			strict: true
 		}),
 		alias: {
-			$settings: 'doc.config.ts'
+			$settings: 'doc.config.ts',
+			$css: 'src/app.css',
 		},
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH

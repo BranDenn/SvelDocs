@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 	import CopyButton from './copy-button.svelte';
+	import '../../../../app.css'
 
 	let { children, ...restProps }: HTMLAttributes<HTMLPreElement> = $props();
 
@@ -19,34 +20,3 @@
 		/>
 	{/if}
 </div>
-
-<style lang="postcss">
-	@reference '../../../../app.css';
-
-	:global([data-rehype-pretty-code-figure]) {
-		@apply overflow-hidden rounded-md border shadow-xs;
-	}
-	:global([data-rehype-pretty-code-title]) {
-		@apply bg-foreground border-b p-2 text-sm font-bold;
-	}
-	:global([data-rehype-pretty-code-caption]) {
-		@apply text-secondary bg-foreground border-t p-2 text-sm;
-	}
-	:global([data-line]) {
-		@apply inline-block pl-4;
-	}
-	:global([data-line]:hover) {
-		@apply !bg-primary/5;
-	}
-	:global([data-line-numbers]) {
-		counter-reset: line;
-	}
-	:global([data-line-numbers] > [data-line]::before) {
-		counter-increment: line;
-		content: counter(line);
-		@apply text-secondary pr-4;
-	}
-	:global([data-highlighted-line]) {
-		@apply !bg-accent/10;
-	}
-</style>

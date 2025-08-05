@@ -2,6 +2,10 @@
 description: How to customize the theme, markdown, and components.
 ---
 
+<script lang="ts">
+	import Alert from '$lib/components/ui/alert/alert.svelte'
+</script>
+
 ## Theme
 
 The theme is very simple setup of variables in the `src/app.css` file. Here's what it looks like:
@@ -45,9 +49,11 @@ Markdown content can be styled in two different ways.
 
 You can modifiy the msdx blueprint components directly to update their styling. This can be done with the html class attribute, or by adding a style block within that component. To read more about blueprints, head [here](/docs/configuration/markdown#blueprints).
 
+<Alert type="warning">Avoid using :global() styles scoped within these components as they may not work in production.</Alert>
+
 #### docs.css
 
-You can also apply styling within the `src/routes/[...slug=docs]/docs.css` file. This is imported only in the `src/routes/[...slug=docs]/+page.svelte` file. This can be more useful to apply styles to multiple attributes, such as making all headings bold. 
+You can also apply styling within the `src/routes/[...slug=docs]/docs.css` file. This is imported only in the `src/routes/[...slug=docs]/+page.svelte` file. This can be more useful to apply styles to multiple attributes, such as making all headings bold.
 
 ## Components
 

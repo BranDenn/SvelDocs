@@ -21,8 +21,8 @@ description: Example Description
 
 The frontmatter is exposed to the `src/routes/[...slug=docs]/+page.svelte` file, api, and the search functionality. Any number of frontmatter can be defined, but will not be shown automatically. If you want additional frontmatter attributes to be shown on the page or search results, be sure to edit the `src/routes/[...slug=docs]/+page.svelte` or `src/lib/components/search/flexsearch.ts` files respectively.
 
-<Alert type="note">
-    All frontmatter attributes from markdown files are exposed plublicly in the api and search results. You cannot omit frontmatter attributes by default.
+<Alert type="warning">
+    All frontmatter attributes from markdown files are exposed plublicly in the api and search results.
 </Alert>
 
 #### Type Safety

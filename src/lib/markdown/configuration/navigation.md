@@ -4,7 +4,7 @@ description: Customize the navigation groups, items, and routing.
 
 ## Problem
 
-It is often very annoying setting up navigation with a lot of routes. The goto implementation is usually an array of objects like this:
+It is often very annoying setting up navigation with a lot of routes for markdown files. The goto implementation is usually an array of objects like this:
 
 ```ts title="typical-implementation.ts"
 export const NAVIGATION: [
@@ -21,6 +21,8 @@ export const NAVIGATION: [
     ...
 ];
 ```
+
+Now imagine having 20 or more markdown files...
 
 ## Solution
 
@@ -40,11 +42,11 @@ export const NAVIGATION: NavGroup[] = [
 
 #### Structure Explanation
 
-As seen in the above example, only 2 items are defined, even though there are more than 2 markdown files.
+As seen in the above example, only 2 items are defined, even though there are more than 2 markdown files in this documentation.
 
-Calling the `Items()` function after a group will automatically retrieve the markdown from the file system - meaning it will be listed alphabetically. However, the function can be overridden with specific items like the example above - the 2 items were manually defined as they needed a specific order, icon, and one href override.
+Calling the `Items()` function after a group will automatically retrieve the markdown from the file system - meaning it will be listed alphabetically. However, the function can be overridden with specific items like the example above - the 2 items were manually defined in the `'Getting Started'` group as they needed a specific order, icon, and one href override.
 
-The group has further parameters that can be configured, for example, the `{ show: false, groupHref: false }` from above. Read below to understand the parameters.
+The group has further parameters that can be configured, for example, the `{ show: false, groupHref: false }` from the `'Getting Started'` group. Read below to understand the parameters.
 
 ## API Reference
 

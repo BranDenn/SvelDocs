@@ -1,4 +1,4 @@
-@reference "../../app.css";
+@reference "$css";
 
 @layer base {
 	code[data-theme*=' '],
@@ -53,6 +53,37 @@
 		}
 		blockquote p::after {
 			content: '"';
+		}
+
+		/* code */
+		:not(pre) > code {
+			@apply bg-foreground text-primary rounded border px-1 py-0.5 text-sm text-nowrap shadow-xs;
+		}
+		[data-rehype-pretty-code-figure] {
+			@apply overflow-hidden rounded-md border shadow-xs;
+		}
+		[data-rehype-pretty-code-title] {
+			@apply bg-foreground border-b p-2 text-sm font-bold;
+		}
+		[data-rehype-pretty-code-caption] {
+			@apply text-secondary bg-foreground border-t p-2 text-sm;
+		}
+		[data-line] {
+			@apply inline-block pl-4;
+		}
+		[data-line]:hover {
+			@apply !bg-primary/5;
+		}
+		[data-line-numbers] {
+			counter-reset: line;
+		}
+		[data-line-numbers] > [data-line]::before {
+			counter-increment: line;
+			content: counter(line);
+			@apply text-secondary pr-4;
+		}
+		[data-highlighted-line] {
+			@apply !bg-accent/10;
 		}
 	}
 }
