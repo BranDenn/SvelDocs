@@ -6,7 +6,7 @@
 	import { SETTINGS } from '$settings';
 	import A from '../ui/a/a.svelte';
 
-	let { prev, next } = $derived(NavMap.get(page.url.pathname) ?? { prev: null, next: null });
+	let { prev, next } = $derived(NavMap.get(`/${page.params.slug}`) ?? { prev: null, next: null });
 </script>
 
 <footer class="mt-4 flex flex-col gap-4 text-sm">
