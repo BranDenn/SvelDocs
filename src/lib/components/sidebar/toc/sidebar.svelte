@@ -118,7 +118,9 @@
 						class={cn(
 							'block border-l py-1 pr-4 transition-colors',
 							c.inView && 'border-primary/50',
-							index === firstVisibleIndex ? 'border-primary text-primary' : 'hover:text-primary'
+							index === firstVisibleIndex
+								? 'border-primary text-primary underline'
+								: 'hover:text-primary'
 						)}
 						style="padding-left: {c.level}rem">{c.text}</a
 					>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { toggleMode, mode } from 'mode-watcher';
+	import { toggleMode } from 'mode-watcher';
 	import Sun from '@lucide/svelte/icons/sun';
 	import Moon from '@lucide/svelte/icons/moon';
 </script>
@@ -9,10 +9,6 @@
 	onclick={toggleMode}
 	class="text-secondary hover:text-primary grid aspect-square place-content-center overflow-hidden p-1 transition-colors"
 >
-	<Sun
-		class={[mode.current != 'dark' ? 'translate-y-1/2' : 'opacity-0', 'size-5 transition-all']}
-	/>
-	<Moon
-		class={[mode.current === 'dark' ? '-translate-y-1/2' : 'opacity-0', 'size-5 transition-all']}
-	/>
+	<Sun class="size-5 translate-y-1/2 !transition-all dark:translate-y-0 dark:opacity-0" />
+	<Moon class="size-5 opacity-0 !transition-all dark:-translate-y-1/2 dark:opacity-100" />
 </button>

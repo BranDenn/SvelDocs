@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 	import CopyButton from './copy-button.svelte';
-	import '../../../../app.css'
+	import '../../../../app.css';
 
 	let { children, ...restProps }: HTMLAttributes<HTMLPreElement> = $props();
 

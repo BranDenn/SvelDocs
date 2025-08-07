@@ -69,9 +69,7 @@
 									<section class="flex flex-col gap-2">
 										<h1 class="font-medium">{nav.group}</h1>
 										{#each nav.items as { title, href, icon }}
-											<SearchLink {href} {icon}>
-												{title}
-											</SearchLink>
+											<SearchLink {href} {icon} {title} />
 										{/each}
 									</section>
 								{/each}
@@ -80,11 +78,8 @@
 									<section class="flex flex-col gap-2">
 										<h1 class="font-medium">{@html group}</h1>
 										{#each items as { title, href, description, icon }}
-											<SearchLink {href} {icon}>
-												<div class="flex flex-col">
-													<h1>{@html title}</h1>
-													<p class="text-secondary">{@html description}</p>
-												</div>
+											<SearchLink {href} {icon} {title}>
+												<p class="text-secondary">{@html description}</p>
 											</SearchLink>
 										{/each}
 									</section>
