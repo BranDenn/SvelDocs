@@ -33,7 +33,7 @@
 						>
 							<X class="size-6" />
 						</Dialog.Close>
-						<Nav class="scrollbar h-full overflow-auto py-8" />
+						<Nav class="scrollbar h-full overflow-auto py-8 text-base" />
 					</div>
 				{/if}
 			{/snippet}
