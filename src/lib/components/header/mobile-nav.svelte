@@ -5,7 +5,7 @@
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import MobileSidebar from '../sidebar/doc/mobile-sidebar.svelte';
 
-	let { title, group } = $derived(NavMap.get(page.url.pathname) ?? { title: null, group: null });
+	let { title, group } = $derived(NavMap.get(`/${page.params.slug}`) ?? { title: null, group: null });
 
 	let open = $state(false);
 </script>
