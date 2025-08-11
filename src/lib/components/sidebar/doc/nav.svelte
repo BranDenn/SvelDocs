@@ -18,7 +18,7 @@
 				<Collapsible.Root open={true}>
 					<Collapsible.Trigger class="group flex w-full items-center justify-between font-semibold">
 						{nav.group}
-						<ChevronRight class="size-4 transition-transform group-data-[state=open]:rotate-90" />
+						<ChevronRight class="size-[1.2em] transition-transform group-data-[state=open]:rotate-90" />
 					</Collapsible.Trigger>
 					<Collapsible.Content forceMount class="mt-2 flex flex-col">
 						{#snippet child({ props, open })}

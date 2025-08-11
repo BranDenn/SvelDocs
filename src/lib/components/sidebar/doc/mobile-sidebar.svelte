@@ -31,7 +31,7 @@
 						<Dialog.Close
 							class="text-secondary hover:text-primary absolute top-4 right-4 transition-colors"
 						>
-							<X class="size-6" />
+							<X class="size-7" />
 						</Dialog.Close>
 						<Nav class="scrollbar h-full overflow-auto py-8 text-base" />
 					</div>
