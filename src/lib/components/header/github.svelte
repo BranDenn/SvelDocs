@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { SETTINGS } from '$settings';
-	import A from '../ui/a/a.svelte';
+	import Link from '../ui/link/link.svelte';
 </script>
 
-<A
+<Link
 	aria-label="GitHub repository"
 	href={SETTINGS.GITHUB_URL}
 	class="fill-secondary hover:fill-primary p-1 transition-colors"
@@ -14,4 +14,4 @@
 		>
 		</path>
 	</svg>
-</A>
+</Link>

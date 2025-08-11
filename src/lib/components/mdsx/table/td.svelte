@@ -5,7 +5,10 @@
 </script>
 
 <td
-	class={cn('bg-foreground/50 border-t p-4 leading-6 not-first:border-l', className)}
+	class={cn(
+		'bg-foreground/50 [&>code]:text-accent border-t p-4 leading-6 not-first:border-l',
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

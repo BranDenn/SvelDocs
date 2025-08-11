@@ -7,9 +7,10 @@
 
 	let {
 		class: className,
+		style,
 		content,
 		timeout = 3000
-	}: { class?: ClassValue; content: string; timeout?: number } = $props();
+	}: { class?: ClassValue; style: any; content: string; timeout?: number } = $props();
 
 	let copied = $state(false);
 
@@ -32,6 +33,7 @@
 			'bg-background hover:bg-foreground text-secondary hover:text-primary rounded border p-1 transition-colors',
 			className
 		),
+		style: style,
 		onclick: copyToClipboard
 	}}
 >

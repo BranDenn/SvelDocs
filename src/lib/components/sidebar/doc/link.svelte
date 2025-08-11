@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import type { NavItem } from '$lib/docs';
-	import A from '$lib/components/ui/a/a.svelte';
+	import Link from '$lib/components/ui/link/link.svelte';
 	import { resolve } from '$app/paths';
 
 	let { title, href, icon: Icon }: NavItem = $props();
@@ -16,7 +16,7 @@
     {title}
 </a> -->
 
-<A
+<Link
 	{href}
 	class={[
 		'border-l px-4 py-1.5 transition-all',
@@ -30,4 +30,4 @@
 		<Icon class={['size-4', isActive && 'stroke-[2.5]']} />
 	{/if}
 	{title}
-</A>
+</Link>

@@ -14,7 +14,7 @@ description: Examples of markdown and their result.
 
 ## Headings
 
-```markdown title=".md"
+```md
 # h1 Heading
 ## h2 Heading
 ### h3 Heading
@@ -32,7 +32,7 @@ description: Examples of markdown and their result.
 
 ## Styling Text
 
-```markdown title=".md"
+```md
 This is **bold text** (or **bold text**)
 This is _italic text_ (or _italic text_)
 This is ~strikethrough text~ (or ~~strikethrough text~~)
@@ -52,7 +52,7 @@ This is <ins>underline text</ins>
 
 ## Links
 
-```md title=".md"
+```md
 This is an [internal link](/docs)
 This is an [external link](https://sveldocs.com)
 ```
@@ -62,7 +62,7 @@ This is an [external link](https://sveldocs.com)
 
 ## Line Breaks
 
-```md title=".md"
+```md
 This is a\\
 line break
 ```
@@ -74,7 +74,7 @@ line break
 
 #### Unordered List
 
-```md title=".md"
+```md
 - First
 * Second
 - Third
@@ -86,7 +86,7 @@ line break
 
 #### Ordered List
 
-```md title=".md"
+```md
 1. First
 2. Second
 3. Third
@@ -98,7 +98,7 @@ line break
 
 #### Nested List
 
-```md title=".md"
+```md
 1. First
    - Second
      - Third
@@ -110,7 +110,7 @@ line break
 
 #### Task List
 
-```md title=".md"
+```md
 - [x] Complete
 - [ ] Pending
 ```
@@ -122,7 +122,7 @@ line break
 
 #### Quoting Text
 
-```md title=".md"
+```md
 > This is a quote block example
 ```
 
@@ -130,7 +130,7 @@ line break
 
 #### Quoting Code
 
-```md title=".md"
+```md
 This is `quoted code`
 ```
 
@@ -138,14 +138,16 @@ This is `quoted code`
 
 #### Quoting Code Blocks
 
-````md title=".md"
-This is a
+````md
+This is a code block:
 
 ```ts
 var str: string = 'hello world';
 console.log(str);
 ```
 ````
+
+This is a code block:
 
 ```ts
 var str: string = 'hello world';
@@ -154,7 +156,7 @@ console.log(str);
 
 ## Tables
 
-```md title=".md"
+```md
 | Left-aligned | Center-aligned | Right-aligned |
 | :----------- | :------------: | ------------: |
 | 1            |       2        |             3 |
@@ -168,7 +170,7 @@ console.log(str);
 
 ## Footnotes
 
-```md title=".md"
+```md
 Footnote[^first].
 Footnote[^second].
 [^first]: This links to the Footnote 1
@@ -184,7 +186,7 @@ Footnote[^second].
 
 Alerts are components to increase their customizability. View how to use them [here](/docs/components/alerts).
 
-```svelte title=".md"
+```svelte
 <script lang="ts">
 	import Alert from '$lib/components/ui/alert/alert.svelte'
 </script>

@@ -10,7 +10,7 @@ description: How to work with markdown and how to customize the markdown result.
 
 Frontmatter is how metadata is defined in markdown. It is defined at the top of your markdown file between 3 dashes like this:
 
-```md title=".md"
+```md
 ---
 title: Example Title
 description: Example Description

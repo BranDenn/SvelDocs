@@ -1,5 +1,5 @@
 <script lang="ts">
-	import A from '$lib/components/ui/a/a.svelte';
+	import Link from '$lib/components/ui/link/link.svelte';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
 
@@ -8,10 +8,10 @@
 	const isExternal = !href?.startsWith('/') && !href?.startsWith('#');
 </script>
 
-<A
+<Link
 	{href}
 	{...restProps}
 	class={[isExternal && 'inline-flex items-center gap-1', 'text-accent underline']}
 >
-	{@render children?.()}{#if isExternal}<ExternalLink class="size-[1em]" />{/if}</A
+	{@render children?.()}{#if isExternal}<ExternalLink class="size-[1em]" />{/if}</Link
 >

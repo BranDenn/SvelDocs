@@ -69,18 +69,28 @@
 			@apply text-secondary bg-foreground border-t p-2 text-sm;
 		}
 		[data-line] {
-			@apply inline-block pl-4;
-		}
-		[data-line]:hover {
-			@apply !bg-primary/5;
+			@apply hover:bg-primary/5 inline-block px-4;
 		}
 		[data-line-numbers] {
 			counter-reset: line;
 		}
+		[data-line-numbers] > [data-line] {
+			@apply pl-0;
+		}
 		[data-line-numbers] > [data-line]::before {
 			counter-increment: line;
 			content: counter(line);
-			@apply text-secondary pr-4;
+			@apply text-secondary/75;
+		}
+		[data-line-numbers-max-digits] {
+			--w: attr(data-line-numbers-max-digits ch);
+			& > [data-line]:hover::before {
+				@apply text-secondary bg-inherit;
+			}
+			& > [data-line]::before {
+				width: calc(var(--w) + 2rem);
+				@apply bg-foreground sticky left-0 inline-block px-4 text-right;
+			}
 		}
 		[data-highlighted-line] {
 			@apply !bg-accent/10;

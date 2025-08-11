@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { SETTINGS } from '$settings';
-	import A from '../ui/a/a.svelte';
+	import Link from '../ui/link/link.svelte';
 </script>
 
-<A
+<Link
 	href="/"
 	class="hover:text-accent flex items-center gap-2 justify-self-start p-1 text-lg font-bold transition-colors"
 >
@@ -18,4 +17,4 @@
 		<path d="M19.5 0H31.5L12.5 32H0.5L19.5 0Z"></path>
 	</svg>
 	SvelDocs
-</A>
+</Link>
