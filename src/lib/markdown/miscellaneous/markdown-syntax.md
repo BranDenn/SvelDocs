@@ -33,8 +33,8 @@ description: Examples of markdown and their result.
 ## Styling Text
 
 ```md
-This is **bold text** (or **bold text**)
-This is _italic text_ (or _italic text_)
+This is **bold text** (or __bold text__)
+This is *italic text* (or _italic text_)
 This is ~strikethrough text~ (or ~~strikethrough text~~)
 This is **_bold & italic text_**
 This is <sub>subscript text</sub>

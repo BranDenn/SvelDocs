@@ -20,12 +20,12 @@
 
 <div class="group relative">
 	<pre
-		class="scrollbar bg-foreground max-h-128 overflow-auto py-4 text-sm"
+		class="scrollbar max-h-96 overflow-auto py-4 text-sm bg-block"
 		{...restProps}
 		{@attach codeAttach}>{@render children?.()}</pre>
 	{#if language}
 		<span
-			class="text-secondary absolute top-2 text-xs transition-opacity group-hover:opacity-0"
+			class="text-secondary absolute top-2 text-xs transition-opacity group-hover:opacity-0 rounded bg-block/50 p-1"
 			style="right: calc(0.5rem + {scrollbarWidth}px);"
 		>
 			.{language}

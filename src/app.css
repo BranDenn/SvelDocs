@@ -18,6 +18,8 @@
 	--color-primary: var(--color-zinc-800);
 	--color-secondary: var(--color-zinc-700);
 	--color-accent: var(--color-blue-600);
+
+	--color-block: color-mix(in oklab, var(--color-background), var(--color-foreground));
 }
 
 @layer base {
@@ -48,7 +50,7 @@
 		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
 	}
 
-	* {
+	*, *::before, *::after {
 		@apply border-border;
 	}
 

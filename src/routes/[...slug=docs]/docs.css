@@ -89,7 +89,7 @@
 			}
 			& > [data-line]::before {
 				width: calc(var(--w) + 2rem);
-				@apply bg-foreground sticky left-0 inline-block px-4 text-right;
+				@apply sticky left-0 inline-block px-4 text-right border-r mr-4 bg-block;
 			}
 		}
 		[data-highlighted-line] {

@@ -6,7 +6,7 @@
 
 <td
 	class={cn(
-		'bg-foreground/50 [&>code]:text-accent border-t p-4 leading-6 not-first:border-l',
+		'bg-block [&>code]:text-accent border-t p-4 leading-6 not-first:border-l',
 		className
 	)}
 	{...restProps}
