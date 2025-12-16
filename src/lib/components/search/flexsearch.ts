@@ -17,7 +17,7 @@ export function createSearchIndex(): void {
 }
 
 /**
- * Result that is retured in the serach results map object
+ * Result that is retured in the search results map object
  */
 interface Result {
 	href: string;

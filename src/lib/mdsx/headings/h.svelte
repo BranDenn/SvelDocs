@@ -13,7 +13,7 @@
 <svelte:element this={element} class={cn('group relative font-bold', className)} {...restProps}>
 	<div class="absolute top-1/2 left-0 hidden -translate-x-full -translate-y-1/2 pr-4 md:block">
 		<a
-			class="bg-background hover:bg-primary text-muted-foreground hover:text-foreground block rounded-md border p-1 opacity-0 transition-[opacity,background-color,color] group-hover:opacity-100"
+			class="bg-secondary hover:bg-primary text-muted-foreground hover:text-foreground block rounded-md border p-1 opacity-0 transition-[opacity,background-color,color] group-hover:opacity-100"
 			href="#{restProps.id}"
 		>
 			<LinkIcon class="size-4" />

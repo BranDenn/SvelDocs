@@ -1,15 +1,11 @@
 <script lang="ts">
 	import './docs.css';
+	import SEO from '$components/seo';
 
 	let { data } = $props();
 </script>
 
-<svelte:head>
-	<title>{data.title} - SvelDocs</title>
-	{#if data.md?.description}
-		<meta name="description" content={data.md?.description} />
-	{/if}
-</svelte:head>
+<SEO title={data.title} description={data.md.description} type="article" />
 
 <header class="flex flex-col gap-2">
 	<h1 class="text-accent text-sm font-bold">{data.group}</h1>

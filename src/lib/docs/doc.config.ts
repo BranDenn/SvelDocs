@@ -1,6 +1,9 @@
 import { Group, type NavGroup, type BaseSettings } from '$lib/docs';
-import BookOpenCheck from '@lucide/svelte/icons/book-open-check';
-import Rocket from '@lucide/svelte/icons/rocket';
+import BookOpenCheckIcon from '@lucide/svelte/icons/book-open-check';
+import RocketIcon from '@lucide/svelte/icons/rocket';
+import CogIcon from '@lucide/svelte/icons/cog';
+import ComponentIcon from '@lucide/svelte/icons/component';
+import DicesIcon from '@lucide/svelte/icons/dices';
 
 // --- MARKDOWN FRONTMATTER ---
 /**
@@ -18,7 +21,7 @@ export interface MdFm {
  * This is exported to other code files that determine what the setting changes.
  */
 export const SETTINGS: BaseSettings = {
-	NAV_STYLE: 'left-border',
+	NAV_STYLE: 'button',
 	SEARCH_BAR_LOCATION: 'sidebar',
 	COLLAPSIBLE_NAV_GROUPS: true,
 	COMPANY_NAME: 'Your Company Name',
@@ -35,10 +38,10 @@ export const SETTINGS: BaseSettings = {
  */
 export const NAVIGATION: NavGroup[] = [
 	Group('Getting Started', { show: false, groupHref: false }).Items(
-		{ title: 'Introduction', icon: BookOpenCheck, href: '/docs' },
-		{ title: 'Quick Start', icon: Rocket }
+		{ title: 'Introduction', icon: BookOpenCheckIcon, href: '/docs' },
+		{ title: 'Quick Start', icon: RocketIcon }
 	),
-	Group('Configuration').Items(),
-	Group('Components').Items(),
-	Group('Miscellaneous').Items()
+	Group('Configuration', { icon: CogIcon }).Items(),
+	Group('Components', { icon: ComponentIcon }).Items(),
+	Group('Miscellaneous', { icon: DicesIcon }).Items()
 ];

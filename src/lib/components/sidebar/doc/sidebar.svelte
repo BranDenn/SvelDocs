@@ -10,7 +10,7 @@
 >
 	{#if SETTINGS.SEARCH_BAR_LOCATION === 'sidebar'}
 		<div class="pointer-events-none sticky top-0 z-10">
-			<div class="bg-background pointer-events-auto px-8 pt-8">
+			<div class="bg-background pointer-events-auto px-4 pt-8">
 				<SearchDialog.DesktopTrigger />
 			</div>
 			<div class="from-background h-8 shrink-0 bg-linear-to-b"></div>

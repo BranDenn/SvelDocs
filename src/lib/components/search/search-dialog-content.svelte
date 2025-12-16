@@ -1,15 +1,11 @@
 <script lang="ts">
 	import * as Dialog from '$ui/dialog';
 	import Search from '@lucide/svelte/icons/search';
-	import { onMount } from 'svelte';
-	import { createSearchIndex, getSearchResults } from './flexsearch';
 	import { NAVIGATION } from '$settings';
 	import * as SearchDialog from '.';
+	import { getSearchContext } from './search-context.svelte';
 
-	let query: string = $state('');
-	let results = $derived(getSearchResults(query));
-
-	onMount(createSearchIndex);
+	const searchContext = getSearchContext();
 </script>
 
 <Dialog.Content
@@ -19,7 +15,7 @@
 	<div class="flex items-center gap-2 border-b px-4 py-2">
 		<Search class="text-muted-foreground size-5 shrink-0" />
 		<input
-			bind:value={query}
+			bind:value={searchContext.query}
 			placeholder="Search Documentation..."
 			autocomplete="off"
 			spellcheck="false"
@@ -34,7 +30,28 @@
 		</Dialog.Close>
 	</div>
 	<div class="scrollbar-thin relative overflow-y-auto">
-		{#if query === ''}
+		{#if !searchContext.query}
+			{#each NAVIGATION as { items, group }}
+				<SearchDialog.Section title={group}>
+					{#each items as { title, href, icon }}
+						<SearchDialog.Link {href} {icon} {title} />
+					{/each}
+				</SearchDialog.Section>
+			{/each}
+		{:else if searchContext.results.size}
+			{#each searchContext.results.entries() as [group, items]}
+				<SearchDialog.Section title={group}>
+					{#each items as { title, href, content, icon }}
+						<SearchDialog.Link {href} {icon} {title}>
+							<p class="text-muted-foreground">{@html content}</p>
+						</SearchDialog.Link>
+					{/each}
+				</SearchDialog.Section>
+			{/each}
+		{:else}
+			<span class="text-center">No results found.</span>
+		{/if}
+		<!-- {#if query === ''}
 			{#each NAVIGATION as { items, group }}
 				<SearchDialog.Section title={group}>
 					{#each items as { title, href, icon }}
@@ -54,8 +71,8 @@
 			{/each}
 		{:else}
 			<span class="text-center">No results found.</span>
-		{/if}
-		{#if !query || (query && results.size)}
+		{/if} -->
+		{#if !searchContext.query || (searchContext.query && searchContext.results.size)}
 			<div class="from-background pointer-events-none sticky bottom-0 h-4 bg-linear-to-t"></div>
 		{/if}
 	</div>

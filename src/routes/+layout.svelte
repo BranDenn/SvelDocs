@@ -7,6 +7,10 @@
 	let { children } = $props();
 </script>
 
+<svelte:head>
+	<meta property="og:site_name" content="SvelDocs" />
+</svelte:head>
+
 <ModeWatcher defaultMode="dark" />
 
 <Tooltip.Provider delayDuration={150} disableCloseOnTriggerClick={true}>

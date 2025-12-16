@@ -80,7 +80,7 @@
 		[data-line-numbers-max-digits] {
 			--w: attr(data-line-numbers-max-digits ch);
 			& > [data-line]:hover::before {
-				@apply text-primary bg-[color-mix(in_oklab,var(--color-background),#808080_35%)];
+				@apply text-foreground bg-[color-mix(in_oklch,var(--color-background),#808080_35%)];
 			}
 			& > [data-line]::before {
 				width: calc(var(--w) + 2rem);

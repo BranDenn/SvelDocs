@@ -14,7 +14,11 @@
 	<div class="flex flex-col">
 		<div class="flex items-center gap-2">
 			{#if Icon}
-				<Icon class="size-4 shrink-0" />
+				{#if typeof Icon === 'string'}
+					<span class="size-4 shrink-0">{Icon}</span>
+				{:else}
+					<Icon class="size-4 shrink-0" />
+				{/if}
 			{/if}
 			<h1>{@html title}</h1>
 		</div>

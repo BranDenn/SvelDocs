@@ -1,3 +1,4 @@
+import type { Pathname } from '$app/types';
 import type { MdFm } from '$lib/docs/doc.config';
 import type { Component } from 'svelte';
 
@@ -11,7 +12,7 @@ export interface BaseSettings {
 	 * - "left-border": Links are styled with a left border, similar to the tailwind's documentation site.
 	 * - "custom": Links are styled as user defined style.
 	 */
-	NAV_STYLE: 'button' | 'left-border' | 'custom';
+	NAV_STYLE: 'button' | 'left-border';
 	/**
 	 * Placement location of the search bar.
 	 * - "sidebar": Search bar is placed at the top of the navigation sidebar.
@@ -47,7 +48,7 @@ export interface NavItem {
 	/**
 	 * The icon displayed in front of the title in the navigation sidebar.
 	 */
-	icon?: Component;
+	icon?: Component | string;
 	/**
 	 * The link that the navigation item points to.
 	 */
@@ -64,7 +65,7 @@ type NavGroupParams = Partial<Omit<NavGroup, 'items' | 'group' | 'Items'>>;
  */
 export class NavGroup {
 	/**
-	 * The name of the group. This is used to categorize navigation items.\
+	 * The name of the group. This is used to categorize navigation items.
 	 * - If `show` is enabled, this group text is displayed in the navigation sidebar.
 	 * - If `groupHref` is enabled, this group name is used in the link.
 	 */
@@ -87,6 +88,10 @@ export class NavGroup {
 	 */
 	groupHref: boolean;
 	/**
+	 * The icon displayed in front of the title in the navigation sidebar.
+	 */
+	icon?: Component | string;
+	/**
 	 * A list of all the {@link NavItem} links associated with this group.
 	 */
 	items: NavItem[] = [];
@@ -101,6 +106,7 @@ export class NavGroup {
 		this.folder = params?.folder ?? groupName.replaceAll(' ', '-').toLowerCase();
 		this.show = params?.show ?? true;
 		this.groupHref = params?.groupHref ?? true;
+		this.icon = params?.icon;
 	}
 
 	/**
@@ -170,14 +176,14 @@ export class NavMapItem {
 	group: string;
 	title: string;
 	folder: string;
-	icon?: Component;
+	icon?: Component | string;
 
 	markdown?: Markdown;
 
 	prev?: string;
 	next?: string;
 
-	constructor(g: string, t: string, f: string, i: Component | undefined, docData: Doc) {
+	constructor(g: string, t: string, f: string, i: Component | string | undefined, docData: Doc) {
 		this.group = g;
 		this.title = t;
 		this.folder = f;
@@ -202,7 +208,7 @@ export async function getMarkdownComponent(folder: string, title: string) {
  * Map of all the individual navigation items.\
  * This is required for next/previous links in the page, as well as referencing the item based off of the URL pathname.
  */
-export const NavMap: Map<string, NavMapItem> = new Map();
+export const NavMap: Map<Pathname, NavMapItem> = new Map();
 
 /**
  * Initializes the {@link NavMap} based off of the {@link NavGroup} list defined in the `doc.config.ts` file.
@@ -219,7 +225,7 @@ export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[]) {
 				item.icon,
 				docData[index]
 			);
-			NavMap.set(item.href as string, navMapItem);
+			NavMap.set(item.href as Pathname, navMapItem);
 			index += 1;
 		});
 	});

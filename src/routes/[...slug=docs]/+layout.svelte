@@ -3,11 +3,26 @@
 	import Header from '$components/header';
 	import * as Sidebar from '$components/sidebar';
 	import * as SearchDialog from '$components/search';
+	import { NavMap } from '$lib/docs';
 
 	let { children } = $props();
 </script>
 
-<SearchDialog.Provider>
+<SearchDialog.Provider
+	onContextInit={(ctx) => {
+		const keys = NavMap.keys();
+		keys.forEach((key) => {
+			const value = NavMap.get(key);
+			if (!value) return;
+
+			const { group, title, icon, markdown } = value;
+			const fullTitle = title + (markdown?.title ? ` (${markdown.title})` : '');
+			const fullContent = (markdown?.description ?? '') + (markdown?.content ?? '');
+
+			ctx.addToIndex({ href: key, group, title: fullTitle, content: fullContent, icon });
+		});
+	}}
+>
 	<Header />
 
 	<div class="container flex grow">
