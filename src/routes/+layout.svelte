@@ -1,8 +1,8 @@
 <script lang="ts">
-	import '../app.css';
+	import '$css';
 
 	import { ModeWatcher } from 'mode-watcher';
-	import { Tooltip } from 'bits-ui';
+	import * as Tooltip from '$ui/tooltip';
 
 	let { children } = $props();
 </script>

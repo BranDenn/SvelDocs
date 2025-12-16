@@ -5,7 +5,7 @@
 	import OctagonAlert from '@lucide/svelte/icons/octagon-alert';
 	import type { Component, Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
-	import { cn } from '$lib';
+	import { cn } from '$utils';
 
 	const Icons = {
 		note: { icon: Info, class: 'text-blue-500' },
@@ -24,8 +24,8 @@
 
 	let { class: className, children, title, icon, type }: Props = $props();
 
-	let Icon: Component = icon ?? Icons[type].icon;
-	let Title: string = title ?? type.charAt(0).toUpperCase() + type.slice(1);
+	const Icon: Component = $derived(icon ?? Icons[type].icon);
+	const Title: string = $derived(title ?? type.charAt(0).toUpperCase() + type.slice(1));
 </script>
 
 <div

@@ -1,6 +1,5 @@
-import type { MdFm } from '$settings';
+import type { MdFm } from '$lib/docs/doc.config';
 import type { Component } from 'svelte';
-import { resolve } from '$app/paths';
 
 /**
  * Interface for the base settings of the documentation site to be set in the `doc.config.ts` file.

@@ -29,11 +29,11 @@
 				{#if open}
 					<div {...props} transition:fly={{ duration: 150, x: '-100%', opacity: 100 }}>
 						<Dialog.Close
-							class="text-secondary hover:text-primary absolute top-4 right-4 transition-colors"
+							class="text-muted-foreground hover:text-primary absolute top-4 right-4 transition-colors"
 						>
 							<X class="size-7" />
 						</Dialog.Close>
-						<Nav class="scrollbar h-full overflow-auto py-8 text-base" />
+						<Nav class="scrollbar-thin h-full overflow-auto py-8 text-base" />
 					</div>
 				{/if}
 			{/snippet}

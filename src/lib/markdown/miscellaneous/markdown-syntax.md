@@ -3,13 +3,13 @@ description: Examples of markdown and their result.
 ---
 
 <script lang="ts">
-	import Alert from '$lib/components/ui/alert/alert.svelte'
-	import H1 from '$lib/components/mdsx/headings/h1.svelte'
-	import H2 from '$lib/components/mdsx/headings/h2.svelte'
-	import H3 from '$lib/components/mdsx/headings/h3.svelte'
-	import H4 from '$lib/components/mdsx/headings/h4.svelte'
-	import H5 from '$lib/components/mdsx/headings/h5.svelte'
-	import H6 from '$lib/components/mdsx/headings/h6.svelte'
+	import Alert from '$ui/alert/alert.svelte'
+	import H1 from '$lib/mdsx/headings/h1.svelte'
+	import H2 from '$lib/mdsx/headings/h2.svelte'
+	import H3 from '$lib/mdsx/headings/h3.svelte'
+	import H4 from '$lib/mdsx/headings/h4.svelte'
+	import H5 from '$lib/mdsx/headings/h5.svelte'
+	import H6 from '$lib/mdsx/headings/h6.svelte'
 </script>
 
 ## Headings

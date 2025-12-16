@@ -6,7 +6,7 @@
 <Link
 	aria-label="GitHub repository"
 	href={SETTINGS.GITHUB_URL}
-	class="fill-secondary hover:fill-primary p-1 transition-colors"
+	class="fill-muted-foreground hover:fill-foreground p-1 transition-colors"
 >
 	<svg viewBox="0 0 20 20" class="size-5">
 		<path

@@ -4,13 +4,13 @@
 
 	let { href, children, ...restProps }: HTMLAnchorAttributes = $props();
 
-	const hasSlash = href?.startsWith('/');
-	const hasHash = href?.startsWith('#');
-	const isExternal = !hasSlash && !hasHash;
-	const target = isExternal ? '_blank' : undefined;
-	const rel = isExternal ? 'noopener noreferrer' : undefined;
+	const hasSlash = $derived(href?.startsWith('/'));
+	const hasHash = $derived(href?.startsWith('#'));
+	const isExternal = $derived(!hasSlash && !hasHash);
+	const target = $derived(isExternal ? '_blank' : undefined);
+	const rel = $derived(isExternal ? 'noopener noreferrer' : undefined);
 </script>
 
-<a href={hasSlash ? resolve(`/${href}`) : href} {target} {rel} {...restProps}>
-	{@render children?.()}</a
->
+<a href={hasSlash ? resolve(`${href}`) : href} {target} {rel} {...restProps}>
+	{@render children?.()}
+</a>

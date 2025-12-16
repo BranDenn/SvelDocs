@@ -12,25 +12,29 @@
 	--spacing-sidebar-toc: 14rem;
 
 	/* light mode colors */
-	--color-background: var(--color-zinc-50);
-	--color-foreground: var(--color-zinc-100);
-	--color-border: var(--color-zinc-200);
-	--color-primary: var(--color-zinc-800);
-	--color-secondary: var(--color-zinc-700);
-	--color-accent: var(--color-blue-600);
+	--color-background: var(--color-zinc-50); /* background */
+	--color-foreground: var(--color-zinc-800); /* default font color */
+	--color-muted-foreground: var(--color-zinc-700); /* muted font color */
+	--color-primary: var(--color-zinc-100); /* color 1 */
+	--color-border: var(--color-zinc-200); /* border color */
+	--color-accent: var(--color-orange-600); /* accent color */
 
-	--color-block: color-mix(in oklab, var(--color-background), var(--color-foreground));
+	--color-secondary: color-mix(
+		in oklch,
+		var(--color-background),
+		var(--color-primary)
+	); /* color 2 */
 }
 
-@layer base {
+@layer theme {
 	.dark {
 		/* dark mode colors */
-		--color-background: var(--color-zinc-900);
-		--color-foreground: var(--color-zinc-800);
-		--color-border: var(--color-zinc-700);
-		--color-primary: var(--color-zinc-200);
-		--color-secondary: var(--color-zinc-300);
-		--color-accent: var(--color-blue-400);
+		--color-background: var(--color-zinc-900); /* background */
+		--color-foreground: var(--color-zinc-200); /* default font color */
+		--color-muted-foreground: var(--color-zinc-300); /* muted font color */
+		--color-primary: var(--color-zinc-800); /* color 1 */
+		--color-border: var(--color-zinc-700); /* border color */
+		--color-accent: var(--color-orange-400); /* accent color */
 	}
 }
 
@@ -47,15 +51,18 @@
 	}
 
 	body {
-		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
+		@apply bg-background text-foreground font-inter flex min-h-dvh flex-col;
+		scrollbar-color: var(--color-border) transparent;
 	}
 
-	*, *::before, *::after {
+	*,
+	*::before,
+	*::after {
 		@apply border-border;
 	}
 
 	kbd {
-		@apply font-[inherit];
+		@apply rounded border px-1 text-xs;
 	}
 
 	a,
@@ -71,8 +78,7 @@
 		@apply cursor-pointer;
 	}
 
-	.scrollbar {
+	.scrollbar-thin {
 		scrollbar-width: thin;
-		scrollbar-color: var(--color-border) transparent;
 	}
 }

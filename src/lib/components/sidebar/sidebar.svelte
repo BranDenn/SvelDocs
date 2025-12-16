@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { ClassValue, HTMLAttributes } from 'svelte/elements';
-	import { cn } from '$lib';
+	import { cn } from '$utils';
 
 	interface PROPS {
 		class?: ClassValue;

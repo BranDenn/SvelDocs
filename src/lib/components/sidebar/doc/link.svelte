@@ -3,13 +3,17 @@
 	import type { NavItem } from '$lib/docs';
 	import Link from '$lib/components/ui/link/link.svelte';
 	import { resolve } from '$app/paths';
+	import type { HTMLAnchorAttributes } from 'svelte/elements';
+	import { cn } from '$utils';
 
-	let { title, href, icon: Icon }: NavItem = $props();
+	type Props = NavItem & HTMLAnchorAttributes;
+
+	let { title, href, icon: Icon, class: className }: Props = $props();
 
 	let isActive: boolean = $derived(page.url.pathname === resolve(`/${href}`));
 </script>
 
-<!-- <a href={href} class={["rounded-lg py-1.5 px-4 transition-all", page.url.pathname === href ? "bg-accent/10 text-accent font-bold" : "text-secondary hover:bg-secondary/10 hover:text-primary", Icon && "flex items-center gap-2"]}>
+<!-- <a href={href} class={["rounded-lg py-1.5 px-4 transition-all", page.url.pathname === href ? "bg-accent/10 text-accent font-bold" : "text-muted-foreground hover:bg-secondary/10 hover:text-primary", Icon && "flex items-center gap-2"]}>
     {#if Icon && SETTINGS.SHOW_NAV_ICONS}
         <Icon class="size-4" />
     {/if}
@@ -18,13 +22,14 @@
 
 <Link
 	{href}
-	class={[
+	class={cn(
 		'border-l px-4 py-1.5 transition-all',
 		isActive
 			? 'text-accent border-accent pl-6 font-bold'
-			: 'text-secondary hover:text-primary hover:border-secondary font-medium',
-		Icon && 'flex items-center gap-2'
-	]}
+			: 'text-muted-foreground hover:text-foreground hover:border-foreground font-medium',
+		Icon && 'flex items-center gap-2',
+		className
+	)}
 >
 	{#if Icon}
 		<Icon class={['size-4', isActive && 'stroke-[2.5]']} />

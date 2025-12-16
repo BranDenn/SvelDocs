@@ -2,7 +2,7 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { mdsx } from 'mdsx';
-import { mdsxConfig } from './mdsx.config.js';
+import { mdsxConfig } from './src/lib/mdsx/mdsx.config.ts';
 
 const config = {
 	preprocess: [mdsx(mdsxConfig), vitePreprocess()],
@@ -16,7 +16,10 @@ const config = {
 			strict: true
 		}),
 		alias: {
-			$settings: 'doc.config.ts',
+			$components: 'src/lib/components',
+			$ui: 'src/lib/components/ui',
+			$utils: 'src/lib/utils',
+			$settings: 'src/lib/docs/doc.config.ts',
 			$css: 'src/app.css'
 		},
 		paths: {

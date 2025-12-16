@@ -15,12 +15,12 @@
 	<h1 class="text-accent text-sm font-bold">{data.group}</h1>
 	<h2 class="text-3xl font-extrabold">{data.md?.title ?? data.title}</h2>
 	{#if data.md?.description}
-		<p class="text-secondary text-lg">{data.md?.description}</p>
+		<p class="text-muted-foreground text-lg">{data.md?.description}</p>
 	{/if}
 </header>
 
 <hr class="border-border my-4" />
 
-<article id="content" class="prose scrollbar">
+<article id="content" class="prose scrollbar-thin">
 	<data.component />
 </article>

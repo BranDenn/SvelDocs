@@ -13,7 +13,7 @@ description: Component for alert notifcation blocks.
 	import OctagonAlert from '@lucide/svelte/icons/octagon-alert';
 	import type { Component, Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
-	import { cn } from '$lib';
+	import { cn } from '$utils';
 
 	const Icons = {
 		note: { icon: Info, class: 'text-blue-500' },

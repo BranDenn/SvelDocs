@@ -9,7 +9,7 @@ export default defineConfig({
 	},
 	server: {
 		fs: {
-			allow: ['doc.config.ts', 'mdsvex.config.js']
+			allow: []
 		}
 	}
 });

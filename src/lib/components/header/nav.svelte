@@ -2,7 +2,7 @@
 	import Logo from './logo.svelte';
 	import ThemeSwitch from './theme-switch.svelte';
 	import Github from './github.svelte';
-	import { SearchBox } from '$lib/components/search';
+	import * as SearchDialog from '$components/search';
 	import { SETTINGS } from '$settings';
 </script>
 
@@ -15,11 +15,11 @@
 	<Logo />
 
 	{#if SETTINGS.SEARCH_BAR_LOCATION === 'header'}
-		<SearchBox class="w-64 justify-end justify-self-center py-1" />
+		<SearchDialog.DesktopTrigger class="w-64 justify-self-center" />
 	{/if}
 
 	<div class="flex items-center gap-2 justify-self-end">
-		<SearchBox mode="mobile" />
+		<SearchDialog.MobileTrigger />
 		<ThemeSwitch />
 		<Github />
 	</div>

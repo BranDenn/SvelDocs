@@ -1,8 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { NavMap, loadNavMap, getMarkdownComponent } from '$lib/docs';
-import { NAVIGATION } from '$settings';
+import { NAVIGATION } from '$lib/docs/doc.config';
 import { resolve } from '$app/paths';
+
+export const prerender = false;
 
 export const load: PageLoad = async ({ fetch, params }) => {
 	// load navmap if it is not already loaded

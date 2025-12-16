@@ -2,7 +2,7 @@
 	import { navigating } from '$app/state';
 	import Sidebar from '../sidebar.svelte';
 	import TableOfContents from '@lucide/svelte/icons/table-of-contents';
-	import { cn } from '$lib';
+	import { cn } from '$utils';
 	import { afterNavigate, onNavigate } from '$app/navigation';
 
 	interface CONTENT {
@@ -96,14 +96,14 @@
 	navigating;
 </script>
 
-<Sidebar class="scrollbar min-w-sidebar-toc hidden flex-col overflow-y-auto xl:flex">
-	<div class="from-background sticky top-0 bg-linear-to-b p-4"></div>
+<Sidebar class="scrollbar-thin min-w-sidebar-toc hidden flex-col overflow-y-auto xl:flex">
+	<div class="from-background sticky top-0 h-8 shrink-0 bg-linear-to-b"></div>
 	<div class="flex grow flex-col gap-4 px-4 font-medium">
 		<div
 			class="grid aspect-4/3 content-center gap-4 rounded border-2 border-dashed p-4 text-center text-xs"
 		>
 			<span>Your logo here</span>
-			<span class="text-secondary">Support the project and reach developers.</span>
+			<span class="text-muted-foreground">Support the project and reach developers.</span>
 		</div>
 		{#if contents.length > 0}
 			<div class="flex items-center gap-2 text-sm">
@@ -111,16 +111,16 @@
 				On this page
 			</div>
 
-			<div class="text-secondary text-sm">
+			<div class="text-muted-foreground text-sm">
 				{#each contents as c, index}
 					<a
 						href="#{c.id}"
 						class={cn(
 							'block border-l py-1 pr-4 transition-colors',
-							c.inView && 'border-primary/50',
+							c.inView && 'border-foreground/50',
 							index === firstVisibleIndex
-								? 'border-primary text-primary underline'
-								: 'hover:text-primary'
+								? 'border-foreground text-foreground underline'
+								: 'hover:text-foreground'
 						)}
 						style="padding-left: {c.level}rem">{c.text}</a
 					>
@@ -128,5 +128,5 @@
 			</div>
 		{/if}
 	</div>
-	<div class="from-background sticky bottom-0 bg-linear-to-t p-4"></div>
+	<div class="from-background sticky bottom-0 h-8 shrink-0 bg-linear-to-t"></div>
 </Sidebar>
