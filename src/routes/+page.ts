@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { SETTINGS } from '$lib/docs/doc.config';
+import { SETTINGS } from '$lib/docs/docs.config';
 
 export const load: PageLoad = ({ url }) => {
 	if (!SETTINGS.REDIRECT_URL) return;

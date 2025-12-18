@@ -3,7 +3,7 @@
 	import ThemeSwitch from './theme-switch.svelte';
 	import Github from './github.svelte';
 	import * as SearchDialog from '$components/search';
-	import { SETTINGS } from '$settings';
+	import { SETTINGS } from '$lib/docs/docs.config';
 </script>
 
 <nav

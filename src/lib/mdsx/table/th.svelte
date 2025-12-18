@@ -4,6 +4,6 @@
 	let { children, class: className, ...restProps }: HTMLThAttributes = $props();
 </script>
 
-<th class={cn('bg-primary p-4 not-first:border-l', className)} {...restProps}>
+<th class={cn('p-4 not-first:border-l', className)} {...restProps}>
 	{@render children?.()}
 </th>

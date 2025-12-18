@@ -1,5 +1,5 @@
 import type { Pathname } from '$app/types';
-import type { MdFm } from '$lib/docs/doc.config';
+import type { MdFm } from '$lib/docs/docs.config';
 import type { Component } from 'svelte';
 
 /**
@@ -180,8 +180,8 @@ export class NavMapItem {
 
 	markdown?: Markdown;
 
-	prev?: string;
-	next?: string;
+	prev?: Pathname;
+	next?: Pathname;
 
 	constructor(g: string, t: string, f: string, i: Component | string | undefined, docData: Doc) {
 		this.group = g;
@@ -230,7 +230,7 @@ export function loadNavMap(NAVIGATION: NavGroup[], docData: Doc[]) {
 		});
 	});
 
-	let previousMapPair: [string, NavMapItem] | null = null;
+	let previousMapPair: [Pathname, NavMapItem] | null = null;
 
 	for (const pair of NavMap) {
 		if (previousMapPair) {

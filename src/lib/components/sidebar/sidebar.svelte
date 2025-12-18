@@ -14,10 +14,7 @@
 
 <aside
 	{...props}
-	class={cn(
-		'sticky top-[calc(var(--spacing-header)+1px)] h-[calc(100dvh-var(--spacing-header)-1px)]',
-		className
-	)}
+	class={cn('top-desktop-header sticky h-[calc(100dvh-var(--spacing-desktop-header))]', className)}
 >
 	{@render children?.()}
 </aside>

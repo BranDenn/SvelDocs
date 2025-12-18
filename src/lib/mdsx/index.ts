@@ -10,5 +10,10 @@ export { default as pre } from './code/pre.svelte';
 export { default as a } from './links/a.svelte';
 
 export { default as table } from './table/table.svelte';
+export { default as thead } from './table/thead.svelte';
+export { default as tbody } from './table/tbody.svelte';
+export { default as tr } from './table/tr.svelte';
 export { default as th } from './table/th.svelte';
 export { default as td } from './table/td.svelte';
+
+export { default as hr } from './separators/hr.svelte';

@@ -3,7 +3,7 @@
 	import { NavMap, type NavMapItem } from '$lib/docs';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
-	import { SETTINGS } from '$settings';
+	import { SETTINGS } from '$lib/docs/docs.config';
 	import Link from '../ui/link/link.svelte';
 
 	let { prev, next } = $derived(NavMap.get(`/${page.params.slug}`) ?? { prev: null, next: null });

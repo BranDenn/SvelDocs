@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { NavMap, loadNavMap, getMarkdownComponent } from '$lib/docs';
-import { NAVIGATION } from '$lib/docs/doc.config';
+import { NAVIGATION } from '$lib/docs/docs.config';
 import { resolve } from '$app/paths';
 
 export const prerender = false;

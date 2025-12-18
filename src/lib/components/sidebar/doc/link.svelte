@@ -5,7 +5,7 @@
 	import { resolve } from '$app/paths';
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
 	import { cn } from '$utils';
-	import { SETTINGS } from '$settings';
+	import { SETTINGS } from '$lib/docs/docs.config';
 
 	type Props = NavItem & HTMLAnchorAttributes;
 

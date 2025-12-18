@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SETTINGS } from '$settings';
+	import { SETTINGS } from '$lib/docs/docs.config';
 	import Link from '../ui/link/link.svelte';
 </script>
 

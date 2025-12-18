@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Sidebar from '../sidebar.svelte';
-	import { SETTINGS } from '$settings';
+	import { SETTINGS } from '$lib/docs/docs.config';
 	import * as SearchDialog from '$components/search';
 	import Nav from './nav.svelte';
 </script>

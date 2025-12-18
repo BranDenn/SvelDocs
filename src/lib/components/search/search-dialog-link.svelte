@@ -9,9 +9,9 @@
 
 <Link
 	{href}
-	class="bg-primary hover:text-accent hover:border-accent flex items-center gap-2 rounded-lg border p-2 text-sm shadow transition-colors"
+	class="bg-secondary hover:bg-primary flex items-center gap-2 rounded-lg border p-2 text-sm shadow transition-colors"
 >
-	<div class="flex flex-col">
+	<div class="flex flex-col gap-1">
 		<div class="flex items-center gap-2">
 			{#if Icon}
 				{#if typeof Icon === 'string'}
@@ -20,7 +20,7 @@
 					<Icon class="size-4 shrink-0" />
 				{/if}
 			{/if}
-			<h1>{@html title}</h1>
+			<h2 class="font-medium">{@html title}</h2>
 		</div>
 		{@render children?.()}
 	</div>

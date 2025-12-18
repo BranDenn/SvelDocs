@@ -38,7 +38,7 @@
 	>
 		{#snippet child({ props, open })}
 			{#if open}
-				<div {...props} transition:fly={{ duration: 150, y: -64 }}>
+				<div {...props} transition:fly={{ duration: 150, y: -32 }}>
 					{@render children?.()}
 					{#if !hideClose}
 						<Dialog.Close

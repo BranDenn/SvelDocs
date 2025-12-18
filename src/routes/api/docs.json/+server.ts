@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { NAVIGATION, type MdFm } from '$lib/docs/doc.config';
+import { NAVIGATION, type MdFm } from '$lib/docs/docs.config';
 import { type Doc, getMarkdownText } from '$lib/docs';
 import remarkStringify from 'remark-stringify';
 import remarkParse from 'remark-parse';

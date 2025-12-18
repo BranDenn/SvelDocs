@@ -3,7 +3,7 @@
 	import Nav from './nav.svelte';
 </script>
 
-<header class="bg-background sticky top-0 z-50 border-b">
+<header class="bg-background sticky top-0 z-100 border-b">
 	<Nav />
 
 	<div class="h-header mx-4 flex items-center overflow-hidden border-t md:hidden">

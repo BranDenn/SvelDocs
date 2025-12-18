@@ -23,12 +23,14 @@ description: Examples of markdown and their result.
 ##### h6 Heading
 ```
 
-<H1 class="toc-ignore">h1 Heading</H1>
-<H2 class="toc-ignore">h2 Heading</H2>
-<H3 class="toc-ignore">h3 Heading</H3>
-<H4 class="toc-ignore">h4 Heading</H4>
-<H5 class="toc-ignore">h5 Heading</H5>
-<H6 class="toc-ignore">h6 Heading</H6>
+<H1 data-ignore-toc>h1 Heading</H1>
+<H2 data-ignore-toc>h2 Heading</H2>
+<H3 data-ignore-toc>h3 Heading</H3>
+<H4 data-ignore-toc>h4 Heading</H4>
+<H5 data-ignore-toc>h5 Heading</H5>
+<H6 data-ignore-toc>h6 Heading</H6>
+
+---
 
 ## Styling Text
 
@@ -50,6 +52,8 @@ This is <sub>subscript text</sub>\
 This is <sup>supercript text</sup>\
 This is <ins>underline text</ins>
 
+---
+
 ## Links
 
 ```md
@@ -60,6 +64,8 @@ This is an [external link](https://sveldocs.com)
 This is an [internal link](/docs)\
 This is an [external link](https://sveldocs.com)
 
+---
+
 ## Line Breaks
 
 ```md
@@ -69,6 +75,8 @@ line break
 
 This is a\
 line break
+
+---
 
 ## Lists
 
@@ -118,6 +126,8 @@ line break
 - [x] Complete
 - [ ] Pending
 
+---
+
 ## Quote Blocks
 
 #### Quoting Text
@@ -154,6 +164,8 @@ var str: string = 'hello world';
 console.log(str);
 ```
 
+---
+
 ## Tables
 
 ```md
@@ -168,6 +180,8 @@ console.log(str);
 | 1            |       2        |             3 |
 | 4            |       5        |             6 |
 
+---
+
 ## Footnotes
 
 ```md
@@ -181,6 +195,8 @@ Footnote[^first].
 Footnote[^second].
 [^first]: This links to the Footnote 1
 [^second]: This links to the Footnote 2
+
+---
 
 ## Alerts
 
@@ -201,3 +217,5 @@ Alerts are components to increase their customizability. View how to use them [h
 <Alert type="tip">This is a tip alert.</Alert>
 <Alert type="warning">This is a warning alert.</Alert>
 <Alert type="caution">This is a caution alert.</Alert>
+
+---

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Link from './link.svelte';
 	import { Collapsible } from 'bits-ui';
-	import { NAVIGATION } from '$settings';
-	import { SETTINGS } from '$settings';
+	import { NAVIGATION } from '$lib/docs/docs.config';
+	import { SETTINGS } from '$lib/docs/docs.config';
 	import { slide } from 'svelte/transition';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import type { ClassValue } from 'svelte/elements';

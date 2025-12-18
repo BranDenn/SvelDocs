@@ -15,7 +15,7 @@
 <Dialog.Trigger
 	bind:ref
 	class={cn(
-		'bg-secondary hover:bg-primary hover:border-accent/50 group isolate hidden w-full items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium shadow-md transition-colors md:flex',
+		'bg-secondary hover:bg-primary group isolate hidden w-full items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium shadow-md transition-colors md:flex',
 		'[&_kbd]:bg-background',
 		className
 	)}
