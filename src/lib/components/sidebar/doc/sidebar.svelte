@@ -6,7 +6,7 @@
 </script>
 
 <Sidebar
-	class="scrollbar-thin min-w-sidebar-nav hidden flex-col overflow-y-auto overscroll-contain border-r md:flex"
+	class="scrollbar-thin min-w-sidebar-nav -ml-sidebar-nav flex flex-col overflow-y-auto overscroll-contain border-r opacity-0 transition-[margin,opacity] duration-300 lg:ml-0 lg:opacity-100"
 >
 	{#if SETTINGS.SEARCH_BAR_LOCATION === 'sidebar'}
 		<div class="pointer-events-none sticky top-0 z-10">

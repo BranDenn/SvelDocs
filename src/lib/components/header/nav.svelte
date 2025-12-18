@@ -8,7 +8,7 @@
 
 <nav
 	class={[
-		'h-header container flex items-center justify-between gap-4 px-4',
+		'h-header bg-background isolate container flex items-center justify-between gap-4 px-4',
 		SETTINGS.SEARCH_BAR_LOCATION === 'header' && 'md:grid md:grid-cols-3'
 	]}
 >

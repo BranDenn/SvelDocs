@@ -27,7 +27,7 @@
 
 	<div class="relative container flex grow">
 		<div
-			class="from-accent/10 pointer-events-none absolute inset-0 z-20 h-256 bg-radial-[50%_50%_at_50%_0%]"
+			class="from-accent/10 pointer-events-none absolute inset-0 z-20 max-h-256 bg-radial-[50%_50%_at_50%_0%]"
 		></div>
 
 		<Sidebar.Nav />
@@ -35,11 +35,11 @@
 		<!-- must have min-w-0 to ensure middle content does not push sidebars -->
 		<div class="flex w-full min-w-0 flex-col wrap-break-word">
 			<div
-				class="from-background top-mobile-header md:top-desktop-header pointer-events-none sticky z-10 h-8 shrink-0 bg-linear-to-b"
+				class="from-background top-mobile-header lg:top-desktop-header pointer-events-none sticky z-10 h-8 shrink-0 bg-linear-to-b transition-[top] duration-300"
 			></div>
 			<div
 				id="content-area"
-				class="flex grow flex-col gap-8 px-4 transition-[padding] md:px-14 md:py-6"
+				class="flex grow flex-col gap-8 px-4 transition-[padding] md:px-14 lg:py-6"
 			>
 				<main class="grow">
 					{@render children?.()}
