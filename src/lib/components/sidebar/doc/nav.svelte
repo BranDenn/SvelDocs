@@ -24,7 +24,7 @@
 {/snippet}
 
 <nav class={cn('flex grow flex-col gap-4 px-4 text-sm', className)}>
-	{#each NAVIGATION as nav, i}
+	{#each NAVIGATION as nav, i (i)}
 		{#if i > 0}
 			<hr />
 		{/if}
@@ -40,7 +40,7 @@
 					{#snippet child({ props, open })}
 						{#if open}
 							<ul {...props} transition:slide={{ duration: 150 }}>
-								{#each nav.items as { title, href, icon }}
+								{#each nav.items as { title, href, icon } (href)}
 									<li class="flex">
 										<Link {title} {href} {icon} class="w-full" />
 									</li>
@@ -57,7 +57,7 @@
 						{@render group(nav.group, nav.icon)}
 					</h2>
 				{/if}
-				{#each nav.items as { title, href, icon }}
+				{#each nav.items as { title, href, icon } (href)}
 					<li class="flex">
 						<Link {title} {href} {icon} class="w-full" />
 					</li>

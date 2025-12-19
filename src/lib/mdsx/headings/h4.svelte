@@ -2,6 +2,7 @@
 	import { cn } from '$utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import H from './h.svelte';
+
 	let { children, class: className, ...restProps }: HTMLAttributes<HTMLHeadingElement> = $props();
 </script>
 

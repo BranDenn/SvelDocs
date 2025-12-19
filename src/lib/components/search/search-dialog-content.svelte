@@ -4,6 +4,7 @@
 	import { NAVIGATION } from '$lib/docs/docs.config';
 	import * as SearchDialog from '.';
 	import { getSearchContext } from './search-context.svelte';
+	import Highlight from '$ui/highlight';
 
 	const searchContext = getSearchContext();
 </script>
@@ -12,6 +13,7 @@
 	hideClose
 	class="top-4 z-100 translate-y-0 gap-0 overflow-y-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(32rem,calc(100%-max(1rem,10%)-1rem))]"
 >
+	{searchContext.cleanQuery}
 	<div class="flex items-center gap-2 border-b px-4 py-2">
 		<Search
 			class="text-muted-foreground has-[+input:focus-visible]:text-foreground size-5 shrink-0 transition-[color]"
@@ -33,19 +35,21 @@
 	</div>
 	<div class="scrollbar-thin relative overflow-y-auto">
 		{#if !searchContext.query}
-			{#each NAVIGATION as { items, group }}
+			{#each NAVIGATION as { items, group } (group)}
 				<SearchDialog.Section title={group}>
-					{#each items as { title, href, icon }}
+					{#each items as { title, href, icon } (href)}
 						<SearchDialog.Link {href} {icon} {title} />
 					{/each}
 				</SearchDialog.Section>
 			{/each}
 		{:else if searchContext.results.size}
-			{#each searchContext.results.entries() as [group, items]}
+			{#each searchContext.results.entries() as [group, items] (group)}
 				<SearchDialog.Section title={group}>
-					{#each items as { title, href, content, icon }}
+					{#each items as { title, href, content, icon } (href)}
 						<SearchDialog.Link {href} {icon} {title}>
-							<p class="text-muted-foreground">{@html content}</p>
+							<p class="text-muted-foreground">
+								<Highlight text={content} query={searchContext.cleanQuery} />
+							</p>
 						</SearchDialog.Link>
 					{/each}
 				</SearchDialog.Section>

@@ -56,5 +56,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint ."
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@types/node": "^25.0.3"
+	}
 }

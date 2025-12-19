@@ -49,11 +49,6 @@
 }
 
 @layer base {
-	/* ensure hrefs to elements are not hidden by the header when clicking them */
-	html {
-		@apply scroll-pt-[calc(var(--spacing-mobile-header)+2rem)] md:scroll-pt-[calc(var(--spacing-desktop-header)+2rem)];
-	}
-
 	body {
 		@apply bg-background text-foreground font-inter flex min-h-dvh flex-col overflow-x-hidden;
 		scrollbar-color: var(--color-border) transparent;

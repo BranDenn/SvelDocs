@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { Link } from '$ui/link';
 </script>
 
 <svelte:head>
@@ -11,8 +12,9 @@
 		<h1 class="text-2xl">Error {page.status}</h1>
 		{page.error?.message}
 	</div>
-	<a
+	<Link
 		class="hover:bg-primary hover:text-foreground text-muted-foreground hover:border-accent rounded border px-2 py-1 font-medium transition-colors"
-		href="/">Home</a
-	>
+		href="/"
+		>Home
+	</Link>
 </div>

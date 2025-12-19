@@ -16,7 +16,7 @@
 	<Tooltip.Trigger
 		bind:ref
 		class={cn(
-			'text-muted-foreground hover:text-foreground p-1 transition-colors md:hidden',
+			'text-muted-foreground hover:text-foreground p-1 transition-colors lg:hidden',
 			className
 		)}
 		{...restProps}

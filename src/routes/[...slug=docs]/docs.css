@@ -19,11 +19,6 @@
 			@apply mt-4;
 		}
 
-		/* paragraph */
-		p {
-			@apply text-muted-foreground leading-8;
-		}
-
 		/* lists */
 		ul > *,
 		ol > * {
@@ -88,7 +83,7 @@
 			}
 		}
 		[data-highlighted-line] {
-			@apply !bg-accent/10;
+			@apply bg-accent/10!;
 		}
 	}
 }

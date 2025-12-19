@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '$css';
 
+	import siteConfig from '$lib/site.config';
 	import { ModeWatcher } from 'mode-watcher';
 	import * as Tooltip from '$ui/tooltip';
 
@@ -8,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<meta property="og:site_name" content="SvelDocs" />
+	<meta property="og:site_name" content={siteConfig.siteName} />
 </svelte:head>
 
 <ModeWatcher defaultMode="dark" />

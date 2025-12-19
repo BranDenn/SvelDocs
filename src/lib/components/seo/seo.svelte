@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { onMount } from 'svelte';
+	import siteConfig from '$lib/site.config';
 
 	type SeoProps = {
 		title: string;
@@ -20,26 +20,15 @@
 		modifiedTime
 	}: SeoProps = $props();
 
-	let url = $state('');
-	let fullTitle = $state('');
-	let jsonLd = $state({});
-
-	onMount(() => {
-		const metaElement = document.querySelector('meta[property="og:site_name"]');
-		const siteName = metaElement ? metaElement.getAttribute('content') : null;
-		fullTitle = siteName ? title + ' - ' + siteName : title;
-		url = page.url.origin + page.url.pathname; // url is update onMount to prevent getting the server side rendering value
-
-		if (siteName) {
-			jsonLd = {
-				'@context': 'https://schema.org',
-				'@type': type,
-				name: siteName,
-				url: url,
-				description: description,
-				image: image
-			};
-		}
+	let url = $derived(page.url.origin + page.url.pathname);
+	let fullTitle = $derived(siteConfig.siteName + ' - ' + title);
+	let jsonLd = $derived({
+		'@context': 'https://schema.org',
+		'@type': type,
+		name: fullTitle,
+		url: url,
+		description: description,
+		image: image
 	});
 </script>
 

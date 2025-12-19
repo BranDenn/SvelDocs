@@ -30,6 +30,7 @@
 
 <TooltipPrimitive.Portal>
 	<TooltipPrimitive.Content
+		forceMount
 		bind:ref
 		data-slot="tooltip-content"
 		collisionPadding={8}

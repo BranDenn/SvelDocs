@@ -10,7 +10,14 @@
 	let { element = 'h2', children, class: className, ...restProps }: Props = $props();
 </script>
 
-<svelte:element this={element} class={cn('group relative font-bold', className)} {...restProps}>
+<svelte:element
+	this={element}
+	class={cn(
+		'group relative scroll-mt-[calc(var(--spacing-mobile-header)+2rem)] font-bold md:scroll-mt-[calc(var(--spacing-desktop-header)+2rem)]',
+		className
+	)}
+	{...restProps}
+>
 	<div class="absolute top-1/2 left-0 hidden -translate-x-full -translate-y-1/2 pr-4 md:block">
 		<a
 			class="bg-secondary hover:bg-primary text-muted-foreground hover:text-foreground block rounded-md border p-1 opacity-0 transition-[opacity,background-color,color] group-hover:opacity-100"

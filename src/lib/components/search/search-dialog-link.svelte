@@ -3,8 +3,12 @@
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import type { Snippet } from 'svelte';
 	import { Link } from '$ui/link';
+	import { getSearchContext } from './search-context.svelte';
+	import Highlight from '$ui/highlight';
 
 	let { href, icon: Icon, title, children }: NavItem & { children?: Snippet } = $props();
+
+	const searchContext = getSearchContext();
 </script>
 
 <Link
@@ -20,7 +24,9 @@
 					<Icon class="size-4 shrink-0" />
 				{/if}
 			{/if}
-			<h2 class="font-medium">{@html title}</h2>
+			<h2 class="font-medium">
+				<Highlight text={title} query={searchContext.cleanQuery} />
+			</h2>
 		</div>
 		{@render children?.()}
 	</div>

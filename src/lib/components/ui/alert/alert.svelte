@@ -8,10 +8,10 @@
 	import { cn } from '$utils';
 
 	const Icons = {
-		note: { icon: Info, class: 'text-blue-500' },
-		tip: { icon: Lightbulb, class: 'text-green-500' },
-		warning: { icon: TriangleAlert, class: 'text-yellow-500' },
-		caution: { icon: OctagonAlert, class: 'text-red-500' }
+		note: { icon: Info, class: 'dark:text-blue-400 text-blue-600' },
+		tip: { icon: Lightbulb, class: 'dark:text-green-400 text-green-600' },
+		warning: { icon: TriangleAlert, class: 'dark:text-yellow-400 text-yellow-600' },
+		caution: { icon: OctagonAlert, class: 'dark:text-red-400 text-red-600' }
 	};
 
 	interface Props {

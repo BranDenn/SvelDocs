@@ -1,6 +1,7 @@
 import { createContext, type Component } from 'svelte';
 import { Document } from 'flexsearch';
 import type { Pathname } from '$app/types';
+import { escapeRegex } from '$utils';
 
 type IndexData = {
 	title: string;
@@ -24,10 +25,11 @@ export class Search {
 			store: ['title', 'group', 'content']
 		}
 	});
-	public query = $state('');
-	public results = $derived(this.getResults(this.query));
-
 	private readonly itemIconMap = new Map<Pathname, OutputData['icon']>();
+
+	public query = $state('');
+	public cleanQuery = $derived(this.query.replaceAll(/\s+/g, ' ').trim());
+	public results = $derived(this.getResults(this.cleanQuery));
 
 	public addToIndex(...data: InputData[]) {
 		for (const d of data) {
@@ -40,17 +42,13 @@ export class Search {
 	}
 
 	private getResults(q: string) {
-		// clean text
-		let match = q.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-		match = match.replaceAll(/\s+/g, ' ').trim();
-
 		// create a map to group the results
-		const groupedResults: Map<any, OutputData[]> = new Map();
+		const groupedResults: Map<string, OutputData[]> = new Map();
 
-		if (!match) return groupedResults;
+		if (!q) return groupedResults;
 
 		// return most relevant results
-		const indexResults = this.index.search(match, {
+		const indexResults = this.index.search(q, {
 			limit: 10,
 			merge: true,
 			enrich: true
@@ -68,8 +66,8 @@ export class Search {
 			const data = groupedResults.get(group);
 			data?.push({
 				href,
-				title: textWithMark(title, match),
-				content: strippedContent(content, match),
+				title: title,
+				content: strippedContent(content, q),
 				icon: itemIcon
 			});
 		}
@@ -87,14 +85,6 @@ export function setSearchContext() {
 }
 
 /**
- * Adds a <mark> html tag between found content.
- */
-function textWithMark(text: string, match: string) {
-	const regex = new RegExp(match, 'gi');
-	return text.replace(regex, '<mark>$&</mark>');
-}
-
-/**
  * Strips content and adds ellipses if over the character limit.
  */
 function strippedContent(
@@ -103,7 +93,7 @@ function strippedContent(
 	totalCharacters: number = 80,
 	maxFront: number = 20
 ) {
-	const regex = new RegExp(match, 'gi');
+	const regex = new RegExp(`(${escapeRegex(match)})`, 'gi');
 	const foundPosition: number = text.search(regex);
 
 	// subtract 20 characters from front
@@ -116,15 +106,11 @@ function strippedContent(
 	const end: number = foundPosition + totalCharacters;
 
 	// if there was more content at the beginning, then have leading ...
-	let new_content = start > 0 ? '... ' : '';
-	new_content += text.substring(start, end);
+	let newContent = start > 0 ? '... ' : '';
+	newContent += text.substring(start, end);
 
 	// if there was more content at the end, then have trailing ...
-	if (text.length > end) new_content += ' ...';
+	if (text.length > end) newContent += ' ...';
 
-	// if the content was not found then return stripped text WITHOUT markers
-	if (foundPosition < 0) return new_content;
-
-	// if the content was found then return stripped text WITH markers
-	return textWithMark(new_content, match);
+	return newContent;
 }

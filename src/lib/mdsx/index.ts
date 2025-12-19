@@ -17,3 +17,5 @@ export { default as th } from './table/th.svelte';
 export { default as td } from './table/td.svelte';
 
 export { default as hr } from './separators/hr.svelte';
+
+export { default as p } from './text/p.svelte';

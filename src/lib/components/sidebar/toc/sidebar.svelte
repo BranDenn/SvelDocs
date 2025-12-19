@@ -6,7 +6,6 @@
 	let container: HTMLElement | null = $state(null);
 	let topOffset = $state(0);
 	let pOffset = $state({ top: '0px', left: '0px', bottom: '50%', right: '0px' });
-	let vOffset = $state({ top: '0px', left: '0px', bottom: '32px', right: '0px' });
 
 	onMount(() => {
 		container = document.getElementById('content');

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Copy from '@lucide/svelte/icons/copy';
-	import Check from '@lucide/svelte/icons/check';
+	import CopyIcon from '@lucide/svelte/icons/copy';
+	import CheckIcon from '@lucide/svelte/icons/check';
 	import type { ClassValue } from 'svelte/elements';
 	import * as Tooltip from '$ui/tooltip';
 	import { Tooltip as TooltipPrimitive } from 'bits-ui';
@@ -39,9 +39,9 @@
 		{...restProps}
 	>
 		{#if copied}
-			<Check class="size-4" />
+			<CheckIcon class="size-4" />
 		{:else}
-			<Copy class="size-4" />
+			<CopyIcon class="size-4" />
 		{/if}
 	</Tooltip.Trigger>
 	<Tooltip.Content>

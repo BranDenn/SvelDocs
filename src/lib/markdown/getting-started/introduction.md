@@ -9,6 +9,8 @@ SvelDocs provides you with all of the code for creating modern markdown document
 
 The files are structured for quick iterations and detailed understanding, while still offering easy expansion. SvelDocs provides a settings file with preset options that should fit most needs, but in the chance that something does not match your taste, you can always customize the code to your liking.
 
+---
+
 ## Features
 
 - Simple structure for adding groups and links
@@ -23,6 +25,8 @@ The files are structured for quick iterations and detailed understanding, while 
 - Light and Dark mode
 - Clean and modern look
 
+---
+
 ## Ready to Dive In?
 
 Head over to the [Quick Start](/docs/quick-start) section to clone the repository and launch your own documentation.
@@ -30,6 +34,8 @@ Head over to the [Quick Start](/docs/quick-start) section to clone the repositor
 OR
 
 Explore the rest of the documentation to see SvelDocs's options and capabilities.
+
+---
 
 ## Inspiration
 

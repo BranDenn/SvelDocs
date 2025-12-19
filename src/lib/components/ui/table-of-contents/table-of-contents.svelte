@@ -5,6 +5,8 @@
 	import TableOfContentsIcon from '@lucide/svelte/icons/table-of-contents';
 	import { Link } from '$ui/link';
 	import { page } from '$app/state';
+	import { afterNavigate } from '$app/navigation';
+	import { onDestroy } from 'svelte';
 
 	interface TOC {
 		level: number;
@@ -172,17 +174,16 @@
 		return isParent(startingIndex - 1, finalIndex);
 	}
 
-	$effect(() => {
-		page.url;
+	afterNavigate(() => {
 		update();
+	});
 
-		return () => {
-			priorityViewObserver?.disconnect();
-			priorityViewObserver = null;
-			reachedBottomObserver?.disconnect();
-			reachedBottomObserver = null;
-			toc = [];
-		};
+	onDestroy(() => {
+		priorityViewObserver?.disconnect();
+		priorityViewObserver = null;
+		reachedBottomObserver?.disconnect();
+		reachedBottomObserver = null;
+		toc = [];
 	});
 </script>
 
