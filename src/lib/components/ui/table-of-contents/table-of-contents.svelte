@@ -5,14 +5,12 @@
 	import TableOfContentsIcon from '@lucide/svelte/icons/table-of-contents';
 	import { Link } from '$ui/link';
 	import { page } from '$app/state';
-	import { afterNavigate } from '$app/navigation';
-	import { onDestroy } from 'svelte';
+	import { afterNavigate, goto, replaceState } from '$app/navigation';
 
 	interface TOC {
 		level: number;
 		text: string;
 		id: string;
-		inView?: boolean;
 		isIntersectingPriority?: boolean;
 		parentIndex?: number;
 	}
@@ -40,10 +38,13 @@
 	// table of contents that is displayed in its sidebar
 	let toc: TOC[] = $state([]);
 
+	let reachedBottom = false;
+	let hashIndex = $state(-1);
 	let mostRecentEntry = $state(0);
 
 	// gets the content prioritized in the table of contents by id
 	let activeIndex = $derived.by(() => {
+		if (hashIndex > -1) return hashIndex;
 		const idx = toc.findLastIndex((c) => c.isIntersectingPriority);
 		if (idx > 0) return idx;
 		return mostRecentEntry;
@@ -63,7 +64,7 @@
 			const scrolledUp = currentScrollTop < lastScrollTop;
 			lastScrollTop = currentScrollTop;
 
-			if (idx <= 0) return;
+			if (idx < 0) return;
 
 			toc[idx].isIntersectingPriority = entry.isIntersecting;
 
@@ -72,10 +73,21 @@
 				return;
 			}
 
+			if (idx === hashIndex && !entry.isIntersecting) {
+				hashIndex = -1;
+				goto('', { noScroll: true });
+			}
+
+			if (idx === toc.length - 2 && reachedBottom) {
+				mostRecentEntry = toc.length - 1;
+				return;
+			}
+
 			const prevIdx = idx - 1;
 			if (prevIdx >= 0 && scrolledUp) {
 				const previous = toc[prevIdx];
 				if (!previous.isIntersectingPriority) mostRecentEntry = prevIdx;
+				return;
 			}
 		});
 	}
@@ -84,7 +96,25 @@
 
 	function bottomIntersectionCallback(entries: IntersectionObserverEntry[]) {
 		entries.forEach((entry) => {
-			if (entry.isIntersecting) mostRecentEntry = toc.length - 1;
+			reachedBottom = entry.isIntersecting;
+
+			const lastIndex = toc.length - 1;
+			if (entry.isIntersecting) {
+				mostRecentEntry = lastIndex;
+				return;
+			}
+
+			if (lastIndex === hashIndex && !entry.isIntersecting) {
+				hashIndex = -1;
+				goto('', { noScroll: true });
+			}
+
+			if (toc[lastIndex].isIntersectingPriority) return;
+
+			if (mostRecentEntry !== lastIndex) return;
+
+			const prevIdx = lastIndex - 1;
+			if (prevIdx >= 0) mostRecentEntry = prevIdx;
 		});
 	}
 
@@ -95,7 +125,10 @@
 			...container.querySelectorAll('h1, h2, h3, h4, h5, h6')
 		] as HTMLHeadingElement[];
 
-		if (headings.length < 1) return;
+		if (headings.length < 1) {
+			toc = [];
+			return;
+		}
 
 		priorityViewObserver?.disconnect();
 		priorityViewObserver = new IntersectionObserver(priorityInstersectionCallback, observerOptions);
@@ -124,7 +157,7 @@
 			// get the heading level
 			const level = parseInt(heading.tagName[1]);
 
-			// add the heading element to the observing to change its inView key
+			// add the heading element to the observing to change its isIntersectingPriority key
 			priorityViewObserver?.observe(heading);
 
 			// push heading details to contents array
@@ -174,16 +207,34 @@
 		return isParent(startingIndex - 1, finalIndex);
 	}
 
-	afterNavigate(() => {
-		update();
+	afterNavigate(({ type }) => {
+		if (type !== 'enter') {
+			update();
+			return;
+		}
+
+		const element = document.getElementById(page.url.hash.replace('#', ''));
+		element?.scrollIntoView();
 	});
 
-	onDestroy(() => {
-		priorityViewObserver?.disconnect();
-		priorityViewObserver = null;
-		reachedBottomObserver?.disconnect();
-		reachedBottomObserver = null;
-		toc = [];
+	$effect(() => {
+		update();
+
+		return () => {
+			priorityViewObserver?.disconnect();
+			priorityViewObserver = null;
+			reachedBottomObserver?.disconnect();
+			reachedBottomObserver = null;
+			toc = [];
+		};
+	});
+
+	$effect(() => {
+		const hash = page.url.hash;
+		if (!hash) return;
+
+		const index = toc.findIndex((c) => `#${c.id}` === hash);
+		if (index > -1) hashIndex = index;
 	});
 </script>
 
@@ -196,15 +247,15 @@
 
 		<div class="text-sm">
 			{#each toc as c, i (c.id)}
-				{@const isActive = i === activeIndex || isParent(activeIndex, i)}
+				{@const isActive = i === activeIndex}
+				{@const isP = isParent(activeIndex, i)}
 				<Link
 					href="#{c.id}"
 					class={cn(
-						'transition-font block border-l py-1 pr-4 transition-colors',
-						c.inView && 'border-foreground/50',
-						isActive
-							? 'border-accent text-accent font-medium'
-							: 'text-muted-foreground hover:text-foreground'
+						'transition-font text-muted-foreground block border-l py-1 pr-4 transition-colors',
+						!isActive && !isP && 'hover:text-foreground',
+						isP && 'border-accent/75 text-accent',
+						isActive && 'border-accent text-accent font-medium'
 					)}
 					style="padding-left: {c.level}rem"
 				>

@@ -4,15 +4,11 @@
 	import { onMount } from 'svelte';
 
 	let container: HTMLElement | null = $state(null);
-	let topOffset = $state(0);
-	let pOffset = $state({ top: '0px', left: '0px', bottom: '50%', right: '0px' });
+	const topOffset = 81;
+	const pOffset = { top: `${topOffset}px`, left: '0px', bottom: '50%', right: '0px' };
 
 	onMount(() => {
 		container = document.getElementById('content');
-
-		const contentArea = document.getElementById('content-area');
-		topOffset = contentArea?.offsetTop ?? 0;
-		pOffset.top = `${topOffset}px`;
 	});
 </script>
 
@@ -38,7 +34,7 @@
 					rootMargin: `-${pOffset.top} -${pOffset.left} -${pOffset.bottom} -${pOffset.right}`
 				}}
 				reachedBottomObserverOptions={{
-					threshold: 1,
+					threshold: 1.0,
 					rootMargin: '0px 0px -32px 0px'
 				}}
 			/>

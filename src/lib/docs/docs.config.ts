@@ -1,4 +1,6 @@
-import { Group, type NavGroup, type BaseSettings } from '$lib/docs';
+import { Group, type NavGroup } from '$lib/docs';
+import type { DocSettings } from './types/doc-settings';
+import type { DocNavigationSettings } from './types/doc-navigation';
 import BookOpenCheckIcon from '@lucide/svelte/icons/book-open-check';
 import RocketIcon from '@lucide/svelte/icons/rocket';
 import CogIcon from '@lucide/svelte/icons/cog';
@@ -20,7 +22,7 @@ export interface MdFm {
  * This makes it simple to change the basic settings on the site.\
  * This is exported to other code files that determine what the setting changes.
  */
-export const SETTINGS: BaseSettings = {
+export const SETTINGS: DocSettings = {
 	NAV_STYLE: 'button',
 	SEARCH_BAR_LOCATION: 'sidebar',
 	COLLAPSIBLE_NAV_GROUPS: true,
@@ -45,3 +47,37 @@ export const NAVIGATION: NavGroup[] = [
 	Group('Components', { icon: ComponentIcon }).Items(),
 	Group('Miscellaneous', { icon: DicesIcon }).Items()
 ];
+
+export const docNavigation: DocNavigationSettings = {
+	tabs: [
+		{
+			title: 'Overview',
+			groups: [
+				{
+					title: 'Getting Started',
+					showTitle: false,
+					combineHref: false,
+					pages: [
+						{ title: 'Introduction', icon: BookOpenCheckIcon, href: '/docs' },
+						{ title: 'Quick Start', icon: RocketIcon }
+					]
+				},
+				{
+					title: 'Configuration',
+					icon: CogIcon,
+					pages: 'auto'
+				},
+				{
+					title: 'Components',
+					icon: ComponentIcon,
+					pages: 'auto'
+				},
+				{
+					title: 'Miscellaneous',
+					icon: DicesIcon,
+					pages: 'auto'
+				}
+			]
+		}
+	]
+};

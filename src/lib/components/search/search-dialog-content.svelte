@@ -13,7 +13,6 @@
 	hideClose
 	class="top-4 z-100 translate-y-0 gap-0 overflow-y-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(32rem,calc(100%-max(1rem,10%)-1rem))]"
 >
-	{searchContext.cleanQuery}
 	<div class="flex items-center gap-2 border-b px-4 py-2">
 		<Search
 			class="text-muted-foreground has-[+input:focus-visible]:text-foreground size-5 shrink-0 transition-[color]"
