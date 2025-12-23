@@ -23,7 +23,7 @@
 	});
 </script>
 
-{#each parts as part (part)}
+{#each parts as part, i (i)}
 	{#if part.toLowerCase() === query.toLowerCase()}
 		<mark>{part}</mark>
 	{:else}

@@ -20,7 +20,7 @@
 		modifiedTime
 	}: SeoProps = $props();
 
-	let url = $derived(page.url.origin + page.url.pathname);
+	let url = $derived(siteConfig.siteOrigin + page.url.pathname);
 	let fullTitle = $derived(siteConfig.siteName + ' - ' + title);
 	let jsonLd = $derived({
 		'@context': 'https://schema.org',

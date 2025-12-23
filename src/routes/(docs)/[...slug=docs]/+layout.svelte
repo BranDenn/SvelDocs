@@ -4,8 +4,11 @@
 	import * as Sidebar from '$components/sidebar';
 	import * as SearchDialog from '$components/search';
 	import { NavMap } from '$lib/docs';
+	import { setDocNavigationContext } from '$lib/docs/navigation/doc-navigation-context.svelte';
 
-	let { children } = $props();
+	let { data, children } = $props();
+
+	// const docNavigationContext = $derived(setDocNavigationContext(data.docNavigation))
 </script>
 
 <SearchDialog.Provider
@@ -19,7 +22,7 @@
 			const fullTitle = title + (markdown?.title ? ` (${markdown.title})` : '');
 			const fullContent = (markdown?.description ?? '') + (markdown?.content ?? '');
 
-			ctx.addToIndex({ href: key, group, title: fullTitle, content: fullContent, icon });
+			ctx.addItem({ href: key, group, title: fullTitle, content: fullContent, icon });
 		});
 	}}
 >

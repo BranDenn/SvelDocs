@@ -13,7 +13,7 @@
 <svelte:element
 	this={element}
 	class={cn(
-		'group relative scroll-mt-[calc(var(--spacing-mobile-header)+2rem)] font-bold md:scroll-mt-[calc(var(--spacing-desktop-header)+2rem)]',
+		'group relative scroll-mt-[calc(var(--spacing-mobile-header)+2rem)] font-bold lg:scroll-mt-[calc(var(--spacing-desktop-header)+2rem)]',
 		className
 	)}
 	{...restProps}

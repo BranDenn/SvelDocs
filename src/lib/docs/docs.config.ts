@@ -1,6 +1,5 @@
 import { Group, type NavGroup } from '$lib/docs';
 import type { DocSettings } from './types/doc-settings';
-import type { DocNavigationSettings } from './types/doc-navigation';
 import BookOpenCheckIcon from '@lucide/svelte/icons/book-open-check';
 import RocketIcon from '@lucide/svelte/icons/rocket';
 import CogIcon from '@lucide/svelte/icons/cog';
@@ -47,37 +46,3 @@ export const NAVIGATION: NavGroup[] = [
 	Group('Components', { icon: ComponentIcon }).Items(),
 	Group('Miscellaneous', { icon: DicesIcon }).Items()
 ];
-
-export const docNavigation: DocNavigationSettings = {
-	tabs: [
-		{
-			title: 'Overview',
-			groups: [
-				{
-					title: 'Getting Started',
-					showTitle: false,
-					combineHref: false,
-					pages: [
-						{ title: 'Introduction', icon: BookOpenCheckIcon, href: '/docs' },
-						{ title: 'Quick Start', icon: RocketIcon }
-					]
-				},
-				{
-					title: 'Configuration',
-					icon: CogIcon,
-					pages: 'auto'
-				},
-				{
-					title: 'Components',
-					icon: ComponentIcon,
-					pages: 'auto'
-				},
-				{
-					title: 'Miscellaneous',
-					icon: DicesIcon,
-					pages: 'auto'
-				}
-			]
-		}
-	]
-};

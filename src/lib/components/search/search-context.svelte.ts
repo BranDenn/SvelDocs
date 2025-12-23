@@ -9,12 +9,23 @@ type IndexData = {
 	content: string;
 };
 
-type InputData = {
+type ItemInputData = {
 	href: Pathname;
 	icon?: string | Component;
 } & IndexData;
 
-type OutputData = Omit<InputData, 'group'> & { icon?: string | Component };
+type ItemOutputData = Omit<ItemInputData, 'group'>;
+
+type GroupInputData = {
+	title: string;
+	icon?: string | Component;
+	items: ItemOutputData[];
+};
+
+type OutputData = {
+	icon?: string | Component;
+	items: ItemOutputData[];
+};
 
 export class Search {
 	private readonly index = new Document<IndexData>({
@@ -25,15 +36,27 @@ export class Search {
 			store: ['title', 'group', 'content']
 		}
 	});
-	private readonly itemIconMap = new Map<Pathname, OutputData['icon']>();
+	private readonly itemIconMap = new Map<Pathname, ItemInputData['icon']>();
+	private readonly groupIconMap = new Map<string, GroupInputData['icon']>();
 
 	public query = $state('');
 	public cleanQuery = $derived(this.query.replaceAll(/\s+/g, ' ').trim());
 	public results = $derived(this.getResults(this.cleanQuery));
 
-	public addToIndex(...data: InputData[]) {
-		for (const d of data) {
-			const { icon, ...rest } = d;
+	public addGroup(...data: GroupInputData[]) {
+		for (const group of data) {
+			if (group.icon && !this.groupIconMap.has(group.title)) {
+				this.groupIconMap.set(group.title, group.icon);
+			}
+			for (const item of group.items) {
+				this.addItem({ group: group.title, ...item });
+			}
+		}
+	}
+
+	public addItem(...data: ItemInputData[]) {
+		for (const item of data) {
+			const { icon, ...rest } = item;
 			if (icon && !this.itemIconMap.has(rest.href)) {
 				this.itemIconMap.set(rest.href, icon);
 			}
@@ -43,7 +66,7 @@ export class Search {
 
 	private getResults(q: string) {
 		// create a map to group the results
-		const groupedResults: Map<string, OutputData[]> = new Map();
+		const groupedResults: Map<string, OutputData> = new Map();
 
 		if (!q) return groupedResults;
 
@@ -60,11 +83,14 @@ export class Search {
 			const href = result.id as Pathname;
 			const { group, title, content } = result.doc;
 
-			if (!groupedResults.has(group)) groupedResults.set(group, []);
+			if (!groupedResults.has(group)) {
+				const groupIcon = this.groupIconMap.get(group);
+				groupedResults.set(group, { icon: groupIcon, items: [] });
+			}
 
 			const itemIcon = this.itemIconMap.get(href);
-			const data = groupedResults.get(group);
-			data?.push({
+			const items = groupedResults.get(group)?.items;
+			items?.push({
 				href,
 				title: title,
 				content: strippedContent(content, q),

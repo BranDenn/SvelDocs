@@ -42,9 +42,9 @@
 				</SearchDialog.Section>
 			{/each}
 		{:else if searchContext.results.size}
-			{#each searchContext.results.entries() as [group, items] (group)}
-				<SearchDialog.Section title={group}>
-					{#each items as { title, href, content, icon } (href)}
+			{#each searchContext.results.entries() as [group, data] (group)}
+				<SearchDialog.Section title={group} icon={data.icon}>
+					{#each data.items as { title, href, content, icon } (href)}
 						<SearchDialog.Link {href} {icon} {title}>
 							<p class="text-muted-foreground">
 								<Highlight text={content} query={searchContext.cleanQuery} />

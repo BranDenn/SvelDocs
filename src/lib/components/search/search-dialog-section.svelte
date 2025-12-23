@@ -2,17 +2,35 @@
 	import type { Snippet } from 'svelte';
 	import { getSearchContext } from './search-context.svelte';
 	import Highlight from '$ui/highlight';
+	import { type Component } from 'svelte';
 
-	let { children, title }: { children: Snippet; title: string } = $props();
+	let {
+		children,
+		title,
+		icon: Icon
+	}: { children: Snippet; title: string; icon?: string | Component } = $props();
 
 	const searchContext = getSearchContext();
 </script>
 
 <section class="group">
 	<header class="pointer-events-none sticky top-0">
-		<h1 class="bg-background pointer-events-auto px-4 pt-4 font-medium">
-			<Highlight text={title} query={searchContext.cleanQuery} />
-		</h1>
+		{#if Icon}
+			<div class="bg-background pointer-events-auto flex items-center gap-2 px-4 pt-4">
+				{#if typeof Icon === 'string'}
+					<span class="size-4 shrink-0">{Icon}</span>
+				{:else}
+					<Icon class="size-4 shrink-0" />
+				{/if}
+				<h2 class="font-medium">
+					<Highlight text={title} query={searchContext.cleanQuery} />
+				</h2>
+			</div>
+		{:else}
+			<h2 class="bg-background pointer-events-auto px-4 pt-4 font-medium">
+				<Highlight text={title} query={searchContext.cleanQuery} />
+			</h2>
+		{/if}
 		<div class="from-background sticky top-0 h-4 bg-linear-to-b"></div>
 	</header>
 
