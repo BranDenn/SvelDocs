@@ -8,46 +8,53 @@ import type { DocNavigationConfig } from './doc-navigation';
  *
  * This being in the .server.ts file will work for Static Site Generation (SSG) as well.
  */
+// const docNavigationConfig: DocNavigationConfig = {
+// 	tabNextPrev: true,
+// 	tabs: [
+// 		{
+// 			title: 'Overview',
+// 			combineHref: false,
+// 			icon: 'flag',
+// 			groups: [
+// 				{
+// 					title: 'Getting Started',
+// 					showTitle: false,
+// 					combineHref: false,
+// 					pages: [
+// 						{ title: 'Introduction', icon: 'book-open-check', href: '/docs' },
+// 						{ title: 'Quick Start', icon: 'rocket' }
+// 					]
+// 				},
+// 				{
+// 					title: 'Configuration',
+// 					icon: 'cog',
+// 					pages: 'auto'
+// 				},
+// 				{
+// 					title: 'Components',
+// 					icon: 'component',
+// 					pages: 'auto'
+// 				},
+// 				{
+// 					title: 'Miscellaneous',
+// 					icon: 'dices',
+// 					pages: 'auto'
+// 				}
+// 			]
+// 		},
+// 		{
+// 			title: 'Guides',
+// 			combineHref: true,
+// 			icon: 'book',
+// 			pages: 'auto'
+// 		}
+// 	]
+// };
+
 const docNavigationConfig: DocNavigationConfig = {
-	tabNextPrev: true,
-	tabs: [
-		{
-			title: 'Overview',
-			combineHref: false,
-			icon: 'flag',
-			groups: [
-				{
-					title: 'Getting Started',
-					showTitle: false,
-					combineHref: false,
-					pages: [
-						{ title: 'Introduction', icon: 'book-open-check', href: '/docs' },
-						{ title: 'Quick Start', icon: 'rocket' }
-					]
-				},
-				{
-					title: 'Configuration',
-					icon: 'cog',
-					pages: 'auto'
-				},
-				{
-					title: 'Components',
-					icon: 'component',
-					pages: 'auto'
-				},
-				{
-					title: 'Miscellaneous',
-					icon: 'dices',
-					pages: 'auto'
-				}
-			]
-		},
-		{
-			title: 'Guides',
-			combineHref: true,
-			icon: 'book',
-			pages: 'auto'
-		}
+	pages: [
+		{ title: 'Introduction', icon: 'book-open-check', href: '/docs' },
+		{ title: 'Quick Start', icon: 'rocket' }
 	]
 };
 

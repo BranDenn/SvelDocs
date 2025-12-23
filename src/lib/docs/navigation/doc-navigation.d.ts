@@ -86,8 +86,8 @@ export type DocTab = {
  */
 export type DocNavigationConfig =
 	| { tabNextPrev?: boolean; tabs: DocTab[] | 'auto'; groups?: never; pages?: never }
-	| { groups: DocGroup[]; tabs?: never; pages?: never; tabNextPrev?: never }
-	| { pages: DocPage[]; tabs?: never; groups?: never; tabNextPrev?: never };
+	| { groups: DocGroup[] | 'auto'; tabs?: never; pages?: never; tabNextPrev?: never }
+	| { pages: DocPage[] | 'auto'; tabs?: never; groups?: never; tabNextPrev?: never };
 
 // Treat this file as a module
 export {};

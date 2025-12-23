@@ -8,22 +8,20 @@
 
 	let { data, children } = $props();
 
-	// const docNavigationContext = $derived(setDocNavigationContext(data.docNavigation))
+	const docNavigationContext = $derived(setDocNavigationContext(data.docNavigation));
 </script>
 
 <SearchDialog.Provider
 	onContextInit={(ctx) => {
-		const keys = NavMap.keys();
-		keys.forEach((key) => {
-			const value = NavMap.get(key);
-			if (!value) return;
-
-			const { group, title, icon, markdown } = value;
-			const fullTitle = title + (markdown?.title ? ` (${markdown.title})` : '');
-			const fullContent = (markdown?.description ?? '') + (markdown?.content ?? '');
-
-			ctx.addItem({ href: key, group, title: fullTitle, content: fullContent, icon });
-		});
+		// const keys = NavMap.keys();
+		// keys.forEach((key) => {
+		// 	const value = NavMap.get(key);
+		// 	if (!value) return;
+		// 	const { group, title, icon, markdown } = value;
+		// 	const fullTitle = title + (markdown?.title ? ` (${markdown.title})` : '');
+		// 	const fullContent = (markdown?.description ?? '') + (markdown?.content ?? '');
+		// 	ctx.addItem({ href: key, group, title: fullTitle, content: fullContent, icon });
+		// });
 	}}
 >
 	<Header />
