@@ -5,7 +5,7 @@
 	import TableOfContentsIcon from '@lucide/svelte/icons/table-of-contents';
 	import { Link } from '$ui/link';
 	import { page } from '$app/state';
-	import { afterNavigate, goto, replaceState } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 
 	interface TOC {
 		level: number;
@@ -76,6 +76,7 @@
 			if (idx === hashIndex && !entry.isIntersecting) {
 				hashIndex = -1;
 				goto('', { noScroll: true });
+				return;
 			}
 
 			if (idx === toc.length - 2 && reachedBottom) {
@@ -208,13 +209,20 @@
 	}
 
 	afterNavigate(({ type }) => {
-		if (type !== 'enter') {
-			update();
+		// if a page is intially loaded with a hash, then scroll to element
+		if (type === 'enter') {
+			const element = document.getElementById(page.url.hash.replace('#', ''));
+			element?.scrollIntoView();
 			return;
 		}
 
-		const element = document.getElementById(page.url.hash.replace('#', ''));
-		element?.scrollIntoView();
+		// if a page is loaded by being clicked on either from the sidebar or search, then make sure to update the toc
+		// the TOC does not automatically update as the docs is use a shared slug page
+		// type === 'link' ensures that this does not trigger from goto
+		if (type === 'link') {
+			update();
+			return;
+		}
 	});
 
 	$effect(() => {
@@ -234,7 +242,7 @@
 		if (!hash) return;
 
 		const index = toc.findIndex((c) => `#${c.id}` === hash);
-		if (index > -1) hashIndex = index;
+		hashIndex = index;
 	});
 </script>
 

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Link } from '$ui/link';
+	import siteConfig from '$lib/site.config';
 </script>
 
 <svelte:head>
-	<title>Error {page.status} - SvelDocs</title>
+	<title>Error {page.status} - {siteConfig.siteName}</title>
 </svelte:head>
 
 <div class="grid grow content-center justify-items-center gap-4 p-4">

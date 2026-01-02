@@ -21,7 +21,7 @@
 	}: SeoProps = $props();
 
 	let url = $derived(siteConfig.siteOrigin + page.url.pathname);
-	let fullTitle = $derived(siteConfig.siteName + ' - ' + title);
+	let fullTitle = $derived(title + ' - ' + siteConfig.siteName);
 	let jsonLd = $derived({
 		'@context': 'https://schema.org',
 		'@type': type,

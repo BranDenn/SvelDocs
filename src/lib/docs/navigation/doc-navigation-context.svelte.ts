@@ -16,6 +16,7 @@ export type Page = {
 export type Group = {
 	title: string;
 	icon?: string;
+	show?: boolean;
 	pageHrefs: ResolvedPathname[];
 };
 
@@ -31,20 +32,39 @@ export type Params = {
 	pages?: Page[];
 };
 
+export type GroupedPages = {
+	title: string;
+	icon?: string;
+	show?: boolean;
+	pages: Page[];
+};
+
 class DocNavigation {
 	private readonly pagesMap = new SvelteMap<ResolvedPathname, Page>();
 	private readonly tabsMap = new SvelteMap<string, Tab>();
 	private readonly groupsMap = new SvelteMap<string, Group>();
 
-	public readonly currentItem = $derived(this.pagesMap.get(page.url.pathname));
+	public readonly currentPage = $derived.by(() => {
+		if (page.error) {
+			const split = page.url.pathname.split('/');
+			while (split.length > 0) {
+				split.pop();
+				const newHref = split.join('/');
+				const page = this.pagesMap.get(newHref as ResolvedPathname);
+				if (page) return page;
+			}
+		}
+
+		return this.pagesMap.get(page.url.pathname);
+	});
 
 	public readonly mode = $derived.by(() => {
-		if (this.currentItem?.group) return 'group';
+		if (this.currentPage?.group) return 'group';
 		return 'page';
 	});
 
 	public readonly currentTab = $derived.by(() => {
-		const tab = this.currentItem?.tab;
+		const tab = this.currentPage?.tab;
 		if (!tab) return undefined;
 
 		const tabData = this.tabsMap.get(tab);
@@ -54,7 +74,7 @@ class DocNavigation {
 	});
 
 	public readonly currentGroup = $derived.by(() => {
-		const group = this.currentItem?.group;
+		const group = this.currentPage?.group;
 		if (!group) return undefined;
 
 		const groupData = this.groupsMap.get(group);
@@ -76,19 +96,29 @@ class DocNavigation {
 
 		const groupKeys = new Set(pagesOnTab.flatMap(({ group }) => group ?? []));
 
-		const groupedPages = [...groupKeys].map((groupKey) => {
+		const groupedPages: GroupedPages[] = [...groupKeys].map((groupKey) => {
 			const group = this.groupsMap.get(groupKey)!;
 			const pages = group.pageHrefs.map((pageHref) => {
 				const item = this.pagesMap.get(pageHref)!;
 				return item;
 			});
-			return { title: group.title, icon: group.icon, pages };
+			return { title: group.title, icon: group.icon, show: group.show, pages };
 		});
 
 		return groupedPages;
 	});
 
 	constructor(params: Params) {
+		params.tabs?.forEach((tab) => {
+			const key = tab.title;
+			this.tabsMap.set(key, tab);
+		});
+
+		params.groups?.forEach((group) => {
+			const key = group.title;
+			this.groupsMap.set(key, group);
+		});
+
 		params.pages?.forEach((page) => {
 			const key = page.href;
 			this.pagesMap.set(key, page);

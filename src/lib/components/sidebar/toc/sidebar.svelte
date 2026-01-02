@@ -33,6 +33,7 @@
 				observerOptions={{
 					rootMargin: `-${pOffset.top} -${pOffset.left} -${pOffset.bottom} -${pOffset.right}`
 				}}
+				{topOffset}
 				reachedBottomObserverOptions={{
 					threshold: 1.0,
 					rootMargin: '0px 0px -32px 0px'

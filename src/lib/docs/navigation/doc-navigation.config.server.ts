@@ -52,10 +52,36 @@ import type { DocNavigationConfig } from './doc-navigation';
 // };
 
 const docNavigationConfig: DocNavigationConfig = {
-	pages: [
-		{ title: 'Introduction', icon: 'book-open-check', href: '/docs' },
-		{ title: 'Quick Start', icon: 'rocket' }
+	groups: [
+		{
+			title: 'Getting Started',
+			showTitle: false,
+			combineHref: false,
+			pages: [
+				{ title: 'Introduction', icon: 'book-open-check', href: '/docs' },
+				{ title: 'Quick Start', icon: 'rocket' }
+			]
+		},
+		{
+			title: 'Configuration',
+			icon: 'cog',
+			pages: 'auto'
+		},
+		{
+			title: 'Components',
+			icon: 'component',
+			pages: 'auto'
+		},
+		{
+			title: 'Miscellaneous',
+			icon: 'dices',
+			pages: 'auto'
+		}
 	]
 };
+
+// const docNavigationConfig: DocNavigationConfig = {
+// 	pages: 'auto'
+// }
 
 export default docNavigationConfig;

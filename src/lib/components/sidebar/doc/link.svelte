@@ -6,6 +6,7 @@
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
 	import { cn } from '$utils';
 	import { SETTINGS } from '$lib/docs/docs.config';
+	import DynamicIcon from '$components/dynamic-icon';
 
 	type Props = NavItem & HTMLAnchorAttributes;
 
@@ -27,11 +28,12 @@
 		)}
 	>
 		{#if Icon}
-			{#if typeof Icon === 'string'}
+			<DynamicIcon name={Icon} />
+			<!-- {#if typeof Icon === 'string'}
 				<span class="size-4 shrink-0">{Icon}</span>
 			{:else}
 				<Icon class={['size-4 shrink-0', isActive && 'stroke-[2.5]']} />
-			{/if}
+			{/if} -->
 		{/if}
 		{title}
 	</Link>

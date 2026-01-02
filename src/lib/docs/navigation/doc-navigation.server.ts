@@ -36,45 +36,11 @@ function slugify(s: string) {
 	return s.replaceAll(' ', '-').toLowerCase();
 }
 
-function getTabs(tabs: DocTab[] | 'auto') {
-	if (tabs === 'auto') {
-		return [];
-	}
-
-	for (const tab of tabs) {
-		if ('groups' in tab) {
-			// this.loadGroups(tab.groups)
-			continue;
-		}
-
-		// this.loadPages(tab.pages)
-	}
-}
-
-function getGroups(groups: DocGroup[] | 'auto', tab?: DocTab) {
-	if (groups === 'auto') {
-		return [];
-	}
-}
-
-function getPages(pages: DocPage[] | 'auto', group?: DocGroup, tab?: DocTab): Page[] {
-	if (pages === 'auto') {
-		return [];
-	}
-
-	return pages.map((page) => {
-		let href: ResolvedPathname;
-		if (page.href) href = page.href;
-		else {
-			const slugParts: string[] = [];
-			if (tab?.combineHref) slugParts.push(tab.title);
-			if (group?.combineHref) slugParts.push(group.title);
-			slugParts.push(page.title);
-			href = `/docs/${slugify(slugParts.join('/'))}` as ResolvedPathname;
-		}
-
-		return { href, title: page.title };
-	});
+function getTitle(s: string) {
+	return s
+		.split('-')
+		.map((t) => (t.charAt(0) || '').toUpperCase() + t.slice(1))
+		.join(' ');
 }
 
 export function generateDocs(): Params {
@@ -90,10 +56,7 @@ export function generateDocs(): Params {
 				const filename = key.split('/').at(-1);
 				if (!filename) return [];
 
-				const title = filename
-					.split('-')
-					.map((t) => (t.charAt(0) || '').toUpperCase() + t.slice(1))
-					.join(' ');
+				const title = getTitle(filename);
 				const href = `/docs/${slugify(title)}` as ResolvedPathname;
 				return { href, title };
 			});
@@ -103,6 +66,8 @@ export function generateDocs(): Params {
 				return { href, title: p.title, icon: p.icon };
 			});
 		}
+
+		pages.sort((a, b) => a.title.localeCompare(b.title));
 
 		// Set prev/next links across the list
 		for (let i = 0; i < pages.length; i++) {
@@ -127,20 +92,36 @@ export function generateDocs(): Params {
 		for (const group of config.groups) {
 			const groupSlug = slugify(group.title);
 			const pageHrefs: ResolvedPathname[] = [];
+			const folderName = group.folderPath ?? slugify(group.title);
 
 			if (group.pages === 'auto') {
-				return {};
+				const mdKeys = Object.keys(markdown).filter((key) => {
+					const groupname = key.split('/').at(-2);
+					return groupname === folderName;
+				});
+
+				mdKeys.forEach((key) => {
+					const filename = key.split('/').at(-1);
+					if (!filename) return;
+
+					const pageTitle = getTitle(filename);
+					const href = `/docs/${slugify(group.title)}/${slugify(pageTitle)}` as ResolvedPathname;
+
+					pages.push({ href, title: pageTitle, group: group.title });
+					pageHrefs.push(href);
+				});
+			} else {
+				for (const page of group.pages) {
+					const pageSlug = slugify(page.title);
+					const prefix = group.combineHref === false ? '' : `${groupSlug}/`;
+					const href = (page.href ?? `/docs/${prefix}${pageSlug}`) as ResolvedPathname;
+
+					pages.push({ href, title: page.title, group: group.title, icon: page.icon });
+					pageHrefs.push(href);
+				}
 			}
 
-			for (const page of group.pages) {
-				const pageSlug = slugify(page.title);
-				const prefix = group.combineHref === false ? '' : `${groupSlug}/`;
-				const href = (page.href ?? `/docs/${prefix}${pageSlug}`) as ResolvedPathname;
-				pageHrefs.push(href);
-				pages.push({ href, title: page.title, group: group.title, icon: page.icon });
-			}
-
-			groups.push({ title: group.title, icon: group.icon, pageHrefs });
+			groups.push({ title: group.title, icon: group.icon, pageHrefs, show: group.showTitle });
 		}
 
 		// Set prev/next links across the list

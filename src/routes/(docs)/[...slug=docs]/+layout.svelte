@@ -8,11 +8,19 @@
 
 	let { data, children } = $props();
 
-	const docNavigationContext = $derived(setDocNavigationContext(data.docNavigation));
+	const docNavigationContext = setDocNavigationContext(data.docNavigation);
 </script>
+
+<!-- {JSON.stringify(docNavigationContext.currentItem)}
+{JSON.stringify(docNavigationContext.data)} -->
 
 <SearchDialog.Provider
 	onContextInit={(ctx) => {
+		data.docNavigation.pages?.forEach((page) => {
+			const group = page.group ?? '';
+			const fullTitle = page.title;
+			// ctx.addItem({ href: page.href, group: page.group ?? '', title})
+		});
 		// const keys = NavMap.keys();
 		// keys.forEach((key) => {
 		// 	const value = NavMap.get(key);

@@ -6,7 +6,7 @@ import { resolve } from '$app/paths';
 
 export const prerender = false;
 
-export const load: PageLoad = async ({ fetch, params }) => {
+export const load: PageLoad = async ({ fetch, params, parent }) => {
 	// load navmap if it is not already loaded
 	if (NavMap.size <= 0) {
 		try {
