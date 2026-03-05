@@ -1,0 +1,21 @@
+<script lang="ts">
+	import type { HTMLAttributes } from 'svelte/elements';
+	import type { WithElementRef } from 'bits-ui';
+	import { cn } from '$utils';
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-slot="sidebar-header"
+	class={cn('bg-card flex flex-col gap-8 px-2 pt-2', className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>

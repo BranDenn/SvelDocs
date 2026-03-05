@@ -6,11 +6,11 @@
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
 	import { cn } from '$utils';
 	import { SETTINGS } from '$lib/docs/docs.config';
-	import DynamicIcon from '$components/dynamic-icon';
+	import Icon from '$components/icon';
 
 	type Props = NavItem & HTMLAnchorAttributes;
 
-	let { title, href, icon: Icon, class: className }: Props = $props();
+	let { title, href, icon: iconValue, class: className }: Props = $props();
 
 	let isActive: boolean = $derived(page.url.pathname === resolve(`/${href}`));
 </script>
@@ -23,12 +23,16 @@
 			isActive
 				? 'text-accent bg-accent/5 font-bold'
 				: 'text-muted-foreground hover:text-foreground hover:bg-foreground/5 font-medium',
-			Icon && 'flex items-center gap-2',
+			iconValue && 'flex items-center gap-2',
 			className
 		)}
 	>
-		{#if Icon}
-			<DynamicIcon name={Icon} />
+		{#if iconValue}
+			{#if typeof iconValue === 'string'}
+				<Icon name={iconValue} />
+			{:else}
+				<iconValue class={['size-4 shrink-0', isActive && 'stroke-[2.5]']}></iconValue>
+			{/if}
 			<!-- {#if typeof Icon === 'string'}
 				<span class="size-4 shrink-0">{Icon}</span>
 			{:else}
@@ -45,15 +49,15 @@
 			isActive
 				? 'text-accent border-accent pl-6 font-bold'
 				: 'text-muted-foreground hover:text-foreground hover:border-foreground font-medium',
-			Icon && 'flex items-center gap-2',
+			iconValue && 'flex items-center gap-2',
 			className
 		)}
 	>
-		{#if Icon}
-			{#if typeof Icon === 'string'}
-				<span class="size-4 shrink-0">{Icon}</span>
+		{#if iconValue}
+			{#if typeof iconValue === 'string'}
+				<Icon name={iconValue} />
 			{:else}
-				<Icon class={['size-4 shrink-0', isActive && 'stroke-[2.5]']} />
+				<iconValue class={['size-4 shrink-0', isActive && 'stroke-[2.5]']}></iconValue>
 			{/if}
 		{/if}
 		{title}

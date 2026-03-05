@@ -6,6 +6,7 @@
 		ast: {
 			children?: Array<Record<string, unknown>>;
 		};
+		title?: string;
 		metadata: {
 			title?: string;
 			description?: string;
@@ -17,7 +18,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.metadata.title ?? data.slug}</title>
+	<title>{data.metadata.title ?? data.title ?? data.slug}</title>
 	{#if data.metadata.description}
 		<meta name="description" content={data.metadata.description} />
 	{/if}
@@ -25,6 +26,6 @@
 
 <article class="prose mx-auto w-full max-w-3xl p-6">
 	{#each data.ast.children ?? [] as node, i (`node-${i}`)}
-		<BlueprintRenderer node={node} />
+		<BlueprintRenderer {node} />
 	{/each}
 </article>

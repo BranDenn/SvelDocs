@@ -6,5 +6,7 @@ export const entries: EntryGenerator = () => {
 };
 
 export const load: PageServerLoad = async ({ params, locals }) => {
-	return loadDocAst(params.slug, locals);
+	const d = await loadDocAst(params.slug, locals);
+	console.log(d);
+	return d;
 };

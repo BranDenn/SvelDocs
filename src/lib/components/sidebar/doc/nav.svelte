@@ -13,21 +13,25 @@
 		type Page,
 		type GroupedPages
 	} from '$lib/docs/navigation/doc-navigation-context.svelte';
-	import DynamicIcon from '$components/dynamic-icon';
+	import Icon from '$components/icon';
 
 	let { class: className }: { class?: ClassValue } = $props();
 
 	const docNavigationContext = getDocNavigationContext();
 </script>
 
-{#snippet group(title: string, Icon?: Component | string)}
-	{#if Icon}
+{#snippet group(title: string, iconValue?: Component | string)}
+	{#if iconValue}
 		<!-- {#if typeof Icon === 'string'}
 			<span class="size-4 shrink-0">{Icon}</span>
 		{:else}
 			<Icon class="size-4 shrink-0" />
 		{/if} -->
-		<DynamicIcon name={Icon} />
+		{#if typeof iconValue === 'string'}
+			<Icon name={iconValue} />
+		{:else}
+			<iconValue class="size-4 shrink-0"></iconValue>
+		{/if}
 	{/if}
 	{title}
 {/snippet}

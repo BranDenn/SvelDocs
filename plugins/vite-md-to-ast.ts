@@ -1,6 +1,6 @@
 import matter from 'gray-matter';
 import type { PluginOption } from 'vite';
-import { unified, type Pluggable } from 'unified';
+import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
 import remarkRehype, { type Options as RemarkRehypeOptions } from 'remark-rehype';
@@ -10,15 +10,25 @@ type RehypeNode = { type: string; children?: RehypeNode[]; [key: string]: unknow
 
 const MDX_PASS_THROUGH = ['mdxJsxFlowElement', 'mdxJsxTextElement'];
 
-function usePlugins(processor: ReturnType<typeof unified>, plugins: unknown[] | undefined) {
+function usePlugins(processor: any, plugins: unknown[] | undefined) {
 	plugins?.forEach((plugin) => {
 		if (Array.isArray(plugin)) {
-			processor.use(plugin[0] as Pluggable, plugin[1] as Record<string, unknown>);
+			processor.use(plugin[0], plugin[1]);
 			return;
 		}
 
-		processor.use(plugin as Pluggable);
+		processor.use(plugin);
 	});
+}
+
+function parseId(id: string) {
+	const [filepath, query = ''] = id.split('?', 2);
+	const queryParams = new URLSearchParams(query);
+
+	return {
+		filepath,
+		queryParams
+	};
 }
 
 function getRemarkRehypeOptions(plugins: unknown[] | undefined): RemarkRehypeOptions {
@@ -38,8 +48,15 @@ function getRemarkRehypeOptions(plugins: unknown[] | undefined): RemarkRehypeOpt
 export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 	return {
 		name: 'vite-plugin-md-to-ast',
+		enforce: 'pre',
 		async transform(code, id) {
-			if (!markdownConfig.extensions.some((ext) => id.endsWith(ext))) {
+			const { filepath, queryParams } = parseId(id);
+
+			if (!markdownConfig.extensions.some((ext) => filepath.endsWith(ext))) {
+				return null;
+			}
+
+			if (queryParams.has('raw') || queryParams.has('url')) {
 				return null;
 			}
 
@@ -56,10 +73,10 @@ export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 				new Set([...(configuredBridgeOptions.passThrough ?? []), ...MDX_PASS_THROUGH])
 			);
 
-			const processor = unified().use(remarkParse).use(remarkMdx);
+			const processor = unified().use(remarkParse).use(remarkMdx) as any;
 
 			usePlugins(processor, remarkPluginsWithoutBridge);
-			processor.use(remarkRehype, {
+			processor.use(remarkRehype as any, {
 				...configuredBridgeOptions,
 				passThrough
 			});
