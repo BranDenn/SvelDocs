@@ -15,5 +15,5 @@
 <ModeWatcher defaultMode="dark" />
 
 <Tooltip.Provider delayDuration={150} disableCloseOnTriggerClick={true}>
-	{@render children()}
+	{@render children?.()}
 </Tooltip.Provider>

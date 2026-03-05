@@ -1,11 +1,18 @@
-import type { RequestHandler, EntryGenerator } from './$types';
+import type { EntryGenerator, RequestHandler } from './$types';
+import { getPublicDocEntries, loadDocAst } from '$lib/server/content/docs-loader';
 
 export const prerender = true;
 
-export const GET: RequestHandler = async ({ params }) => {
-    return new Response(params.slug, {
+export const entries: EntryGenerator = () => {
+	return getPublicDocEntries();
+};
+
+export const GET: RequestHandler = async ({ params, locals }) => {
+	const doc = await loadDocAst(params.slug, locals);
+
+	return new Response(JSON.stringify(doc), {
 		headers: {
-			'Content-Type': 'text/plain; charset=utf-8'
+			'Content-Type': 'application/json; charset=utf-8'
 		}
 	});
-}
+};
