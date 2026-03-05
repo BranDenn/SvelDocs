@@ -5,10 +5,10 @@
 		variants: {
 			variant: {
 				default:
-					'text-muted-foreground hover:bg-muted hover:text-foreground data-[active=true]:bg-primary data-[active=true]:text-card'
+					'text-muted-foreground hover:bg-primary hover:text-foreground data-[active=true]:bg-accent/10 data-[active=true]:text-foreground'
 			},
 			size: {
-				default: 'px-2 py-1.5 text-sm'
+				default: 'px-3 py-1.5 text-sm'
 			}
 		},
 		defaultVariants: {

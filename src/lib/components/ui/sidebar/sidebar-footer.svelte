@@ -13,7 +13,7 @@
 
 <div
 	bind:this={ref}
-	data-slot="sidebar-header"
+	data-slot="sidebar-footer"
 	class={cn('flex flex-col gap-8 px-2 pt-2', className)}
 	{...restProps}
 >

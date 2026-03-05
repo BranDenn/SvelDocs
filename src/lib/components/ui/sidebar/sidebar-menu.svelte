@@ -13,7 +13,7 @@
 	}: WithElementRef<HTMLAttributes<HTMLUListElement>, HTMLUListElement> = $props();
 
 	const mergedProps = $derived({
-		class: cn('flex w-full min-w-0 flex-col gap-1', className),
+		class: cn('flex w-full min-w-0 flex-col gap-px', className),
 		'data-slot': 'sidebar-menu',
 		...restProps
 	});

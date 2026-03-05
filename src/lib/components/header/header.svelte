@@ -12,9 +12,16 @@
 		icon?: string;
 	};
 
-	let { tabs = [] }: { tabs?: HeaderTab[] } = $props();
+	let {
+		tabs = [],
+		activeTabHref = null
+	}: { tabs?: HeaderTab[]; activeTabHref?: string | null } = $props();
 
 	function isTabActive(tabHref: string) {
+		if (activeTabHref) {
+			return tabHref === activeTabHref;
+		}
+
 		return page.url.pathname === tabHref || page.url.pathname.startsWith(`${tabHref}/`);
 	}
 </script>
@@ -29,7 +36,7 @@
 	<!-- Mobile & Tab navigation -->
 	<div
 		class={cn(
-			'h-header container box-content flex items-center border-t px-4 sm:box-border sm:border-none',
+			'h-header container box-content gap-4 flex items-center border-t px-4 sm:box-border sm:border-none',
 			tabs.length === 0 && 'lg:-mt-header transition-[margin] duration-300'
 		)}
 	>

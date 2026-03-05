@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { cn } from '$utils';
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import type { Snippet } from 'svelte';
 	import { Trigger as CollapsibleTrigger } from '../collapsible/index';
 	import { getSidebarGroupCollapsibleContext } from './sidebar-group-collapsible-context';
@@ -20,9 +21,7 @@
 
 	const mergedProps = $derived({
 		class: cn(
-			'flex items-center gap-2 px-2 text-xs font-medium tracking-wide text-muted-foreground [&>svg]:size-4 [&>svg]:shrink-0',
-			'transition-[opacity,margin]',
-			'group-data-[open=false]/sidebar:-mt-6 group-data-[open=false]/sidebar:opacity-0',
+			'group/sidebar-group-label flex items-center gap-2 px-2 text-xs font-medium tracking-wide text-muted-foreground [&>svg]:size-3.5 [&>svg]:shrink-0',
 			className
 		),
 		'data-slot': 'sidebar-group-label',
@@ -37,6 +36,9 @@
 {#if isCollapsible}
 	<CollapsibleTrigger bind:ref {...mergedProps}>
 		{@render children?.()}
+		<ChevronDown
+			class="ml-auto text-muted-foreground transition-[rotate] group-data-[state=closed]/sidebar-group-label:-rotate-90"
+		/>
 	</CollapsibleTrigger>
 {:else if child}
 	{@render child({ props: mergedProps })}

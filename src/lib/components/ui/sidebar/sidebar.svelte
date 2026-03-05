@@ -16,16 +16,10 @@
 <aside
 	bind:this={ref}
 	data-slot="sidebar"
-	class={cn('scrollbar-thin sticky top-0 h-dvh shrink-0 overflow-x-hidden', className)}
+	class={cn('scrollbar-thin z-30 sticky top-0 h-dvh shrink-0 overflow-x-hidden', className)}
 	{...restProps}
 >
 	<div class="flex min-h-full w-64 flex-col transition-[width]">
-		<div
-			class="from-background pointer-events-none sticky top-0 z-10 h-4 shrink-0 bg-linear-to-b"
-		></div>
 		{@render children?.()}
-		<div
-			class="from-background pointer-events-none sticky bottom-0 z-10 h-4 shrink-0 bg-linear-to-t"
-		></div>
 	</div>
 </aside>

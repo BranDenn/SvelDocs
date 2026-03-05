@@ -4,7 +4,8 @@ import type {
 	DocNavigationConfig,
 	DocGroup,
 	DocPage,
-	DocTab
+	DocTab,
+	PageItems
 } from '$lib/server/navigation/define-doc-navigation';
 
 type DocModule = {
@@ -16,10 +17,7 @@ type DocModule = {
 	};
 };
 
-const publicDocModules = import.meta.glob('/src/lib/content/**/*.{md,mdx}', {
-	eager: true
-}) as Partial<Record<string, DocModule>>;
-const privateDocModules = import.meta.glob('/src/lib/server/content/**/*.{md,mdx}', {
+const docModules = import.meta.glob('/content/**/*.{md,mdx}', {
 	eager: true
 }) as Partial<Record<string, DocModule>>;
 
@@ -28,7 +26,88 @@ type DocEntry = {
 	fileBasePath: string;
 	title: string;
 	tabTitle?: string;
+	groupTitle?: string;
 };
+
+/**
+ * Extracts metadata from a DocModule
+ */
+function getModuleMetadata(module: DocModule): Record<string, unknown> {
+	return module.metadata || module.default?.metadata || {};
+}
+
+/**
+ * Gets the title from module metadata or a fallback based on the file path
+ */
+function getTitleFromModule(module: DocModule, fallbackTitle: string): string {
+	const metadata = getModuleMetadata(module);
+	if (metadata.title && typeof metadata.title === 'string') {
+		return metadata.title;
+	}
+	return fallbackTitle;
+}
+
+/**
+ * Finds all markdown files in a given folder and returns as DocPage objects,
+ * excluding any files that are already defined in the explicitPages array.
+ */
+function expandLoadRest(
+	folderPath: string,
+	explicitPages: DocPage[],
+	tab?: DocTab,
+	group?: DocGroup
+): DocPage[] {
+	const explicitFileNames = new Set(
+		explicitPages.map((page) => normalizeFileName(page).toLowerCase())
+	);
+
+	const moduleEntries = Object.entries(docModules);
+	const matchingFiles = new Map<string, DocModule>();
+
+	// Build path segments to match against
+	const pathSegments = resolveFolderSegments(tab, group);
+
+	for (const [path, module] of moduleEntries) {
+		if (!module) continue;
+
+		// Check if the path contains the folder we're looking for
+		if (pathSegments.length === 0) {
+			continue; // Skip if no folder segments (would match everything)
+		}
+
+		const pathCheck = pathSegments.every((segment) => path.includes(segment));
+		if (!pathCheck) continue;
+
+		// Extract the file name from the path
+		const fileName = path.split('/').pop()?.replace(/\.(md|mdx)$/, '').toLowerCase() || '';
+
+		// Skip files already explicitly defined
+		if (explicitFileNames.has(fileName)) {
+			continue;
+		}
+
+		// Skip index files (handled separately)
+		if (fileName === 'index') {
+			continue;
+		}
+
+		matchingFiles.set(fileName, module);
+	}
+
+	// Convert to DocPage objects, sorted by filename
+	return Array.from(matchingFiles.entries())
+		.sort(([a], [b]) => a.localeCompare(b))
+		.map(([fileName, module]) => {
+			const metadata = getModuleMetadata(module);
+			const title = getTitleFromModule(module, normalizeSegment(fileName));
+
+			return {
+				title,
+				icon: metadata.icon as string | undefined,
+				fileName: `${fileName}.md`
+			};
+		});
+}
 
 export type DocTabLink = {
 	title: string;
@@ -131,7 +210,8 @@ function addEntry(entries: DocEntry[], page: DocPage, tab?: DocTab, group?: DocG
 		slug,
 		fileBasePath,
 		title: page.title,
-		tabTitle: tab?.title
+		tabTitle: tab?.title,
+		groupTitle: group?.title
 	});
 }
 
@@ -152,7 +232,24 @@ function resolveTabHref(tab: DocTab): string {
 function addGroupEntries(entries: DocEntry[], group: DocGroup, tab?: DocTab) {
 	if (group.pages === 'auto') return;
 
-	for (const page of group.pages) {
+	const explicitPages: DocPage[] = [];
+	let hasLoadRest = false;
+
+	for (const item of group.pages) {
+		if (item === 'loadRest') {
+			hasLoadRest = true;
+		} else {
+			explicitPages.push(item);
+		}
+	}
+
+	const allPages = [...explicitPages];
+	if (hasLoadRest) {
+		const loadedPages = expandLoadRest(group.folderPath || '', explicitPages, tab, group);
+		allPages.push(...loadedPages);
+	}
+
+	for (const page of allPages) {
 		addEntry(entries, page, tab, group);
 	}
 }
@@ -165,7 +262,24 @@ function addTabEntries(entries: DocEntry[], tab: DocTab) {
 	}
 
 	if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
-		for (const page of tab.pages) {
+		const explicitPages: DocPage[] = [];
+		let hasLoadRest = false;
+
+		for (const item of tab.pages) {
+			if (item === 'loadRest') {
+				hasLoadRest = true;
+			} else {
+				explicitPages.push(item);
+			}
+		}
+
+		const allPages = [...explicitPages];
+		if (hasLoadRest) {
+			const loadedPages = expandLoadRest(tab.folderPath || '', explicitPages, tab);
+			allPages.push(...loadedPages);
+		}
+
+		for (const page of allPages) {
 			addEntry(entries, page, tab);
 		}
 	}
@@ -197,29 +311,9 @@ function collectDocEntries(config: DocNavigationConfig): DocEntry[] {
 }
 
 function findModuleByBasePath(fileBasePath: string) {
-	const publicRoot = `/src/lib/content/${fileBasePath}`;
-	for (const candidate of getCandidates(publicRoot)) {
-		const module = publicDocModules[candidate];
-		if (module) {
-			return { module, access: 'public' as const };
-		}
-	}
-
-	const privateRoot = `/src/lib/server/content/${fileBasePath}`;
-	for (const candidate of getCandidates(privateRoot)) {
-		const module = privateDocModules[candidate];
-		if (module) {
-			return { module, access: 'private' as const };
-		}
-	}
-
-	return null;
-}
-
-function findPublicModuleByBasePath(fileBasePath: string) {
-	const publicRoot = `/src/lib/content/${fileBasePath}`;
-	for (const candidate of getCandidates(publicRoot)) {
-		const module = publicDocModules[candidate];
+	const root = `/content/${fileBasePath}`;
+	for (const candidate of getCandidates(root)) {
+		const module = docModules[candidate];
 		if (module) {
 			return module;
 		}
@@ -228,17 +322,97 @@ function findPublicModuleByBasePath(fileBasePath: string) {
 	return null;
 }
 
+/**
+ * Determines if a page is private based on cascading rules:
+ * 1. If page.private is explicitly set, use that value
+ * 2. Otherwise, if group.private is explicitly set, use that value
+ * 3. Otherwise, if tab.private is explicitly set, use that value
+ * 4. Otherwise, default to false (public)
+ */
+function isPagePrivate(page: DocPage, group?: DocGroup, tab?: DocTab): boolean {
+	if (page.private !== undefined) {
+		return page.private;
+	}
+	if (group?.private !== undefined) {
+		return group.private;
+	}
+	if (tab?.private !== undefined) {
+		return tab.private;
+	}
+	return false;
+}
+
+/**
+ * Finds the tab and group configs for a given entry from docNavigationConfig
+ */
+function findTabAndGroup(
+	entry: DocEntry
+): { tab?: DocTab; group?: DocGroup } {
+	if (!('tabs' in docNavigationConfig) || !docNavigationConfig.tabs || docNavigationConfig.tabs === 'auto') {
+		return {};
+	}
+
+	const tabs = docNavigationConfig.tabs;
+	const tab = tabs.find((t) => t.title === entry.tabTitle);
+
+	if (!tab) {
+		return {};
+	}
+
+	if (!('groups' in tab) || !tab.groups || tab.groups === 'auto') {
+		return { tab };
+	}
+
+	const group = tab.groups.find((g) => g.title === entry.groupTitle);
+	return { tab, group };
+}
+
+/**
+ * Checks if an entry is private by looking up its configuration
+ * This accounts for the cascading private property:
+ * 1. Check markdown file metadata first
+ * 2. Then check page-level config
+ * 3. Then check group-level config
+ * 4. Finally check tab-level config
+ */
+function isEntryPrivate(entry: DocEntry): boolean {
+	// First check the markdown file's metadata
+	const module = findModuleByBasePath(entry.fileBasePath);
+	if (module) {
+		const metadata = getModuleMetadata(module);
+		if (metadata.private !== undefined) {
+			return Boolean(metadata.private);
+		}
+	}
+
+	const { tab, group } = findTabAndGroup(entry);
+
+	// Then check the tab and group
+	if (group?.private !== undefined) {
+		return group.private;
+	}
+	if (tab?.private !== undefined) {
+		return tab.private;
+	}
+	return false;
+}
+
 const docEntries = collectDocEntries(docNavigationConfig);
 const docEntriesBySlug = new Map(docEntries.map((entry) => [entry.slug, entry]));
 
 function isAuthenticated(locals: unknown): boolean {
 	if (!locals || typeof locals !== 'object') return false;
-	return Boolean((locals as Record<string, unknown>).user);
+	const localObj = locals as Record<string, unknown>;
+	return Boolean(localObj.user) || Boolean(localObj.emulated);
 }
 
 export function getPublicDocEntries() {
 	return docEntries
-		.filter((entry) => findPublicModuleByBasePath(entry.fileBasePath))
+		.filter((entry) => {
+			const module = findModuleByBasePath(entry.fileBasePath);
+			if (!module) return false;
+			return !isEntryPrivate(entry);
+		})
 		.map((entry) => ({ slug: entry.slug }));
 }
 
@@ -265,13 +439,13 @@ export function getDocTabs(): DocTabLink[] {
 
 function isPageAccessible(page: DocPage, locals: unknown, tab?: DocTab, group?: DocGroup): boolean {
 	const fileBasePath = resolveFileBasePath(page, tab, group);
-	const match = findModuleByBasePath(fileBasePath);
+	const module = findModuleByBasePath(fileBasePath);
 
-	if (!match) {
+	if (!module) {
 		return false;
 	}
 
-	if (match.access === 'private' && !isAuthenticated(locals)) {
+	if (isPagePrivate(page, group, tab) && !isAuthenticated(locals)) {
 		return false;
 	}
 
@@ -293,19 +467,43 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 	if ('groups' in tab && tab.groups && tab.groups !== 'auto') {
 		const groups: DocSidebarGroup[] = tab.groups
 			.map((group) => {
-				const pages =
-					group.pages === 'auto'
-						? []
-						: group.pages
-								.filter((page) => isPageAccessible(page, locals, tab, group))
-								.map((page) => mapSidebarPage(page, tab, group));
+				let pages: DocPage[] = [];
+
+				if (group.pages !== 'auto') {
+					const explicitPages: DocPage[] = [];
+					let hasLoadRest = false;
+
+					for (const item of group.pages) {
+						if (item === 'loadRest') {
+							hasLoadRest = true;
+						} else {
+							explicitPages.push(item);
+						}
+					}
+
+					pages.push(...explicitPages);
+
+					if (hasLoadRest) {
+						const loadedPages = expandLoadRest(
+							group.folderPath || '',
+							explicitPages,
+							tab,
+							group
+						);
+						pages.push(...loadedPages);
+					}
+				}
+
+				const sidebarPages = pages
+					.filter((page) => isPageAccessible(page, locals, tab, group))
+					.map((page) => mapSidebarPage(page, tab, group));
 
 				return {
 					title: group.title,
 					showTitle: group.showTitle !== false,
 					collapsible: group.collapsible !== false,
 					icon: group.icon,
-					pages
+				pages: sidebarPages
 				};
 			})
 			.filter((group) => group.pages.length > 0);
@@ -319,19 +517,38 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 		};
 	}
 
-	const pages: DocSidebarPage[] =
-		'pages' in tab && tab.pages && tab.pages !== 'auto'
-			? tab.pages
-					.filter((page) => isPageAccessible(page, locals, tab))
-					.map((page) => mapSidebarPage(page, tab))
-			: [];
+	let pages: DocPage[] = [];
+
+	if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
+		const explicitPages: DocPage[] = [];
+		let hasLoadRest = false;
+
+		for (const item of tab.pages) {
+			if (item === 'loadRest') {
+				hasLoadRest = true;
+			} else {
+				explicitPages.push(item);
+			}
+		}
+
+		pages.push(...explicitPages);
+
+		if (hasLoadRest) {
+			const loadedPages = expandLoadRest(tab.folderPath || '', explicitPages, tab);
+			pages.push(...loadedPages);
+		}
+	}
+
+	const sidebarPages: DocSidebarPage[] = pages
+		.filter((page) => isPageAccessible(page, locals, tab))
+		.map((page) => mapSidebarPage(page, tab));
 
 	return {
 		title: tab.title,
 		href: tabHref,
 		icon: tab.icon,
 		mode: 'page',
-		data: pages
+		data: sidebarPages
 	};
 }
 
@@ -354,7 +571,7 @@ export function getDocSidebarTabs(locals: unknown): DocSidebarTab[] {
 		);
 }
 
-export async function loadDocAst(slugParam: string, locals: unknown) {
+export async function loadDocAst(slugParam: string) {
 	const normalizedSlug = normalizeRouteSlug(slugParam);
 	const docEntry = docEntriesBySlug.get(normalizedSlug);
 
@@ -362,17 +579,12 @@ export async function loadDocAst(slugParam: string, locals: unknown) {
 		throw error(404, 'Document not found');
 	}
 
-	const match = findModuleByBasePath(docEntry.fileBasePath);
+	const module = findModuleByBasePath(docEntry.fileBasePath);
 
-	if (!match) {
+	if (!module) {
 		throw error(404, 'Document not found');
 	}
 
-	if (match.access === 'private' && !isAuthenticated(locals)) {
-		throw error(401, 'Unauthorized');
-	}
-
-	const module = match.module;
 	const payload =
 		module.default && typeof module.default === 'object'
 			? module.default
@@ -384,11 +596,14 @@ export async function loadDocAst(slugParam: string, locals: unknown) {
 		throw error(500, 'Document AST was not generated');
 	}
 
+	const isPrivate = isEntryPrivate(docEntry);
+
 	return {
 		ast,
 		metadata,
 		slug: docEntry.slug,
 		title: docEntry.title,
-		access: match.access
+		groupTitle: docEntry.groupTitle,
+		access: isPrivate ? 'private' : 'public'
 	};
 }

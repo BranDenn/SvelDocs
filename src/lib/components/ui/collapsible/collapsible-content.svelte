@@ -14,7 +14,7 @@
 	hiddenUntilFound
 	data-slot="collapsible-content"
 	class={cn(
-		'data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down space-y-2 overflow-hidden',
+		'data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden',
 		className
 	)}
 	{...restProps}
