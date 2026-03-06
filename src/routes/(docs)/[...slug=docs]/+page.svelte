@@ -8,6 +8,7 @@
 	import { page } from '$app/state';
 	import { Link } from '$ui/link';
 	import BlueprintRenderer from '$lib/markdown/BlueprintRenderer.svelte';
+	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
 
 	type PageData = {
 		ast: {
@@ -16,22 +17,23 @@
 		metadata: Record<string, unknown>;
 		slug: string;
 		title: string;
-		groupTitle?: string;
 		access: 'public' | 'private';
 	};
 
 	let { data }: { data: PageData } = $props();
+
+	const docNavigation = getDocNavigationContext();
 </script>
 
-<SEO 
-	title={String(data.metadata.title ?? data.title)} 
-	description={String(data.metadata.description ?? '')} 
-	type="article" 
+<SEO
+	title={String(data.metadata.title ?? data.title)}
+	description={String(data.metadata.description ?? '')}
+	type="article"
 />
 
 <header class="flex flex-col items-start gap-2">
-	{#if data.groupTitle}
-		<span class="text-sm font-medium text-accent">{data.groupTitle}</span>
+	{#if docNavigation.currentGroup}
+		<span class="text-accent text-sm font-medium">{docNavigation.currentGroup.title}</span>
 	{/if}
 	<h1 class="text-3xl font-extrabold sm:text-4xl">{data.title}</h1>
 	{#if data.metadata.description}

@@ -2,27 +2,14 @@
 	// import MobileNav from './mobile-nav.svelte';
 	// import Nav from './nav.svelte';
 	import Logo from './logo.svelte';
-	import { page } from '$app/state';
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
+	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
 
-	type HeaderTab = {
-		title: string;
-		href: string;
-		icon?: string;
-	};
-
-	let {
-		tabs = [],
-		activeTabHref = null
-	}: { tabs?: HeaderTab[]; activeTabHref?: string | null } = $props();
+	const docNavigation = getDocNavigationContext();
 
 	function isTabActive(tabHref: string) {
-		if (activeTabHref) {
-			return tabHref === activeTabHref;
-		}
-
-		return page.url.pathname === tabHref || page.url.pathname.startsWith(`${tabHref}/`);
+		return docNavigation.currentTab?.href === tabHref;
 	}
 </script>
 
@@ -36,12 +23,12 @@
 	<!-- Mobile & Tab navigation -->
 	<div
 		class={cn(
-			'h-header container box-content gap-4 flex items-center border-t px-4 sm:box-border sm:border-none',
-			tabs.length === 0 && 'lg:-mt-header transition-[margin] duration-300'
+			'h-header container box-content flex items-center gap-4 border-t px-4 sm:box-border sm:border-none',
+			docNavigation.tabs.length === 0 && 'lg:-mt-header transition-[margin] duration-300'
 		)}
 	>
-		{#if tabs.length > 0}
-			{#each tabs as tab (tab.title)}
+		{#if docNavigation.tabs.length > 0}
+			{#each docNavigation.tabs as tab (tab.id)}
 				{@const active = isTabActive(tab.href)}
 				<a
 					href={tab.href}

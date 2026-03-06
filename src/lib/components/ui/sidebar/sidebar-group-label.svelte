@@ -21,7 +21,7 @@
 
 	const mergedProps = $derived({
 		class: cn(
-			'group/sidebar-group-label flex items-center gap-2 px-2 text-xs font-medium tracking-wide text-muted-foreground [&>svg]:size-3.5 [&>svg]:shrink-0',
+			'group/sidebar-group-label flex items-center gap-2 p-2 text-xs font-medium tracking-wider text-muted-foreground [&>svg]:size-3.5 [&>svg]:shrink-0',
 			className
 		),
 		'data-slot': 'sidebar-group-label',
@@ -31,13 +31,21 @@
 
 	const sidebar = getSidebarGroupCollapsibleContext();
 	const isCollapsible = !!sidebar?.isCollapsible;
+
+	const collapsibleProps = $derived.by(() => {
+		if (!isCollapsible) return mergedProps;
+		return {
+			...mergedProps,
+			class: cn(mergedProps.class, 'hover:text-foreground transition-[color]')
+		};
+	});
 </script>
 
 {#if isCollapsible}
-	<CollapsibleTrigger bind:ref {...mergedProps}>
+	<CollapsibleTrigger bind:ref {...collapsibleProps}>
 		{@render children?.()}
 		<ChevronDown
-			class="ml-auto text-muted-foreground transition-[rotate] group-data-[state=closed]/sidebar-group-label:-rotate-90"
+			class=" ml-auto transition-[rotate] group-data-[state=closed]/sidebar-group-label:-rotate-90"
 		/>
 	</CollapsibleTrigger>
 {:else if child}

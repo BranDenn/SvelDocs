@@ -16,7 +16,7 @@
 <aside
 	bind:this={ref}
 	data-slot="sidebar"
-	class={cn('scrollbar-thin z-30 sticky top-0 h-dvh shrink-0 overflow-x-hidden', className)}
+	class={cn('scrollbar-thin sticky top-0 z-30 h-dvh shrink-0 overflow-x-hidden', className)}
 	{...restProps}
 >
 	<div class="flex min-h-full w-64 flex-col transition-[width]">

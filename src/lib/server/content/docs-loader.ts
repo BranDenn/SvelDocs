@@ -4,9 +4,9 @@ import type {
 	DocNavigationConfig,
 	DocGroup,
 	DocPage,
-	DocTab,
-	PageItems
+	DocTab
 } from '$lib/server/navigation/define-doc-navigation';
+import type { DocNavigationParams } from '$lib/doc-navigation-context.svelte';
 
 type DocModule = {
 	ast?: unknown;
@@ -79,7 +79,12 @@ function expandLoadRest(
 		if (!pathCheck) continue;
 
 		// Extract the file name from the path
-		const fileName = path.split('/').pop()?.replace(/\.(md|mdx)$/, '').toLowerCase() || '';
+		const fileName =
+			path
+				.split('/')
+				.pop()
+				?.replace(/\.(md|mdx)$/, '')
+				.toLowerCase() || '';
 
 		// Skip files already explicitly defined
 		if (explicitFileNames.has(fileName)) {
@@ -99,7 +104,7 @@ function expandLoadRest(
 		.sort(([a], [b]) => a.localeCompare(b))
 		.map(([fileName, module]) => {
 			const metadata = getModuleMetadata(module);
-			const title = getTitleFromModule(module, normalizeSegment(fileName));
+			const title = getTitleFromModule(module, formatFileNameAsTitle(fileName));
 
 			return {
 				title,
@@ -144,6 +149,13 @@ function normalizeSegment(value: string): string {
 		.replaceAll(/[^a-z0-9\s-]/g, '')
 		.replaceAll(/\s+/g, '-')
 		.replaceAll(/-+/g, '-');
+}
+
+function formatFileNameAsTitle(fileName: string): string {
+	return fileName
+		.replaceAll(/[-_]/g, ' ') // Replace dashes and underscores with spaces
+		.replace(/^./, (char) => char.toUpperCase()) // Capitalize first letter
+		.replace(/\s+(.)/g, (_, char) => ` ${char.toUpperCase()}`); // Capitalize after spaces
 }
 
 function trimSlashes(value: string | null | undefined): string {
@@ -261,7 +273,13 @@ function addTabEntries(entries: DocEntry[], tab: DocTab) {
 		}
 	}
 
-	if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
+	if ('pages' in tab && tab.pages === 'auto') {
+		// Auto-load all pages from the tab folder when pages === 'auto'
+		const loadedPages = expandLoadRest(tab.folderPath || '', [], tab);
+		for (const page of loadedPages) {
+			addEntry(entries, page, tab);
+		}
+	} else if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
 		const explicitPages: DocPage[] = [];
 		let hasLoadRest = false;
 
@@ -345,10 +363,12 @@ function isPagePrivate(page: DocPage, group?: DocGroup, tab?: DocTab): boolean {
 /**
  * Finds the tab and group configs for a given entry from docNavigationConfig
  */
-function findTabAndGroup(
-	entry: DocEntry
-): { tab?: DocTab; group?: DocGroup } {
-	if (!('tabs' in docNavigationConfig) || !docNavigationConfig.tabs || docNavigationConfig.tabs === 'auto') {
+function findTabAndGroup(entry: DocEntry): { tab?: DocTab; group?: DocGroup } {
+	if (
+		!('tabs' in docNavigationConfig) ||
+		!docNavigationConfig.tabs ||
+		docNavigationConfig.tabs === 'auto'
+	) {
 		return {};
 	}
 
@@ -469,7 +489,11 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 			.map((group) => {
 				let pages: DocPage[] = [];
 
-				if (group.pages !== 'auto') {
+				if (group.pages === 'auto') {
+					// Auto-load all pages from the group folder when pages === 'auto'
+					const loadedPages = expandLoadRest(group.folderPath || '', [], tab, group);
+					pages.push(...loadedPages);
+				} else if (group.pages && group.pages !== 'auto') {
 					const explicitPages: DocPage[] = [];
 					let hasLoadRest = false;
 
@@ -484,12 +508,7 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 					pages.push(...explicitPages);
 
 					if (hasLoadRest) {
-						const loadedPages = expandLoadRest(
-							group.folderPath || '',
-							explicitPages,
-							tab,
-							group
-						);
+						const loadedPages = expandLoadRest(group.folderPath || '', explicitPages, tab, group);
 						pages.push(...loadedPages);
 					}
 				}
@@ -503,7 +522,7 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 					showTitle: group.showTitle !== false,
 					collapsible: group.collapsible !== false,
 					icon: group.icon,
-				pages: sidebarPages
+					pages: sidebarPages
 				};
 			})
 			.filter((group) => group.pages.length > 0);
@@ -519,7 +538,11 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 
 	let pages: DocPage[] = [];
 
-	if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
+	if ('pages' in tab && tab.pages === 'auto') {
+		// Auto-load all pages from the tab folder when pages === 'auto'
+		const loadedPages = expandLoadRest(tab.folderPath || '', [], tab);
+		pages.push(...loadedPages);
+	} else if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
 		const explicitPages: DocPage[] = [];
 		let hasLoadRest = false;
 
@@ -571,6 +594,59 @@ export function getDocSidebarTabs(locals: unknown): DocSidebarTab[] {
 		);
 }
 
+export function buildDocNavigationParams(sidebarTabs: DocSidebarTab[]): DocNavigationParams {
+	const tabs: NonNullable<DocNavigationParams['tabs']> = [];
+	const groups: NonNullable<DocNavigationParams['groups']> = [];
+	const pages: NonNullable<DocNavigationParams['pages']> = [];
+
+	for (const [tabIndex, tab] of sidebarTabs.entries()) {
+		const tabId = `tab:${tab.href}:${tabIndex}`;
+		tabs.push({
+			id: tabId,
+			title: tab.title,
+			icon: tab.icon,
+			href: tab.href,
+			mode: tab.mode
+		});
+
+		if (tab.mode === 'group') {
+			for (const [groupIndex, group] of (tab.data as DocSidebarGroup[]).entries()) {
+				const groupId = `group:${tabId}:${normalizeSegment(group.title) || groupIndex}`;
+
+				groups.push({
+					id: groupId,
+					title: group.title,
+					tabId,
+					icon: group.icon,
+					showTitle: group.showTitle,
+					collapsible: group.collapsible
+				});
+
+				for (const pageItem of group.pages) {
+					pages.push({
+						href: pageItem.href,
+						title: pageItem.title,
+						tabId,
+						groupId,
+						icon: pageItem.icon
+					});
+				}
+			}
+		} else {
+			for (const pageItem of tab.data as DocSidebarPage[]) {
+				pages.push({
+					href: pageItem.href,
+					title: pageItem.title,
+					tabId,
+					icon: pageItem.icon
+				});
+			}
+		}
+	}
+
+	return { tabs, groups, pages };
+}
+
 export async function loadDocAst(slugParam: string) {
 	const normalizedSlug = normalizeRouteSlug(slugParam);
 	const docEntry = docEntriesBySlug.get(normalizedSlug);
@@ -603,7 +679,6 @@ export async function loadDocAst(slugParam: string) {
 		metadata,
 		slug: docEntry.slug,
 		title: docEntry.title,
-		groupTitle: docEntry.groupTitle,
 		access: isPrivate ? 'private' : 'public'
-	};
+	} as const;
 }

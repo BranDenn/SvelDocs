@@ -16,26 +16,32 @@ const docNavigationConfig = defineDocNavigation({
 					title: 'Getting Started',
 					showTitle: false,
 					combineHref: false,
-					private: true,
 					pages: [
-						{
-							title: 'Public Example',
-							icon: 'book-open-check',
-							href: '/docs',
-							fileName: 'public-example.md'
-						},
-						{ 
-							title: 'Private Example', 
-							icon: 'rocket', 
-							fileName: 'private-example.md',
-						}
+						{ title: 'Introduction', icon: 'book-open-check', href: '/docs' },
+						{ title: 'Quick Start', icon: 'rocket' }
 					]
+				},
+				{
+					title: 'Configuration',
+					icon: 'cog',
+					pages: 'auto'
+				},
+				{
+					title: 'Components',
+					icon: 'component',
+					pages: 'auto'
+				},
+				{
+					title: 'Miscellaneous',
+					icon: 'dices',
+					pages: 'auto'
 				}
 			]
 		},
 		{
-			title: 'Examples',
-			icon: 'code',
+			title: 'Guides',
+			combineHref: true,
+			icon: 'book',
 			pages: 'auto'
 		}
 	]

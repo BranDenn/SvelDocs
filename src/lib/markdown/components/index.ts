@@ -77,22 +77,22 @@ const resolveDivNode = defineNodeResolver((node) => {
 });
 
 export const astNodeRenderers: AstNodeRendererMap = {
-	// h1: H1,
-	// h2: H2,
-	// h3: H3,
-	// h4: H4,
-	// h5: H5,
-	// h6: H6,
+	h1: H1,
+	h2: H2,
+	h3: H3,
+	h4: H4,
+	h5: H5,
+	h6: H6,
 	// pre: Pre,
-	// a: A,
+	a: A,
 	// table: Table,
 	// thead: Thead,
 	// tbody: Tbody,
 	// tr: Tr,
 	// th: Th,
 	// td: Td,
-	// hr: Hr,
-	// p: P,
+	hr: Hr,
+	p: P
 	// div: resolveDivNode
 };
 
