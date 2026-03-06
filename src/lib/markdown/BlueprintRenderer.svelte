@@ -8,13 +8,19 @@
 		...astNodeRenderers
 	};
 
+	// Void elements that cannot have children
+	const VOID_ELEMENTS = new Set([
+		'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+		'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
+	]);
+
 	type ResolvedRenderer = {
 		component: Component<any>;
 		props: Record<string, unknown>;
 		inheritNodeProps: boolean;
 	};
 
-	let { node }: { node: AstNode } = $props();
+	let { node, parentElement }: { node: AstNode; parentElement?: string } = $props();
 
 	function getMdxProps(attrs: AstNode['attributes'] = []) {
 		return attrs.reduce<Record<string, unknown>>((acc, attr) => {
@@ -47,7 +53,7 @@
 		if (!mapped) return null;
 
 		if (isNodeResolver(mapped)) {
-			return toResolvedRenderer(mapped(node));
+			return toResolvedRenderer(mapped({ node, parentElement }));
 		}
 
 		return toResolvedRenderer(mapped);
@@ -56,32 +62,41 @@
 
 {#if node.type === 'text'}
 	{node.value}
-{:else if node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement'}
+{:else if node.type?.startsWith('mdxJsx')}
 	{@const mappedMdxRenderer = node.name ? getMappedRenderer(node, node.name) : null}
 	{#if mappedMdxRenderer}
 		{@const MdxComponent = mappedMdxRenderer.component}
 		{@const mdxProps = mappedMdxRenderer.inheritNodeProps ? getMdxProps(node.attributes) : {}}
 		<MdxComponent {...mdxProps} {...mappedMdxRenderer.props}>
 			{#each node.children ?? [] as child, i (`${node.name ?? 'mdx'}-${i}`)}
-				<BlueprintRenderer node={child} />
+				<BlueprintRenderer node={child} parentElement={node.name} />
 			{/each}
 		</MdxComponent>
+	{:else if node.name}
+		<svelte:element this={node.name} {...node.properties ?? {}}>
+			{#each node.children ?? [] as child, i (`${node.name}-${i}`)}
+				<BlueprintRenderer node={child} parentElement={node.name} />
+			{/each}
+		</svelte:element>
 	{/if}
 {:else if node.type === 'element'}
 	{@const elementName = node.tagName ?? 'div'}
 	{@const mappedElementRenderer = getMappedRenderer(node, elementName)}
+	{@const isVoidElement = VOID_ELEMENTS.has(elementName)}
 	{#if mappedElementRenderer}
 		{@const ElementComponent = mappedElementRenderer.component}
 		{@const elementProps = mappedElementRenderer.inheritNodeProps ? (node.properties ?? {}) : {}}
 		<ElementComponent {...elementProps} {...mappedElementRenderer.props}>
 			{#each node.children ?? [] as child, i (`${elementName}-${i}`)}
-				<BlueprintRenderer node={child} />
+				<BlueprintRenderer node={child} parentElement={elementName} />
 			{/each}
 		</ElementComponent>
+	{:else if isVoidElement}
+		<svelte:element this={elementName} {...node.properties ?? {}} />
 	{:else}
 		<svelte:element this={elementName} {...node.properties ?? {}}>
 			{#each node.children ?? [] as child, i (`${elementName}-${i}`)}
-				<BlueprintRenderer node={child} />
+				<BlueprintRenderer node={child} parentElement={elementName} />
 			{/each}
 		</svelte:element>
 	{/if}

@@ -242,23 +242,29 @@ function resolveTabHref(tab: DocTab): string {
 }
 
 function addGroupEntries(entries: DocEntry[], group: DocGroup, tab?: DocTab) {
-	if (group.pages === 'auto') return;
+	let allPages: DocPage[] = [];
 
-	const explicitPages: DocPage[] = [];
-	let hasLoadRest = false;
-
-	for (const item of group.pages) {
-		if (item === 'loadRest') {
-			hasLoadRest = true;
-		} else {
-			explicitPages.push(item);
-		}
-	}
-
-	const allPages = [...explicitPages];
-	if (hasLoadRest) {
-		const loadedPages = expandLoadRest(group.folderPath || '', explicitPages, tab, group);
+	if (group.pages === 'auto') {
+		// Auto-load all pages from the group folder when pages === 'auto'
+		const loadedPages = expandLoadRest(group.folderPath || '', [], tab, group);
 		allPages.push(...loadedPages);
+	} else if (group.pages && group.pages !== 'auto') {
+		const explicitPages: DocPage[] = [];
+		let hasLoadRest = false;
+
+		for (const item of group.pages) {
+			if (item === 'loadRest') {
+				hasLoadRest = true;
+			} else {
+				explicitPages.push(item);
+			}
+		}
+
+		allPages.push(...explicitPages);
+		if (hasLoadRest) {
+			const loadedPages = expandLoadRest(group.folderPath || '', explicitPages, tab, group);
+			allPages.push(...loadedPages);
+		}
 	}
 
 	for (const page of allPages) {

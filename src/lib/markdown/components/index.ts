@@ -7,6 +7,7 @@ import H4 from './headings/h4.svelte';
 import H5 from './headings/h5.svelte';
 import H6 from './headings/h6.svelte';
 import Pre from './code/pre.svelte';
+import InlineCode from './code/inline-code.svelte';
 import A from './links/a.svelte';
 import Table from './table/table.svelte';
 import Thead from './table/thead.svelte';
@@ -29,6 +30,11 @@ export type AstNode = {
 
 export type MarkdownNodeComponent = Component<any>;
 
+export type AstNodeContext = {
+	node: AstNode;
+	parentElement?: string;
+};
+
 export type AstNodeRendererResult =
 	| MarkdownNodeComponent
 	| {
@@ -41,15 +47,15 @@ export type AstNodeRendererResult =
 
 const AST_NODE_RESOLVER = Symbol('AST_NODE_RESOLVER');
 
-export type AstNodeResolver = ((node: AstNode) => AstNodeRendererResult) & {
+export type AstNodeResolver = ((context: AstNodeContext) => AstNodeRendererResult) & {
 	[AST_NODE_RESOLVER]: true;
 };
 
-export type AstNodeRenderer = MarkdownNodeComponent | AstNodeResolver;
+export type AstNodeRenderer = MarkdownNodeComponent | AstNodeResolver | ((context: AstNodeContext) => AstNodeRendererResult);
 export type AstNodeRendererMap = Record<string, AstNodeRenderer>;
 
 export function defineNodeResolver(
-	resolver: (node: AstNode) => AstNodeRendererResult
+	resolver: (context: AstNodeContext) => AstNodeRendererResult
 ): AstNodeResolver {
 	return Object.assign(resolver, { [AST_NODE_RESOLVER]: true as const });
 }
@@ -60,40 +66,30 @@ export function isNodeResolver(
 	return Boolean(value && AST_NODE_RESOLVER in value);
 }
 
-const resolveDivNode = defineNodeResolver((node) => {
-	if (!('data-warning' in (node.properties ?? {}))) {
-		return null;
-	}
+// Helper to provide proper typing for resolver functions
+const resolver = (fn: (context: AstNodeContext) => AstNodeRendererResult): AstNodeResolver => {
+	return Object.assign(fn, { [AST_NODE_RESOLVER]: true as const });
+};
 
-	return {
-		component: Alert,
-		props: {
-			type: 'warning',
-			title: 'Warning',
-			class: node.properties?.class
-		},
-		inheritNodeProps: false
-	};
-});
-
-export const astNodeRenderers: AstNodeRendererMap = {
+export const astNodeRenderers = {
 	h1: H1,
 	h2: H2,
 	h3: H3,
 	h4: H4,
 	h5: H5,
 	h6: H6,
-	// pre: Pre,
+	pre: Pre,
+	code: resolver((context) => context.parentElement === 'pre' ? null : { component: InlineCode, inheritNodeProps: true }),
 	a: A,
-	// table: Table,
-	// thead: Thead,
-	// tbody: Tbody,
-	// tr: Tr,
-	// th: Th,
-	// td: Td,
+	table: Table,
+	thead: Thead,
+	tbody: Tbody,
+	tr: Tr,
+	th: Th,
+	td: Td,
 	hr: Hr,
-	p: P
-	// div: resolveDivNode
-};
+	p: P,
+	Alert
+} satisfies AstNodeRendererMap;
 
 export default astNodeRenderers;

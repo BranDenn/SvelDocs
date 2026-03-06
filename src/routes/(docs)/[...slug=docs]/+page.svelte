@@ -23,6 +23,8 @@
 	let { data }: { data: PageData } = $props();
 
 	const docNavigation = getDocNavigationContext();
+
+	$inspect(data.ast)
 </script>
 
 <SEO
