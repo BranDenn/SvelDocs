@@ -20,7 +20,21 @@
 		inheritNodeProps: boolean;
 	};
 
-	let { node, parentElement }: { node: AstNode; parentElement?: string } = $props();
+	let {
+		node,
+		parentElement,
+		componentAliases = {},
+		resolvedComponents = {}
+	}: {
+		node: AstNode;
+		parentElement?: string;
+		componentAliases?: Record<string, string[]>;
+		resolvedComponents?: Record<string, Component<any>>;
+	} = $props();
+
+	function getAliasCandidates(key: string): string[] {
+		return Array.from(new Set([key, ...(componentAliases[key] ?? [])]));
+	}
 
 	function getMdxProps(attrs: AstNode['attributes'] = []) {
 		return attrs.reduce<Record<string, unknown>>((acc, attr) => {
@@ -49,14 +63,23 @@
 	}
 
 	function getMappedRenderer(node: AstNode, key: string): ResolvedRenderer | null {
-		const mapped = componentMap[key];
-		if (!mapped) return null;
+		for (const candidate of getAliasCandidates(key)) {
+			const resolvedComponent = resolvedComponents[candidate];
+			if (resolvedComponent) {
+				return toResolvedRenderer(resolvedComponent);
+			}
 
-		if (isNodeResolver(mapped)) {
-			return toResolvedRenderer(mapped({ node, parentElement }));
+			const mapped = componentMap[candidate as keyof typeof componentMap];
+			if (!mapped) continue;
+
+			if (isNodeResolver(mapped)) {
+				return toResolvedRenderer(mapped({ node, parentElement }));
+			}
+
+			return toResolvedRenderer(mapped);
 		}
 
-		return toResolvedRenderer(mapped);
+		return null;
 	}
 </script>
 
@@ -64,18 +87,30 @@
 	{node.value}
 {:else if node.type?.startsWith('mdxJsx')}
 	{@const mappedMdxRenderer = node.name ? getMappedRenderer(node, node.name) : null}
-	{#if mappedMdxRenderer}
+	{#if node.name === 'script'}
+		<!-- Ignore MDX script blocks; import declarations cannot run from injected HTML script tags. -->
+	{:else if mappedMdxRenderer}
 		{@const MdxComponent = mappedMdxRenderer.component}
 		{@const mdxProps = mappedMdxRenderer.inheritNodeProps ? getMdxProps(node.attributes) : {}}
 		<MdxComponent {...mdxProps} {...mappedMdxRenderer.props}>
 			{#each node.children ?? [] as child, i (`${node.name ?? 'mdx'}-${i}`)}
-				<BlueprintRenderer node={child} parentElement={node.name} />
+				<BlueprintRenderer
+					node={child}
+					parentElement={node.name}
+					{componentAliases}
+					{resolvedComponents}
+				/>
 			{/each}
 		</MdxComponent>
 	{:else if node.name}
 		<svelte:element this={node.name} {...node.properties ?? {}}>
 			{#each node.children ?? [] as child, i (`${node.name}-${i}`)}
-				<BlueprintRenderer node={child} parentElement={node.name} />
+				<BlueprintRenderer
+					node={child}
+					parentElement={node.name}
+					{componentAliases}
+					{resolvedComponents}
+				/>
 			{/each}
 		</svelte:element>
 	{/if}
@@ -88,7 +123,12 @@
 		{@const elementProps = mappedElementRenderer.inheritNodeProps ? (node.properties ?? {}) : {}}
 		<ElementComponent {...elementProps} {...mappedElementRenderer.props}>
 			{#each node.children ?? [] as child, i (`${elementName}-${i}`)}
-				<BlueprintRenderer node={child} parentElement={elementName} />
+				<BlueprintRenderer
+					node={child}
+					parentElement={elementName}
+					{componentAliases}
+					{resolvedComponents}
+				/>
 			{/each}
 		</ElementComponent>
 	{:else if isVoidElement}
@@ -96,7 +136,12 @@
 	{:else}
 		<svelte:element this={elementName} {...node.properties ?? {}}>
 			{#each node.children ?? [] as child, i (`${elementName}-${i}`)}
-				<BlueprintRenderer node={child} parentElement={elementName} />
+				<BlueprintRenderer
+					node={child}
+					parentElement={elementName}
+					{componentAliases}
+					{resolvedComponents}
+				/>
 			{/each}
 		</svelte:element>
 	{/if}

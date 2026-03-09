@@ -9,6 +9,7 @@
 	import { Link } from '$ui/link';
 	import BlueprintRenderer from '$lib/markdown/BlueprintRenderer.svelte';
 	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
+	import type { Component } from 'svelte';
 
 	type PageData = {
 		ast: {
@@ -21,6 +22,41 @@
 	};
 
 	let { data }: { data: PageData } = $props();
+
+	const markdownComponentModules = {
+		...import.meta.glob('/src/lib/markdown/components/**/*.svelte', { eager: true }),
+		...import.meta.glob('/src/lib/components/ui/**/*.svelte', { eager: true })
+	} as Record<string, { default?: Component<any> }>;
+
+	const componentAliases = $derived(
+		(data.metadata.mdxComponentAliases as Record<string, string[]> | undefined) ?? {}
+	);
+
+	const componentImports = $derived(
+		(data.metadata.mdxComponentImports as Record<string, string> | undefined) ?? {}
+	);
+
+	function toModulePath(source: string): string | null {
+		if (source.startsWith('$lib/')) return `/src/lib/${source.slice('$lib/'.length)}`;
+		if (source.startsWith('/src/')) return source;
+		return null;
+	}
+
+	const resolvedMdxComponents = $derived.by(() => {
+		const resolved: Record<string, Component<any>> = {};
+
+		for (const [name, source] of Object.entries(componentImports)) {
+			const modulePath = toModulePath(source);
+			if (!modulePath) continue;
+
+			const module = markdownComponentModules[modulePath];
+			if (module?.default) {
+				resolved[name] = module.default;
+			}
+		}
+
+		return resolved;
+	});
 
 	const docNavigation = getDocNavigationContext();
 
@@ -123,6 +159,6 @@
 
 <article class="prose">
 	{#each data.ast.children ?? [] as node, i (`node-${i}`)}
-		<BlueprintRenderer {node} />
+		<BlueprintRenderer {node} {componentAliases} resolvedComponents={resolvedMdxComponents} />
 	{/each}
 </article>

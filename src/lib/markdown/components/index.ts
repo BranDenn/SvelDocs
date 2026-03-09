@@ -89,7 +89,6 @@ export const astNodeRenderers = {
 	td: Td,
 	hr: Hr,
 	p: P,
-	Alert
 } satisfies AstNodeRendererMap;
 
 export default astNodeRenderers;

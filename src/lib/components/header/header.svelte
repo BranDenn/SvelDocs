@@ -5,6 +5,7 @@
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
 	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
+	import ThemeSwitch from './theme-switch.svelte';
 
 	const docNavigation = getDocNavigationContext();
 
@@ -18,6 +19,12 @@
 		class="h-header bg-background isolate container flex items-center justify-between gap-4 px-4 md:grid md:grid-cols-3"
 	>
 		<Logo />
+		<div>
+		</div>
+		<div class="flex items-center gap-4 justify-self-end">
+			<ThemeSwitch />
+		</div>
+		
 	</nav>
 
 	<!-- Mobile & Tab navigation -->
