@@ -10,6 +10,7 @@
 	import BlueprintRenderer from '$lib/markdown/BlueprintRenderer.svelte';
 	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
 	import type { Component } from 'svelte';
+	import mdxComponentManifest from 'virtual:mdx-component-manifest';
 
 	type PageData = {
 		ast: {
@@ -23,11 +24,6 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const markdownComponentModules = {
-		...import.meta.glob('/src/lib/markdown/components/**/*.svelte', { eager: true }),
-		...import.meta.glob('/src/lib/components/ui/**/*.svelte', { eager: true })
-	} as Record<string, { default?: Component<any> }>;
-
 	const componentAliases = $derived(
 		(data.metadata.mdxComponentAliases as Record<string, string[]> | undefined) ?? {}
 	);
@@ -36,20 +32,15 @@
 		(data.metadata.mdxComponentImports as Record<string, string> | undefined) ?? {}
 	);
 
-	function toModulePath(source: string): string | null {
-		if (source.startsWith('$lib/')) return `/src/lib/${source.slice('$lib/'.length)}`;
-		if (source.startsWith('/src/')) return source;
-		return null;
-	}
+	type ModuleExport = { default?: Component<any> };
+	type MdxManifest = Record<string, ModuleExport | undefined>;
 
 	const resolvedMdxComponents = $derived.by(() => {
 		const resolved: Record<string, Component<any>> = {};
+		const manifest = mdxComponentManifest as MdxManifest;
 
 		for (const [name, source] of Object.entries(componentImports)) {
-			const modulePath = toModulePath(source);
-			if (!modulePath) continue;
-
-			const module = markdownComponentModules[modulePath];
+			const module = manifest[source];
 			if (module?.default) {
 				resolved[name] = module.default;
 			}

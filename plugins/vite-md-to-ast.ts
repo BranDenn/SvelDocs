@@ -263,6 +263,17 @@ export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 
 			const markdownTree = processor.parse(content) as MdastNode;
 			const mdxImportData = extractMdxImportDataFromTree(markdownTree);
+
+			const uniqueImportSources = Array.from(new Set(Object.values(mdxImportData.imports)));
+			for (const source of uniqueImportSources) {
+				const resolved = await this.resolve(source, filepath);
+				if (!resolved) {
+					this.error(
+						`Unresolved MDX import "${source}" in ${filepath}. Ensure the path is valid.`
+					);
+				}
+			}
+
 			const tree = await processor.run(markdownTree);
 			const ast = tree as RehypeNode;
 			normalizeMdxParagraphs(ast);

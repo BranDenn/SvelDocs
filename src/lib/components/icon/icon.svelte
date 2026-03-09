@@ -9,7 +9,7 @@
 	} & IconProps;
 
 	let { name, class: className, ...restProps }: Props = $props();
-	let icon = $derived.by(() => {
+	let Icon = $derived.by(() => {
 		if (!(name in IconManifest)) {
 			console.warn(`[doc-icon-manifest] Icon key not found in manifest: ${name}`);
 			return undefined;
@@ -19,8 +19,7 @@
 	});
 </script>
 
-{#if icon}
-	{@const Icon = icon}
+{#if Icon}
 	<Icon class={cn('size-4 shrink-0', className)} {...restProps} />
 {:else}
 	<span class={cn('size-4 shrink-0', className)}>{name}</span>

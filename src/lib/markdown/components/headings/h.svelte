@@ -23,7 +23,7 @@
 			class="bg-secondary hover:bg-primary text-muted-foreground hover:text-foreground block rounded-md border p-1 opacity-0 transition-[opacity,background-color,color] group-hover:opacity-100"
 			href="#{restProps.id}"
 		>
-			<LinkIcon class="size-4" />
+			<LinkIcon class="size-4 shrink-0" />
 		</a>
 	</div>
 	{@render children?.()}

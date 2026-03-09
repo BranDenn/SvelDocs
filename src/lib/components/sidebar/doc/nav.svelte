@@ -57,7 +57,7 @@
 							class="ml-auto size-[1.2em] transition-transform group-data-[state=open]:rotate-90"
 						/>
 					</Collapsible.Trigger>
-					<Collapsible.Content forceMount class="mt-2 flex flex-col">
+					<Collapsible.Content class="mt-2 flex flex-col">
 						{#snippet child({ props, open })}
 							{#if open}
 								<ul {...props} transition:slide={{ duration: 150 }}>

@@ -3,8 +3,9 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import markdownConfig from './src/lib/markdown/markdown.config';
 import { docIconManifest } from './plugins/vite-doc-icon-manifest';
+import { mdxComponentManifest } from './plugins/vite-mdx-component-manifest';
 import { mdToAst } from './plugins/vite-md-to-ast';
 
 export default defineConfig({
-	plugins: [docIconManifest(), mdToAst(markdownConfig), tailwindcss(), sveltekit()]
+	plugins: [docIconManifest(), mdxComponentManifest(), mdToAst(markdownConfig), tailwindcss(), sveltekit()]
 });
