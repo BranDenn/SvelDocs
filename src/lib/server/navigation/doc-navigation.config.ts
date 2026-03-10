@@ -5,11 +5,13 @@ import { defineDocNavigation } from './define-doc-navigation';
 // You can customize the navigation by defining your own tabs, groups, and pages.
 // You can hover over the properties in your IDE to see detailed explanations of each option.
 
-const docNavigationConfig = defineDocNavigation({
+type Roles = 'paidUser' | 'admin';
+
+const docNavigationConfig = defineDocNavigation<Roles>({
 	tabNextPrev: true,
 	tabs: [
 		{
-			title: 'Overview',
+			title: 'Documentation',
 			combineHref: false,
 			icon: 'flag',
 			groups: [
@@ -44,7 +46,7 @@ const docNavigationConfig = defineDocNavigation({
 			combineHref: true,
 			icon: 'book',
 			pages: 'auto'
-		}
+		},
 	]
 });
 

@@ -9,8 +9,7 @@ export const entries: EntryGenerator = () => {
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const docAstData = await loadDocAst(params.slug);
 
-	// Check if user has access to private docs
-	if (docAstData.access === 'private' && !locals.emulated) {
+	if (docAstData.access !== false && !locals.emulated) {
 		throw error(404, 'Document not found');
 	}
 

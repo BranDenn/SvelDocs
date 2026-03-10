@@ -13,9 +13,20 @@ type Icon = {
  * 'loadRest' will automatically load remaining markdown files from the filesystem.
  * If 'loadRest' is used, it MUST be the last item in the array and can only appear once.
  */
-export type PageItems = DocPage[] | readonly [...DocPage[], 'loadRest'];
+export type PageItems<TRole extends string = string> =
+	| DocPage<TRole>[]
+	| readonly [...DocPage<TRole>[], 'loadRest'];
 
-export type DocPage = {
+/**
+ * Access requirement for docs entries:
+ * - `false` or omitted: public
+ * - `true`: authenticated-only
+ * - `"role"`: only users with that role
+ * - `["roleA", "roleB"]`: any of these roles can access
+ */
+export type DocPrivateAccess<TRole extends string = string> = boolean | TRole | readonly TRole[];
+
+export type DocPage<TRole extends string = string> = {
 	/**
 	 * The name of the page. This is displayed in the navigation sidebar.
 	 */
@@ -32,14 +43,17 @@ export type DocPage = {
 	 */
 	fileName?: string;
 	/**
-	 * Determines if this page is private and requires authentication.
+	 * Determines if this page requires authentication/authorization.
 	 * If not explicitly set, inherits the privacy setting from its parent group or tab.
 	 * An explicit value at the page level overrides parent settings.
+	 * - `true` means any authenticated user.
+	 * - `"admin"` (or any string) means only users with that role.
+	 * - `["admin", "editor"]` means any listed role can access.
 	 */
-	private?: boolean;
+	private?: DocPrivateAccess<TRole>;
 } & Icon;
 
-export type DocGroup = {
+export type DocGroup<TRole extends string = string> = {
 	/**
 	 * The name of the group. This is used to categorize navigation items.
 	 * - If `showTitle` is `false`, this group text will not be displayed in the navigation sidebar.
@@ -77,16 +91,19 @@ export type DocGroup = {
 	 * - If `"auto"`, the pages will be automatically generated from the markdown files in the group folder defined by the `folderPath`.
 	 * - Can include `'loadRest'` as the last element to load remaining markdown files from the filesystem.
 	 */
-	pages: PageItems | 'auto';
+	pages: PageItems<TRole> | 'auto';
 	/**
-	 * Determines if this group and its pages are private and require authentication.
+	 * Determines if this group and its pages require authentication/authorization.
 	 * If not explicitly set, inherits the privacy setting from its parent tab.
 	 * An explicit value at the group level overrides the parent tab setting and can be overridden by page-level settings.
+	 * - `true` means any authenticated user.
+	 * - `"admin"` (or any string) means only users with that role.
+	 * - `["admin", "editor"]` means any listed role can access.
 	 */
-	private?: boolean;
+	private?: DocPrivateAccess<TRole>;
 } & Icon;
 
-type DocTabBase = {
+type DocTabBase<TRole extends string = string> = {
 	/**
 	 * The name of the tab. This is displayed in the header.
 	 */
@@ -106,48 +123,53 @@ type DocTabBase = {
 	 */
 	combineHref?: boolean;
 	/**
-	 * Determines if this tab and its groups/pages are private and require authentication.
+	 * Determines if this tab and its groups/pages require authentication/authorization.
 	 * An explicit value at this level can be overridden by group-level or page-level settings.
+	 * - `true` means any authenticated user.
+	 * - `"admin"` (or any string) means only users with that role.
+	 * - `["admin", "editor"]` means any listed role can access.
 	 */
-	private?: boolean;
+	private?: DocPrivateAccess<TRole>;
 } & Icon;
 
-export type DocTabGroupsConfig = DocTabBase & {
+export type DocTabGroupsConfig<TRole extends string = string> = DocTabBase<TRole> & {
 	/**
 	 * A list of groups to include in this tab.
 	 * - If `"auto"`, groups are generated from this tab folder.
 	 */
-	groups: DocGroup[] | 'auto';
+	groups: DocGroup<TRole>[] | 'auto';
 	/**
 	 * Mutually exclusive with `groups` at the tab level.
 	 */
 	pages?: never;
 };
 
-export type DocTabPagesConfig = DocTabBase & {
+export type DocTabPagesConfig<TRole extends string = string> = DocTabBase<TRole> & {
 	/**
 	 * A list of pages to include directly in this tab.
 	 * - If `"auto"`, pages are generated from this tab folder.
 	 * - Can include `'loadRest'` as the last element to load remaining pages.
 	 */
-	pages: PageItems | 'auto';
+	pages: PageItems<TRole> | 'auto';
 	/**
 	 * Mutually exclusive with `pages` at the tab level.
 	 */
 	groups?: never;
 };
 
-export type DocTab = DocTabGroupsConfig | DocTabPagesConfig;
+export type DocTab<TRole extends string = string> =
+	| DocTabGroupsConfig<TRole>
+	| DocTabPagesConfig<TRole>;
 
 /**
  * Root navigation config when docs are organized by tabs.
  */
-export type DocNavigationTabsConfig = {
+export type DocNavigationTabsConfig<TRole extends string = string> = {
 	/**
 	 * A list of tabs to include in the docs navigation.
 	 * - If `"auto"`, tabs are generated from the filesystem.
 	 */
-	tabs: DocTab[] | 'auto';
+	tabs: DocTab<TRole>[] | 'auto';
 	/**
 	 * Enables previous/next page links that can continue across tab boundaries.
 	 * This option only applies to tab-based navigation.
@@ -167,12 +189,12 @@ export type DocNavigationTabsConfig = {
 /**
  * Root navigation config when docs are organized by groups.
  */
-export type DocNavigationGroupsConfig = {
+export type DocNavigationGroupsConfig<TRole extends string = string> = {
 	/**
 	 * A list of groups to include in the docs navigation.
 	 * - If `"auto"`, groups are generated from the filesystem.
 	 */
-	groups: DocGroup[] | 'auto';
+	groups: DocGroup<TRole>[] | 'auto';
 	/**
 	 * Mutually exclusive with `groups` at the root level.
 	 */
@@ -190,12 +212,12 @@ export type DocNavigationGroupsConfig = {
 /**
  * Root navigation config when docs are organized as a flat list of pages.
  */
-export type DocNavigationPagesConfig = {
+export type DocNavigationPagesConfig<TRole extends string = string> = {
 	/**
 	 * A list of pages to include in the docs navigation.
 	 * - If `"auto"`, pages are generated from the filesystem.
 	 */
-	pages: DocPage[] | 'auto';
+	pages: DocPage<TRole>[] | 'auto';
 	/**
 	 * Mutually exclusive with `pages` at the root level.
 	 */
@@ -214,16 +236,18 @@ export type DocNavigationPagesConfig = {
  * The root structure for documentation navigation.
  * Exactly one mode can be defined: tabs, groups, or pages.
  */
-export type DocNavigationConfig =
-	| DocNavigationTabsConfig
-	| DocNavigationGroupsConfig
-	| DocNavigationPagesConfig;
+export type DocNavigationConfig<TRole extends string = string> =
+	| DocNavigationTabsConfig<TRole>
+	| DocNavigationGroupsConfig<TRole>
+	| DocNavigationPagesConfig<TRole>;
 
 /**
  * Validates that 'loadRest' appears at most once and only as the last item in an array.
  * @throws Error if validation fails
  */
-export function validatePageItems(pages: PageItems | 'auto' | undefined): void {
+export function validatePageItems<TRole extends string = string>(
+	pages: PageItems<TRole> | 'auto' | undefined
+): void {
 	if (!pages || pages === 'auto' || typeof pages === 'string') {
 		return;
 	}
@@ -247,7 +271,7 @@ export function validatePageItems(pages: PageItems | 'auto' | undefined): void {
 	}
 }
 
-function validateTabConfig(tab: DocTab): void {
+function validateTabConfig<TRole extends string = string>(tab: DocTab<TRole>): void {
 	if ('pages' in tab) {
 		validatePageItems(tab.pages);
 	}
@@ -256,7 +280,9 @@ function validateTabConfig(tab: DocTab): void {
 	}
 }
 
-function validateTabsConfig(tabs: DocTab[] | 'auto' | undefined): void {
+function validateTabsConfig<TRole extends string = string>(
+	tabs: DocTab<TRole>[] | 'auto' | undefined
+): void {
 	if (tabs && Array.isArray(tabs)) {
 		for (const tab of tabs) {
 			validateTabConfig(tab);
@@ -264,7 +290,9 @@ function validateTabsConfig(tabs: DocTab[] | 'auto' | undefined): void {
 	}
 }
 
-function validateGroupsConfig(groups: DocGroup[] | 'auto' | undefined): void {
+function validateGroupsConfig<TRole extends string = string>(
+	groups: DocGroup<TRole>[] | 'auto' | undefined
+): void {
 	if (groups && Array.isArray(groups)) {
 		for (const group of groups) {
 			validatePageItems(group.pages);
@@ -275,7 +303,9 @@ function validateGroupsConfig(groups: DocGroup[] | 'auto' | undefined): void {
 /**
  * Defines the documentation navigation configuration with type safety and validation.
  */
-export function defineDocNavigation(config: DocNavigationConfig): DocNavigationConfig {
+export function defineDocNavigation<TRole extends string = string>(
+	config: DocNavigationConfig<TRole>
+): DocNavigationConfig<TRole> {
 	if ('tabs' in config) {
 		validateTabsConfig(config.tabs);
 	}

@@ -3,9 +3,13 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import H from './h.svelte';
 
-	let { children, class: className, ...restProps }: HTMLAttributes<HTMLHeadingElement> = $props();
+	type Props = HTMLAttributes<HTMLHeadingElement> & {
+		ignoreToc?: boolean;
+	};
+
+	let { children, class: className, ignoreToc = false, ...restProps }: Props = $props();
 </script>
 
-<H element="h6" class={cn('mt-2 text-sm sm:text-base', className)} {...restProps}>
+<H element="h6" {ignoreToc} class={cn('mt-2 text-sm sm:text-base', className)} {...restProps}>
 	{@render children?.()}
 </H>

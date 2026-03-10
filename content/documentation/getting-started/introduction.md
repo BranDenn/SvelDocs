@@ -13,8 +13,7 @@ The files are structured for quick iterations and detailed understanding, while 
 
 ## Features
 
-- Simple structure for adding groups and links
-- Quick settings to change the documentation look and structure
+- Simple structure for adding tabs, groups, and pages
 - Table of Contents
 - Searching
 - Remark / Rehype plugins

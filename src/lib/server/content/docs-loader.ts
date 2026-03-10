@@ -4,7 +4,9 @@ import type {
 	DocNavigationConfig,
 	DocGroup,
 	DocPage,
-	DocTab
+	PageItems,
+	DocTab,
+	DocPrivateAccess
 } from '$lib/server/navigation/define-doc-navigation';
 import type { DocNavigationParams } from '$lib/doc-navigation-context.svelte';
 
@@ -28,6 +30,21 @@ type DocEntry = {
 	tabTitle?: string;
 	groupTitle?: string;
 };
+
+type ResolvedAccess = Exclude<DocPrivateAccess, false> | false;
+
+function normalizeRoleList(value: unknown): string[] {
+	if (!Array.isArray(value)) {
+		return [];
+	}
+
+	const normalizedRoles = value
+		.filter((role): role is string => typeof role === 'string')
+		.map((role) => role.trim().toLowerCase())
+		.filter(Boolean);
+
+	return Array.from(new Set(normalizedRoles));
+}
 
 /**
  * Extracts metadata from a DocModule
@@ -155,7 +172,7 @@ function formatFileNameAsTitle(fileName: string): string {
 	return fileName
 		.replaceAll(/[-_]/g, ' ') // Replace dashes and underscores with spaces
 		.replace(/^./, (char) => char.toUpperCase()) // Capitalize first letter
-		.replace(/\s+(.)/g, (_, char) => ` ${char.toUpperCase()}`); // Capitalize after spaces
+		.replaceAll(/\s+(.)/g, (_, char) => ` ${char.toUpperCase()}`); // Capitalize after spaces
 }
 
 function trimSlashes(value: string | null | undefined): string {
@@ -241,6 +258,31 @@ function resolveTabHref(tab: DocTab): string {
 	return `/docs/${normalizeSegment(tab.title)}`;
 }
 
+function expandConfiguredPages(
+	pages: PageItems,
+	folderPath: string,
+	tab?: DocTab,
+	group?: DocGroup
+): DocPage[] {
+	const explicitPages: DocPage[] = [];
+	let hasLoadRest = false;
+
+	for (const item of pages) {
+		if (item === 'loadRest') {
+			hasLoadRest = true;
+		} else {
+			explicitPages.push(item);
+		}
+	}
+
+	if (!hasLoadRest) {
+		return explicitPages;
+	}
+
+	const loadedPages = expandLoadRest(folderPath, explicitPages, tab, group);
+	return [...explicitPages, ...loadedPages];
+}
+
 function addGroupEntries(entries: DocEntry[], group: DocGroup, tab?: DocTab) {
 	let allPages: DocPage[] = [];
 
@@ -248,23 +290,8 @@ function addGroupEntries(entries: DocEntry[], group: DocGroup, tab?: DocTab) {
 		// Auto-load all pages from the group folder when pages === 'auto'
 		const loadedPages = expandLoadRest(group.folderPath || '', [], tab, group);
 		allPages.push(...loadedPages);
-	} else if (group.pages && group.pages !== 'auto') {
-		const explicitPages: DocPage[] = [];
-		let hasLoadRest = false;
-
-		for (const item of group.pages) {
-			if (item === 'loadRest') {
-				hasLoadRest = true;
-			} else {
-				explicitPages.push(item);
-			}
-		}
-
-		allPages.push(...explicitPages);
-		if (hasLoadRest) {
-			const loadedPages = expandLoadRest(group.folderPath || '', explicitPages, tab, group);
-			allPages.push(...loadedPages);
-		}
+	} else {
+		allPages.push(...expandConfiguredPages(group.pages, group.folderPath || '', tab, group));
 	}
 
 	for (const page of allPages) {
@@ -277,6 +304,7 @@ function addTabEntries(entries: DocEntry[], tab: DocTab) {
 		for (const group of tab.groups) {
 			addGroupEntries(entries, group, tab);
 		}
+		return;
 	}
 
 	if ('pages' in tab && tab.pages === 'auto') {
@@ -285,24 +313,11 @@ function addTabEntries(entries: DocEntry[], tab: DocTab) {
 		for (const page of loadedPages) {
 			addEntry(entries, page, tab);
 		}
-	} else if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
-		const explicitPages: DocPage[] = [];
-		let hasLoadRest = false;
+		return;
+	}
 
-		for (const item of tab.pages) {
-			if (item === 'loadRest') {
-				hasLoadRest = true;
-			} else {
-				explicitPages.push(item);
-			}
-		}
-
-		const allPages = [...explicitPages];
-		if (hasLoadRest) {
-			const loadedPages = expandLoadRest(tab.folderPath || '', explicitPages, tab);
-			allPages.push(...loadedPages);
-		}
-
+	if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
+		const allPages = expandConfiguredPages(tab.pages, tab.folderPath || '', tab);
 		for (const page of allPages) {
 			addEntry(entries, page, tab);
 		}
@@ -353,7 +368,7 @@ function findModuleByBasePath(fileBasePath: string) {
  * 3. Otherwise, if tab.private is explicitly set, use that value
  * 4. Otherwise, default to false (public)
  */
-function isPagePrivate(page: DocPage, group?: DocGroup, tab?: DocTab): boolean {
+function resolvePageAccess(page: DocPage, group?: DocGroup, tab?: DocTab): ResolvedAccess {
 	if (page.private !== undefined) {
 		return page.private;
 	}
@@ -401,13 +416,32 @@ function findTabAndGroup(entry: DocEntry): { tab?: DocTab; group?: DocGroup } {
  * 3. Then check group-level config
  * 4. Finally check tab-level config
  */
-function isEntryPrivate(entry: DocEntry): boolean {
+function resolveMetadataAccess(metadata: Record<string, unknown>): ResolvedAccess | undefined {
+	if (metadata.private === undefined) {
+		return undefined;
+	}
+
+	if (Array.isArray(metadata.private)) {
+		const roles = normalizeRoleList(metadata.private);
+		return roles.length > 0 ? roles : false;
+	}
+
+	if (typeof metadata.private === 'string') {
+		const role = metadata.private.trim();
+		return role || false;
+	}
+
+	return Boolean(metadata.private);
+}
+
+function resolveEntryAccess(entry: DocEntry): ResolvedAccess {
 	// First check the markdown file's metadata
 	const module = findModuleByBasePath(entry.fileBasePath);
 	if (module) {
 		const metadata = getModuleMetadata(module);
-		if (metadata.private !== undefined) {
-			return Boolean(metadata.private);
+		const metadataAccess = resolveMetadataAccess(metadata);
+		if (metadataAccess !== undefined) {
+			return metadataAccess;
 		}
 	}
 
@@ -432,12 +466,91 @@ function isAuthenticated(locals: unknown): boolean {
 	return Boolean(localObj.user) || Boolean(localObj.emulated);
 }
 
+function addRole(roles: Set<string>, value: unknown): void {
+	if (typeof value !== 'string') {
+		return;
+	}
+
+	const normalized = value.trim().toLowerCase();
+	if (normalized) {
+		roles.add(normalized);
+	}
+}
+
+function addRolesFromObject(roles: Set<string>, value: unknown): void {
+	if (!value || typeof value !== 'object') {
+		return;
+	}
+
+	const valueObj = value as Record<string, unknown>;
+	addRole(roles, valueObj.role);
+
+	if (!Array.isArray(valueObj.roles)) {
+		return;
+	}
+
+	for (const role of valueObj.roles) {
+		addRole(roles, role);
+	}
+}
+
+function getUserRoles(locals: unknown): Set<string> {
+	const roles = new Set<string>();
+
+	if (!locals || typeof locals !== 'object') {
+		return roles;
+	}
+
+	const localObj = locals as Record<string, unknown>;
+
+	if (localObj.emulated) {
+		roles.add('admin');
+	}
+
+	addRolesFromObject(roles, localObj);
+	addRolesFromObject(roles, localObj.user);
+
+	return roles;
+}
+
+function canAccessDoc(locals: unknown, access: DocPrivateAccess | undefined): boolean {
+	if (access === undefined || access === false) {
+		return true;
+	}
+
+	if (access === true) {
+		return isAuthenticated(locals);
+	}
+
+	if (Array.isArray(access)) {
+		const requiredRoles = normalizeRoleList(access);
+		if (requiredRoles.length === 0) {
+			return isAuthenticated(locals);
+		}
+
+		const roles = getUserRoles(locals);
+		return requiredRoles.some((role) => roles.has(role));
+	}
+
+	if (typeof access !== 'string') {
+		return isAuthenticated(locals);
+	}
+
+	const requiredRole = access.trim().toLowerCase();
+	if (!requiredRole) {
+		return isAuthenticated(locals);
+	}
+
+	const roles = getUserRoles(locals);
+	return roles.has(requiredRole);
+}
+
 export function getPublicDocEntries() {
 	return docEntries
 		.filter((entry) => {
 			const module = findModuleByBasePath(entry.fileBasePath);
 			if (!module) return false;
-			return !isEntryPrivate(entry);
+			return resolveEntryAccess(entry) === false;
 		})
 		.map((entry) => ({ slug: entry.slug }));
 }
@@ -471,7 +584,7 @@ function isPageAccessible(page: DocPage, locals: unknown, tab?: DocTab, group?: 
 		return false;
 	}
 
-	if (isPagePrivate(page, group, tab) && !isAuthenticated(locals)) {
+	if (!canAccessDoc(locals, resolvePageAccess(page, group, tab))) {
 		return false;
 	}
 
@@ -499,24 +612,8 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 					// Auto-load all pages from the group folder when pages === 'auto'
 					const loadedPages = expandLoadRest(group.folderPath || '', [], tab, group);
 					pages.push(...loadedPages);
-				} else if (group.pages && group.pages !== 'auto') {
-					const explicitPages: DocPage[] = [];
-					let hasLoadRest = false;
-
-					for (const item of group.pages) {
-						if (item === 'loadRest') {
-							hasLoadRest = true;
-						} else {
-							explicitPages.push(item);
-						}
-					}
-
-					pages.push(...explicitPages);
-
-					if (hasLoadRest) {
-						const loadedPages = expandLoadRest(group.folderPath || '', explicitPages, tab, group);
-						pages.push(...loadedPages);
-					}
+				} else {
+					pages.push(...expandConfiguredPages(group.pages, group.folderPath || '', tab, group));
 				}
 
 				const sidebarPages = pages
@@ -549,23 +646,7 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 		const loadedPages = expandLoadRest(tab.folderPath || '', [], tab);
 		pages.push(...loadedPages);
 	} else if ('pages' in tab && tab.pages && tab.pages !== 'auto') {
-		const explicitPages: DocPage[] = [];
-		let hasLoadRest = false;
-
-		for (const item of tab.pages) {
-			if (item === 'loadRest') {
-				hasLoadRest = true;
-			} else {
-				explicitPages.push(item);
-			}
-		}
-
-		pages.push(...explicitPages);
-
-		if (hasLoadRest) {
-			const loadedPages = expandLoadRest(tab.folderPath || '', explicitPages, tab);
-			pages.push(...loadedPages);
-		}
+		pages.push(...expandConfiguredPages(tab.pages, tab.folderPath || '', tab));
 	}
 
 	const sidebarPages: DocSidebarPage[] = pages
@@ -678,13 +759,13 @@ export async function loadDocAst(slugParam: string) {
 		throw error(500, 'Document AST was not generated');
 	}
 
-	const isPrivate = isEntryPrivate(docEntry);
+	const access = resolveEntryAccess(docEntry);
 
 	return {
 		ast,
 		metadata,
 		slug: docEntry.slug,
 		title: docEntry.title,
-		access: isPrivate ? 'private' : 'public'
+		access
 	} as const;
 }

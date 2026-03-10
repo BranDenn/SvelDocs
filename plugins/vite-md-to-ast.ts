@@ -4,13 +4,25 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
 import remarkRehype, { type Options as RemarkRehypeOptions } from 'remark-rehype';
-import ts from 'typescript';
 import type { MarkdownConfig } from '../src/lib/markdown/define-config';
 
 type RehypeNode = { type: string; children?: RehypeNode[]; [key: string]: unknown };
 type MdastNode = { type?: string; value?: string; children?: MdastNode[]; [key: string]: unknown };
 
 const MDX_PASS_THROUGH = ['mdxJsxFlowElement', 'mdxJsxTextElement'];
+
+function hasScriptTagNodes(root: MdastNode): boolean {
+	function visit(node: MdastNode): boolean {
+		if (
+			(node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') &&
+			node.name === 'script'
+		) {
+			return true;
+		}
+		return (node.children ?? []).some(visit);
+	}
+	return visit(root);
+}
 
 type MdxComponentAliasMap = Record<string, string[]>;
 type MdxComponentImportMap = Record<string, string>;
@@ -32,85 +44,25 @@ function toPascalCase(value: string): string {
 
 function addAlias(map: MdxComponentAliasMap, key: string, candidates: string[]) {
 	if (!key.trim()) return;
-
 	const uniqueCandidates = Array.from(new Set(candidates.filter(Boolean)));
 	if (!uniqueCandidates.length) return;
-
 	const previous = map[key] ?? [];
 	map[key] = Array.from(new Set([...previous, ...uniqueCandidates]));
 }
 
-function collectText(node: MdastNode): string {
-	const parts: string[] = [];
+const RE_DEFAULT_IMPORT = /^import\s+([\w$]+)\s+from\s+['"]([^'"]+)['"]/;
+const RE_NAMED_IMPORT = /^import\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]/;
 
-	function walk(current: MdastNode) {
-		if (typeof current.value === 'string') {
-			parts.push(current.value);
-		}
-
-		for (const child of current.children ?? []) {
-			walk(child);
-		}
-	}
-
-	walk(node);
-	return parts.join('\n').trim();
-}
-
-function collectImportSourcesFromTs(
-	code: string
-): Array<{ localName: string; importedName: string; source: string }> {
-	const sourceFile = ts.createSourceFile(
-		'mdx-imports.ts',
-		code,
-		ts.ScriptTarget.Latest,
-		true,
-		ts.ScriptKind.TS
-	);
-	const results: Array<{ localName: string; importedName: string; source: string }> = [];
-
-	for (const statement of sourceFile.statements) {
-		if (!ts.isImportDeclaration(statement)) continue;
-		if (!ts.isStringLiteral(statement.moduleSpecifier)) continue;
-
-		const source = statement.moduleSpecifier.text;
-		const clause = statement.importClause;
-		if (!clause) continue;
-
-		if (clause.name) {
-			results.push({
-				localName: clause.name.text,
-				importedName: 'default',
-				source
-			});
-		}
-
-		if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
-			for (const element of clause.namedBindings.elements) {
-				results.push({
-					localName: element.name.text,
-					importedName: element.propertyName?.text ?? element.name.text,
-					source
-				});
-			}
-		}
-	}
-
-	return results;
-}
-
-function applyImportToMaps(
+function applyDefaultImport(
 	aliases: MdxComponentAliasMap,
 	imports: MdxComponentImportMap,
 	localName: string,
-	importedName: string,
 	source: string
 ) {
 	const baseName = getImportSourceBaseName(source);
-
 	addAlias(aliases, localName, [
 		localName,
-		importedName,
+		'default',
 		baseName,
 		baseName.toLowerCase(),
 		toPascalCase(baseName)
@@ -118,36 +70,76 @@ function applyImportToMaps(
 	imports[localName] = source;
 }
 
-function extractMdxImportDataFromTree(root: MdastNode): {
+function applyNamedImports(
+	aliases: MdxComponentAliasMap,
+	imports: MdxComponentImportMap,
+	specifierBlock: string,
+	source: string
+) {
+	const baseName = getImportSourceBaseName(source);
+	for (const specifier of specifierBlock.split(',')) {
+		const parts = specifier.trim().split(/\s+as\s+/);
+		const importedName = parts[0].trim();
+		const localName = (parts[1] ?? parts[0]).trim();
+		if (!localName) continue;
+		addAlias(aliases, localName, [
+			localName,
+			importedName,
+			baseName,
+			baseName.toLowerCase(),
+			toPascalCase(baseName)
+		]);
+		imports[localName] = source;
+	}
+}
+
+function extractImportData(rawContent: string): {
 	aliases: MdxComponentAliasMap;
 	imports: MdxComponentImportMap;
 } {
 	const aliases: MdxComponentAliasMap = {};
 	const imports: MdxComponentImportMap = {};
+	const lines = rawContent.split('\n');
+	let inCodeFence = false;
 
-	function visit(node: MdastNode) {
-		const isEsmNode = node.type === 'mdxjsEsm';
-		const isScriptJsxNode =
-			(node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') &&
-			node.name === 'script';
+	for (const line of lines) {
+		const trimmed = line.trim();
+		if (/^(`{3,}|~{3,})/.test(trimmed)) {
+			inCodeFence = !inCodeFence;
+			continue;
+		}
+		if (inCodeFence || !/^import\s/.test(trimmed)) continue;
 
-		if (isEsmNode || isScriptJsxNode) {
-			const importCode = collectText(node);
-			if (importCode) {
-				for (const item of collectImportSourcesFromTs(importCode)) {
-					applyImportToMaps(aliases, imports, item.localName, item.importedName, item.source);
-				}
-			}
+		const defaultMatch = RE_DEFAULT_IMPORT.exec(trimmed);
+		if (defaultMatch) {
+			applyDefaultImport(aliases, imports, defaultMatch[1], defaultMatch[2]);
+			continue;
 		}
 
-		for (const child of node.children ?? []) {
-			visit(child);
+		const namedMatch = RE_NAMED_IMPORT.exec(trimmed);
+		if (namedMatch) {
+			applyNamedImports(aliases, imports, namedMatch[1], namedMatch[2]);
 		}
 	}
 
-	visit(root);
-
 	return { aliases, imports };
+}
+
+function stripImportLines(content: string): string {
+	const lines = content.split('\n');
+	let inCodeFence = false;
+
+	return lines
+		.filter((line) => {
+			const trimmed = line.trim();
+			if (/^(`{3,}|~{3,})/.test(trimmed)) {
+				inCodeFence = !inCodeFence;
+				return true;
+			}
+			if (inCodeFence) return true;
+			return !/^import\s/.test(trimmed);
+		})
+		.join('\n');
 }
 
 function isWhitespaceTextNode(node: RehypeNode): boolean {
@@ -248,7 +240,9 @@ export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 				return null;
 			}
 
-			const { data: metadata, content } = matter(code);
+			const { data: metadata, content: rawContent } = matter(code);
+			const mdxImportData = extractImportData(rawContent);
+			const content = stripImportLines(rawContent);
 			const remarkPlugins = (markdownConfig.remarkPlugins ?? []) as unknown[];
 
 			const remarkPluginsWithoutBridge = remarkPlugins.filter((plugin) => {
@@ -271,14 +265,11 @@ export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 			usePlugins(processor, (markdownConfig.rehypePlugins ?? []) as unknown[]);
 
 			const markdownTree = processor.parse(content) as MdastNode;
-			const mdxImportData = extractMdxImportDataFromTree(markdownTree);
 
-			const uniqueImportSources = Array.from(new Set(Object.values(mdxImportData.imports)));
-			for (const source of uniqueImportSources) {
-				const resolved = await this.resolve(source, filepath);
-				if (!resolved) {
-					this.error(`Unresolved MDX import "${source}" in ${filepath}. Ensure the path is valid.`);
-				}
+			if (hasScriptTagNodes(markdownTree)) {
+				this.warn(
+					`[md-to-ast] <script> tags in "${filepath}" are ignored. Use top-level import statements instead (e.g. \`import Foo from './foo.svelte'\`).`
+				);
 			}
 
 			const tree = await processor.run(markdownTree);
