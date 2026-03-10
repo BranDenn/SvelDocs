@@ -86,7 +86,7 @@ export type DocGroup = {
 	private?: boolean;
 } & Icon;
 
-export type DocTab = {
+type DocTabBase = {
 	/**
 	 * The name of the tab. This is displayed in the header.
 	 */
@@ -110,20 +110,114 @@ export type DocTab = {
 	 * An explicit value at this level can be overridden by group-level or page-level settings.
 	 */
 	private?: boolean;
-} & (
-	| { groups: DocGroup[] | 'auto'; pages?: never } // If groups exist, pages cannot
-	| { pages: PageItems | 'auto'; groups?: never } // If pages exist, groups cannot
-) &
-	Icon;
+} & Icon;
+
+export type DocTabGroupsConfig = DocTabBase & {
+	/**
+	 * A list of groups to include in this tab.
+	 * - If `"auto"`, groups are generated from this tab folder.
+	 */
+	groups: DocGroup[] | 'auto';
+	/**
+	 * Mutually exclusive with `groups` at the tab level.
+	 */
+	pages?: never;
+};
+
+export type DocTabPagesConfig = DocTabBase & {
+	/**
+	 * A list of pages to include directly in this tab.
+	 * - If `"auto"`, pages are generated from this tab folder.
+	 * - Can include `'loadRest'` as the last element to load remaining pages.
+	 */
+	pages: PageItems | 'auto';
+	/**
+	 * Mutually exclusive with `pages` at the tab level.
+	 */
+	groups?: never;
+};
+
+export type DocTab = DocTabGroupsConfig | DocTabPagesConfig;
 
 /**
- * The structure of the navigation settings for the documentation site.
- * This ensures that only one of the three properties (`tabs`, `groups`, or `pages`) can be defined at a time.
+ * Root navigation config when docs are organized by tabs.
+ */
+export type DocNavigationTabsConfig = {
+	/**
+	 * A list of tabs to include in the docs navigation.
+	 * - If `"auto"`, tabs are generated from the filesystem.
+	 */
+	tabs: DocTab[] | 'auto';
+	/**
+	 * Enables previous/next page links that can continue across tab boundaries.
+	 * This option only applies to tab-based navigation.
+	 * - Defaults to `false` when omitted.
+	 */
+	tabNextPrev?: boolean;
+	/**
+	 * Mutually exclusive with `tabs` at the root level.
+	 */
+	groups?: never;
+	/**
+	 * Mutually exclusive with `tabs` at the root level.
+	 */
+	pages?: never;
+};
+
+/**
+ * Root navigation config when docs are organized by groups.
+ */
+export type DocNavigationGroupsConfig = {
+	/**
+	 * A list of groups to include in the docs navigation.
+	 * - If `"auto"`, groups are generated from the filesystem.
+	 */
+	groups: DocGroup[] | 'auto';
+	/**
+	 * Mutually exclusive with `groups` at the root level.
+	 */
+	tabs?: never;
+	/**
+	 * Mutually exclusive with `groups` at the root level.
+	 */
+	pages?: never;
+	/**
+	 * `tabNextPrev` is only supported in tab-based navigation mode.
+	 */
+	tabNextPrev?: never;
+};
+
+/**
+ * Root navigation config when docs are organized as a flat list of pages.
+ */
+export type DocNavigationPagesConfig = {
+	/**
+	 * A list of pages to include in the docs navigation.
+	 * - If `"auto"`, pages are generated from the filesystem.
+	 */
+	pages: DocPage[] | 'auto';
+	/**
+	 * Mutually exclusive with `pages` at the root level.
+	 */
+	tabs?: never;
+	/**
+	 * Mutually exclusive with `pages` at the root level.
+	 */
+	groups?: never;
+	/**
+	 * `tabNextPrev` is only supported in tab-based navigation mode.
+	 */
+	tabNextPrev?: never;
+};
+
+/**
+ * The root structure for documentation navigation.
+ * Exactly one mode can be defined: tabs, groups, or pages.
  */
 export type DocNavigationConfig =
-	| { tabNextPrev?: boolean; tabs: DocTab[] | 'auto'; groups?: never; pages?: never }
-	| { groups: DocGroup[] | 'auto'; tabs?: never; pages?: never; tabNextPrev?: never }
-	| { pages: DocPage[] | 'auto'; tabs?: never; groups?: never; tabNextPrev?: never };
+	| DocNavigationTabsConfig
+	| DocNavigationGroupsConfig
+	| DocNavigationPagesConfig;
 
 /**
  * Validates that 'loadRest' appears at most once and only as the last item in an array.
@@ -157,10 +251,8 @@ function validateTabConfig(tab: DocTab): void {
 	if ('pages' in tab) {
 		validatePageItems(tab.pages);
 	}
-	if ('groups' in tab && Array.isArray(tab.groups)) {
-		for (const group of tab.groups) {
-			validatePageItems(group.pages);
-		}
+	if ('groups' in tab) {
+		validateGroupsConfig(tab.groups);
 	}
 }
 
@@ -180,6 +272,9 @@ function validateGroupsConfig(groups: DocGroup[] | 'auto' | undefined): void {
 	}
 }
 
+/**
+ * Defines the documentation navigation configuration with type safety and validation.
+ */
 export function defineDocNavigation(config: DocNavigationConfig): DocNavigationConfig {
 	if ('tabs' in config) {
 		validateTabsConfig(config.tabs);

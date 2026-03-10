@@ -3,23 +3,28 @@ description: Examples of markdown and their result.
 ---
 
 <script lang="ts">
-	import Alert from '$lib/components/ui/alert/alert.svelte'
-	import H1 from '$lib/markdown/components/headings/h1.svelte'
-	import H2 from '$lib/markdown/components/headings/h2.svelte'
-	import H3 from '$lib/markdown/components/headings/h3.svelte'
-	import H4 from '$lib/markdown/components/headings/h4.svelte'
-	import H5 from '$lib/markdown/components/headings/h5.svelte'
-	import H6 from '$lib/markdown/components/headings/h6.svelte'
+	import Alert from '$lib/components/ui/alert/alert.svelte' import H1 from
+	'$lib/markdown/components/headings/h1.svelte' import H2 from
+	'$lib/markdown/components/headings/h2.svelte' import H3 from
+	'$lib/markdown/components/headings/h3.svelte' import H4 from
+	'$lib/markdown/components/headings/h4.svelte' import H5 from
+	'$lib/markdown/components/headings/h5.svelte' import H6 from
+	'$lib/markdown/components/headings/h6.svelte'
 </script>
 
 ## Headings
 
 ```md
 # h1 Heading
+
 ## h2 Heading
+
 ### h3 Heading
+
 #### h4 Heading
+
 #### h5 Heading
+
 ##### h6 Heading
 ```
 
@@ -35,8 +40,8 @@ description: Examples of markdown and their result.
 ## Styling Text
 
 ```md
-This is **bold text** (or __bold text__)
-This is *italic text* (or _italic text_)
+This is **bold text** (or **bold text**)
+This is _italic text_ (or _italic text_)
 This is ~strikethrough text~ (or ~~strikethrough text~~)
 This is **_bold & italic text_**
 This is <sub>subscript text</sub>
@@ -84,12 +89,16 @@ line break
 
 ```md
 - First
+
 * Second
+
 - Third
 ```
 
 - First
+
 * Second
+
 - Third
 
 #### Ordered List
@@ -204,7 +213,7 @@ Alerts are components to increase their customizability. View how to use them [h
 
 ```svelte
 <script lang="ts">
-	import Alert from '$lib/components/ui/alert/alert.svelte'
+	import Alert from '$lib/components/ui/alert/alert.svelte';
 </script>
 
 <Alert type="note">This is a note alert.</Alert>

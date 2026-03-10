@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import docNavigationConfig from '$lib/server/navigation/doc-navigation';
+import docNavigationConfig from '$lib/server/navigation/doc-navigation.config';
 import type {
 	DocNavigationConfig,
 	DocGroup,

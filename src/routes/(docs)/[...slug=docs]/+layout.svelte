@@ -70,7 +70,7 @@
 
 <div class="relative container flex grow">
 	<div
-		class="from-accent/10 top-0 pointer-events-none absolute inset-0 z-20 h-[50dvh] bg-radial-[50%_50%_at_50%_0%]"
+		class="from-accent/10 pointer-events-none absolute inset-0 top-0 z-20 h-[50dvh] bg-radial-[50%_50%_at_50%_0%]"
 	></div>
 
 	<Sidebar.Root

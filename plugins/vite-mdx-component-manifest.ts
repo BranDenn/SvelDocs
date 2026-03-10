@@ -102,7 +102,8 @@ export function mdxComponentManifest(options?: { contentPath?: string }): Plugin
 		handleHotUpdate(ctx) {
 			const absoluteFilePath = path.resolve(ctx.file);
 			const isContentFile =
-				absoluteFilePath.startsWith(absoluteContentPath + path.sep) && /\.(md|mdx)$/i.test(absoluteFilePath);
+				absoluteFilePath.startsWith(absoluteContentPath + path.sep) &&
+				/\.(md|mdx)$/i.test(absoluteFilePath);
 
 			if (!isContentFile) {
 				return;

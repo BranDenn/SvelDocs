@@ -83,9 +83,8 @@ function generateModuleSource(navigationFilePath: string): string {
 	return lines.join('\n');
 }
 
-export function docIconManifest(options?: { navigationPath?: string }): PluginOption {
-	const navigationPath = options?.navigationPath ?? 'src/lib/server/navigation/doc-navigation.ts';
-	const absoluteNavigationPath = path.resolve(process.cwd(), navigationPath);
+export function docIconManifest(options: { navigationPath: string }): PluginOption {
+	const absoluteNavigationPath = path.resolve(process.cwd(), options.navigationPath);
 
 	return {
 		name: 'vite-plugin-doc-icon-manifest',

@@ -7,5 +7,11 @@ import { mdxComponentManifest } from './plugins/vite-mdx-component-manifest';
 import { mdToAst } from './plugins/vite-md-to-ast';
 
 export default defineConfig({
-	plugins: [docIconManifest(), mdxComponentManifest(), mdToAst(markdownConfig), tailwindcss(), sveltekit()]
+	plugins: [
+		docIconManifest({ navigationPath: 'src/lib/server/navigation/doc-navigation.config.ts' }),
+		mdxComponentManifest(),
+		mdToAst(markdownConfig),
+		tailwindcss(),
+		sveltekit()
+	]
 });

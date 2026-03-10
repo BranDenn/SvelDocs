@@ -2,9 +2,7 @@
 description: How to work with markdown and how to customize the markdown result.
 ---
 
-<script lang="ts">
-    import Alert from '$lib/components/ui/alert/alert.svelte'
-</script>
+<script lang="ts">import Alert from '$lib/components/ui/alert/alert.svelte'</script>
 
 ## Frontmatter
 
@@ -16,13 +14,16 @@ title: Example Title
 description: Example Description
 ---
 
-~~~ content normally goes here ~~~
+```content normally goes here ~~~
+
+```
 ```
 
 The frontmatter is exposed to the `src/routes/[...slug=docs]/+page.svelte` file, api, and the search functionality. Any number of frontmatter can be defined, but will not be shown automatically. If you want additional frontmatter attributes to be shown on the page or search results, be sure to edit the `src/routes/[...slug=docs]/+page.svelte` or `src/lib/components/search/flexsearch.ts` files respectively.
 
 <Alert type="warning">
-    All frontmatter attributes from markdown files are exposed plublicly in the api and search results.
+	All frontmatter attributes from markdown files are exposed plublicly in the api and search
+	results.
 </Alert>
 
 #### Type Safety
@@ -61,8 +62,8 @@ These are then exported in the `src/lib/components/mdsx/blueprint.svelte` file, 
 
 ```svelte title="blueprint.svelte"
 <script lang="ts" module>
-    // the default <pre> and <a> tags from markdown will now be replaced by these components.
-	export { pre, a } from './index'; 
+	// the default <pre> and <a> tags from markdown will now be replaced by these components.
+	export { pre, a } from './index';
 </script>
 
 <script lang="ts">
@@ -73,6 +74,4 @@ These are then exported in the `src/lib/components/mdsx/blueprint.svelte` file, 
 {@render children?.()}
 ```
 
-<Alert type="note">
-    The exported component must have the same name as the default html tags.
-</Alert>
+<Alert type="note">The exported component must have the same name as the default html tags.</Alert>

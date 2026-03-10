@@ -51,7 +51,10 @@ export type AstNodeResolver = ((context: AstNodeContext) => AstNodeRendererResul
 	[AST_NODE_RESOLVER]: true;
 };
 
-export type AstNodeRenderer = MarkdownNodeComponent | AstNodeResolver | ((context: AstNodeContext) => AstNodeRendererResult);
+export type AstNodeRenderer =
+	| MarkdownNodeComponent
+	| AstNodeResolver
+	| ((context: AstNodeContext) => AstNodeRendererResult);
 export type AstNodeRendererMap = Record<string, AstNodeRenderer>;
 
 export function defineNodeResolver(
@@ -79,7 +82,9 @@ export const astNodeRenderers = {
 	h5: H5,
 	h6: H6,
 	pre: Pre,
-	code: resolver((context) => context.parentElement === 'pre' ? null : { component: InlineCode, inheritNodeProps: true }),
+	code: resolver((context) =>
+		context.parentElement === 'pre' ? null : { component: InlineCode, inheritNodeProps: true }
+	),
 	a: A,
 	table: Table,
 	thead: Thead,
@@ -88,7 +93,7 @@ export const astNodeRenderers = {
 	th: Th,
 	td: Td,
 	hr: Hr,
-	p: P,
+	p: P
 } satisfies AstNodeRendererMap;
 
 export default astNodeRenderers;

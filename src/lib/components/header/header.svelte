@@ -19,12 +19,10 @@
 		class="h-header bg-background isolate container flex items-center justify-between gap-4 px-4 md:grid md:grid-cols-3"
 	>
 		<Logo />
-		<div>
-		</div>
+		<div></div>
 		<div class="flex items-center gap-4 justify-self-end">
 			<ThemeSwitch />
 		</div>
-		
 	</nav>
 
 	<!-- Mobile & Tab navigation -->

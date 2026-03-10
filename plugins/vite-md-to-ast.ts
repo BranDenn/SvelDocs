@@ -57,8 +57,16 @@ function collectText(node: MdastNode): string {
 	return parts.join('\n').trim();
 }
 
-function collectImportSourcesFromTs(code: string): Array<{ localName: string; importedName: string; source: string }> {
-	const sourceFile = ts.createSourceFile('mdx-imports.ts', code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+function collectImportSourcesFromTs(
+	code: string
+): Array<{ localName: string; importedName: string; source: string }> {
+	const sourceFile = ts.createSourceFile(
+		'mdx-imports.ts',
+		code,
+		ts.ScriptTarget.Latest,
+		true,
+		ts.ScriptKind.TS
+	);
 	const results: Array<{ localName: string; importedName: string; source: string }> = [];
 
 	for (const statement of sourceFile.statements) {
@@ -120,7 +128,8 @@ function extractMdxImportDataFromTree(root: MdastNode): {
 	function visit(node: MdastNode) {
 		const isEsmNode = node.type === 'mdxjsEsm';
 		const isScriptJsxNode =
-			(node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') && node.name === 'script';
+			(node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') &&
+			node.name === 'script';
 
 		if (isEsmNode || isScriptJsxNode) {
 			const importCode = collectText(node);
@@ -268,9 +277,7 @@ export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 			for (const source of uniqueImportSources) {
 				const resolved = await this.resolve(source, filepath);
 				if (!resolved) {
-					this.error(
-						`Unresolved MDX import "${source}" in ${filepath}. Ensure the path is valid.`
-					);
+					this.error(`Unresolved MDX import "${source}" in ${filepath}. Ensure the path is valid.`);
 				}
 			}
 
