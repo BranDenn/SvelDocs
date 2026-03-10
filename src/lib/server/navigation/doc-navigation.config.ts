@@ -30,11 +30,6 @@ const docNavigationConfig = defineDocNavigation<Roles>({
 					pages: 'auto'
 				},
 				{
-					title: 'Components',
-					icon: 'component',
-					pages: 'auto'
-				},
-				{
 					title: 'Miscellaneous',
 					icon: 'dices',
 					pages: 'auto'
@@ -46,7 +41,7 @@ const docNavigationConfig = defineDocNavigation<Roles>({
 			combineHref: true,
 			icon: 'book',
 			pages: 'auto'
-		},
+		}
 	]
 });
 

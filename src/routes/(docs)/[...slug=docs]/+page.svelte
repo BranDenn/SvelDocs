@@ -51,7 +51,7 @@
 
 	const docNavigation = getDocNavigationContext();
 
-	$inspect(data.ast);
+	// $inspect(data.ast);
 </script>
 
 <SEO

@@ -125,7 +125,7 @@ function expandLoadRest(
 
 			return {
 				title,
-				icon: metadata.icon as string | undefined,
+				...(metadata.icon !== undefined ? { icon: metadata.icon as string } : {}),
 				fileName: `${fileName}.md`
 			};
 		});
@@ -571,7 +571,7 @@ export function getDocTabs(): DocTabLink[] {
 		return {
 			title: tab.title,
 			href: firstEntry ? `/${firstEntry.slug}` : resolveTabHref(tab),
-			icon: tab.icon
+			...(tab.icon !== undefined ? { icon: tab.icon } : {})
 		};
 	});
 }
@@ -595,7 +595,7 @@ function mapSidebarPage(page: DocPage, tab?: DocTab, group?: DocGroup): DocSideb
 	return {
 		title: page.title,
 		href: `/${resolveRouteSlug(page, tab, group)}`,
-		icon: page.icon
+		...(page.icon !== undefined ? { icon: page.icon } : {})
 	};
 }
 
@@ -624,7 +624,7 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 					title: group.title,
 					showTitle: group.showTitle !== false,
 					collapsible: group.collapsible !== false,
-					icon: group.icon,
+					...(group.icon !== undefined ? { icon: group.icon } : {}),
 					pages: sidebarPages
 				};
 			})
@@ -633,7 +633,7 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 		return {
 			title: tab.title,
 			href: tabHref,
-			icon: tab.icon,
+			...(tab.icon !== undefined ? { icon: tab.icon } : {}),
 			mode: 'group',
 			data: groups
 		};
@@ -656,7 +656,7 @@ function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 	return {
 		title: tab.title,
 		href: tabHref,
-		icon: tab.icon,
+		...(tab.icon !== undefined ? { icon: tab.icon } : {}),
 		mode: 'page',
 		data: sidebarPages
 	};
@@ -681,55 +681,129 @@ export function getDocSidebarTabs(locals: unknown): DocSidebarTab[] {
 		);
 }
 
+function addGroupedTabNavigation(
+	tab: DocSidebarTab,
+	tabIndex: number,
+	tabId: string,
+	groups: NonNullable<DocNavigationParams['groups']>,
+	pages: NonNullable<DocNavigationParams['pages']>
+) {
+	for (const [groupIndex, group] of (tab.data as DocSidebarGroup[]).entries()) {
+		const groupId = `tab:${tabIndex}-group:${groupIndex}`;
+
+		groups.push({
+			id: groupId,
+			title: group.title,
+			tabId,
+			...(group.icon !== undefined ? { icon: group.icon } : {}),
+			showTitle: group.showTitle,
+			collapsible: group.collapsible
+		});
+
+		for (const pageItem of group.pages) {
+			pages.push({
+				href: pageItem.href,
+				title: pageItem.title,
+				tabId,
+				groupId,
+				...(pageItem.icon !== undefined ? { icon: pageItem.icon } : {})
+			});
+		}
+	}
+}
+
+function addFlatTabNavigation(
+	tab: DocSidebarTab,
+	tabId: string,
+	pages: NonNullable<DocNavigationParams['pages']>
+) {
+	for (const pageItem of tab.data as DocSidebarPage[]) {
+		pages.push({
+			href: pageItem.href,
+			title: pageItem.title,
+			tabId,
+			...(pageItem.icon !== undefined ? { icon: pageItem.icon } : {})
+		});
+	}
+}
+
+function applySequentialPrevNext(
+	pages: NonNullable<DocNavigationParams['pages']>,
+	indexes: number[]
+) {
+	for (let i = 0; i < indexes.length; i++) {
+		const currentIndex = indexes[i];
+		const prevIndex = indexes[i - 1];
+		const nextIndex = indexes[i + 1];
+		const currentPage = pages[currentIndex];
+
+		if (!currentPage) {
+			continue;
+		}
+
+		if (prevIndex !== undefined) {
+			currentPage.prev = pages[prevIndex]?.href;
+		}
+
+		if (nextIndex !== undefined) {
+			currentPage.next = pages[nextIndex]?.href;
+		}
+	}
+}
+
+function applyDocPrevNext(
+	pages: NonNullable<DocNavigationParams['pages']>,
+	tabNextPrevEnabled: boolean
+) {
+	if (tabNextPrevEnabled) {
+		const allIndexes = pages.map((_, index) => index);
+		applySequentialPrevNext(pages, allIndexes);
+		return;
+	}
+
+	const pageIndexesByTab = new Map<string, number[]>();
+
+	for (let index = 0; index < pages.length; index++) {
+		const tabId = pages[index].tabId ?? '__default';
+		const tabIndexes = pageIndexesByTab.get(tabId);
+
+		if (tabIndexes) {
+			tabIndexes.push(index);
+		} else {
+			pageIndexesByTab.set(tabId, [index]);
+		}
+	}
+
+	for (const tabIndexes of pageIndexesByTab.values()) {
+		applySequentialPrevNext(pages, tabIndexes);
+	}
+}
+
 export function buildDocNavigationParams(sidebarTabs: DocSidebarTab[]): DocNavigationParams {
 	const tabs: NonNullable<DocNavigationParams['tabs']> = [];
 	const groups: NonNullable<DocNavigationParams['groups']> = [];
 	const pages: NonNullable<DocNavigationParams['pages']> = [];
 
 	for (const [tabIndex, tab] of sidebarTabs.entries()) {
-		const tabId = `tab:${tab.href}:${tabIndex}`;
+		const tabId = `tab:${tabIndex}`;
 		tabs.push({
 			id: tabId,
 			title: tab.title,
-			icon: tab.icon,
+			...(tab.icon !== undefined ? { icon: tab.icon } : {}),
 			href: tab.href,
 			mode: tab.mode
 		});
 
 		if (tab.mode === 'group') {
-			for (const [groupIndex, group] of (tab.data as DocSidebarGroup[]).entries()) {
-				const groupId = `group:${tabId}:${normalizeSegment(group.title) || groupIndex}`;
-
-				groups.push({
-					id: groupId,
-					title: group.title,
-					tabId,
-					icon: group.icon,
-					showTitle: group.showTitle,
-					collapsible: group.collapsible
-				});
-
-				for (const pageItem of group.pages) {
-					pages.push({
-						href: pageItem.href,
-						title: pageItem.title,
-						tabId,
-						groupId,
-						icon: pageItem.icon
-					});
-				}
-			}
+			addGroupedTabNavigation(tab, tabIndex, tabId, groups, pages);
 		} else {
-			for (const pageItem of tab.data as DocSidebarPage[]) {
-				pages.push({
-					href: pageItem.href,
-					title: pageItem.title,
-					tabId,
-					icon: pageItem.icon
-				});
-			}
+			addFlatTabNavigation(tab, tabId, pages);
 		}
 	}
+
+	const tabNextPrevEnabled =
+		'tabs' in docNavigationConfig && docNavigationConfig.tabNextPrev === true;
+	applyDocPrevNext(pages, tabNextPrevEnabled);
 
 	return { tabs, groups, pages };
 }

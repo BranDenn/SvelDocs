@@ -3,9 +3,10 @@ import { getDocSidebarTabs, buildDocNavigationParams } from '$lib/server/content
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	const sidebarTabs = getDocSidebarTabs(locals);
+	const navigation = buildDocNavigationParams(sidebarTabs);
+
 	return {
-		sidebarTabs,
-		navigationParams: buildDocNavigationParams(sidebarTabs),
+		navigation,
 		emulated: locals.emulated
 	};
 };

@@ -5,73 +5,38 @@
 	import Loader from '@lucide/svelte/icons/loader-circle';
 	import * as Sidebar from '$ui/sidebar';
 	import Icon from '$components/icon';
-	import type {
-		DocSidebarGroup,
-		DocSidebarPage,
-		DocSidebarTab
-	} from '$lib/server/content/docs-loader';
 	import {
 		setDocNavigationContext,
-		type DocNavigationParams
+		type DocNavigationParams,
+		type GroupedPages,
+		type NavigationPage
 	} from '$lib/doc-navigation-context.svelte';
 	import type { Snippet } from 'svelte';
-	import { page } from '$app/state';
 	import { cn } from '$utils';
-	import { untrack } from 'svelte';
 
 	let {
 		data,
 		children
 	}: {
 		data: {
-			sidebarTabs?: DocSidebarTab[];
-			navigationParams?: DocNavigationParams;
+			navigation?: DocNavigationParams;
 			emulated?: boolean;
 		};
 		children?: Snippet;
 	} = $props();
 
 	let isLoading = $state(false);
-	const EMPTY_NAVIGATION_PARAMS: DocNavigationParams = { tabs: [], groups: [], pages: [] };
-
-	const initialNavigationParams = untrack(() => data.navigationParams ?? EMPTY_NAVIGATION_PARAMS);
-	let lastNavigationParamsKey = JSON.stringify(initialNavigationParams);
-
-	const docNavigation = setDocNavigationContext(initialNavigationParams);
-
-	$effect(() => {
-		const nextNavigationParams = data.navigationParams ?? EMPTY_NAVIGATION_PARAMS;
-		const nextKey = JSON.stringify(nextNavigationParams);
-
-		if (nextKey === lastNavigationParamsKey) {
-			return;
-		}
-
-		lastNavigationParamsKey = nextKey;
-		docNavigation.update(nextNavigationParams);
-	});
-
-	const currentSidebarTab = $derived.by(() => {
-		const sidebarTabs = data.sidebarTabs ?? [];
-		const currentTabId = docNavigation.currentTab?.id;
-		if (!currentTabId) return sidebarTabs[0] ?? null;
-
-		const navigationTabs = data.navigationParams?.tabs ?? [];
-		const tabIndex = navigationTabs.findIndex((tab) => tab.id === currentTabId);
-		return tabIndex >= 0 ? (sidebarTabs[tabIndex] ?? null) : (sidebarTabs[0] ?? null);
-	});
-
-	function isActive(href: string): boolean {
-		return page.url.pathname === href;
-	}
+	const docNavigation = setDocNavigationContext(
+		() => data.navigation ?? { tabs: [], groups: [], pages: [] }
+	);
 </script>
 
 <Header />
 
 <div class="relative container flex grow">
-	<div
+	<!-- <div
 		class="from-accent/10 pointer-events-none absolute inset-0 top-0 z-20 h-[50dvh] bg-radial-[50%_50%_at_50%_0%]"
-	></div>
+	></div> -->
 
 	<Sidebar.Root
 		class={cn(
@@ -84,37 +49,25 @@
 		<div
 			class="from-background pointer-events-none sticky top-0 z-10 h-4 shrink-0 bg-linear-to-b"
 		></div>
-		<Sidebar.Content class="">
-			{#if currentSidebarTab}
-				{#if currentSidebarTab.mode === 'group'}
-					{@const navGroups = currentSidebarTab.data as DocSidebarGroup[]}
-					{#each navGroups as navGroup (navGroup.title)}
-						{#if navGroup.showTitle}
-							<Sidebar.Group collapsible={navGroup.collapsible}>
-								<Sidebar.GroupLabel>
-									{#if navGroup.icon}
-										<Icon name={navGroup.icon} />
-									{/if}
-									{navGroup.title}
-								</Sidebar.GroupLabel>
-								<Sidebar.Menu>
-									{#each navGroup.pages as pageItem (pageItem.href)}
-										<Sidebar.MenuItem>
-											<Sidebar.MenuButton href={pageItem.href} isActive={isActive(pageItem.href)}>
-												{#if pageItem.icon}
-													<Icon name={pageItem.icon} class="size-4 shrink-0" />
-												{/if}
-												{pageItem.title}
-											</Sidebar.MenuButton>
-										</Sidebar.MenuItem>
-									{/each}
-								</Sidebar.Menu>
-							</Sidebar.Group>
-						{:else}
+		<Sidebar.Content>
+			{#if docNavigation.mode === 'group'}
+				{@const data = docNavigation.data as GroupedPages[]}
+				{#each data as navGroup (navGroup.id)}
+					{#if navGroup.showTitle}
+						<Sidebar.Group collapsible={navGroup.collapsible}>
+							<Sidebar.GroupLabel>
+								{#if navGroup.icon}
+									<Icon name={navGroup.icon} />
+								{/if}
+								{navGroup.title}
+							</Sidebar.GroupLabel>
 							<Sidebar.Menu>
 								{#each navGroup.pages as pageItem (pageItem.href)}
 									<Sidebar.MenuItem>
-										<Sidebar.MenuButton href={pageItem.href} isActive={isActive(pageItem.href)}>
+										<Sidebar.MenuButton
+											href={pageItem.href}
+											isActive={pageItem.href === docNavigation.currentPage?.href}
+										>
 											{#if pageItem.icon}
 												<Icon name={pageItem.icon} class="size-4 shrink-0" />
 											{/if}
@@ -123,23 +76,42 @@
 									</Sidebar.MenuItem>
 								{/each}
 							</Sidebar.Menu>
-						{/if}
+						</Sidebar.Group>
+					{:else}
+						<Sidebar.Menu>
+							{#each navGroup.pages as pageItem (pageItem.href)}
+								<Sidebar.MenuItem>
+									<Sidebar.MenuButton
+										href={pageItem.href}
+										isActive={pageItem.href === docNavigation.currentPage?.href}
+									>
+										{#if pageItem.icon}
+											<Icon name={pageItem.icon} class="size-4 shrink-0" />
+										{/if}
+										{pageItem.title}
+									</Sidebar.MenuButton>
+								</Sidebar.MenuItem>
+							{/each}
+						</Sidebar.Menu>
+					{/if}
+				{/each}
+			{:else if docNavigation.mode === 'page'}
+				<Sidebar.Menu>
+					{@const data = docNavigation.data as NavigationPage[]}
+					{#each data as navPage (navPage.href)}
+						<Sidebar.MenuItem>
+							<Sidebar.MenuButton
+								href={navPage.href}
+								isActive={navPage.href === docNavigation.currentPage?.href}
+							>
+								{#if navPage.icon}
+									<Icon name={navPage.icon} class="size-4 shrink-0" />
+								{/if}
+								{navPage.title}
+							</Sidebar.MenuButton>
+						</Sidebar.MenuItem>
 					{/each}
-				{:else}
-					{@const navPages = currentSidebarTab.data as DocSidebarPage[]}
-					<Sidebar.Menu>
-						{#each navPages as navPage (navPage.href)}
-							<Sidebar.MenuItem>
-								<Sidebar.MenuButton href={navPage.href} isActive={isActive(navPage.href)}>
-									{#if navPage.icon}
-										<Icon name={navPage.icon} class="size-4 shrink-0" />
-									{/if}
-									{navPage.title}
-								</Sidebar.MenuButton>
-							</Sidebar.MenuItem>
-						{/each}
-					</Sidebar.Menu>
-				{/if}
+				</Sidebar.Menu>
 			{:else}
 				<Sidebar.Menu></Sidebar.Menu>
 			{/if}
@@ -176,7 +148,7 @@
 		</div>
 	</Sidebar.Root>
 
-	<div class="flex w-full min-w-0 flex-col wrap-break-word">
+	<div class="relative flex w-full min-w-0 flex-col wrap-break-word">
 		<div
 			class={cn(
 				'from-background pointer-events-none sticky z-10 h-8 shrink-0 bg-linear-to-b transition-[top] duration-300',
@@ -185,6 +157,9 @@
 					: 'top-[calc(var(--spacing-header)*2+1px)] lg:top-[calc(var(--spacing-header)+1px)]'
 			)}
 		></div>
+		<div class="pointer-events-none absolute inset-0 z-20 overflow-hidden">
+			<div class="from-accent/10 aspect-square bg-radial-[50%_50%_at_50%_0%]"></div>
+		</div>
 		<div
 			id="content-area"
 			class="flex grow flex-col gap-8 px-4 transition-[padding] md:px-14 lg:py-6"
@@ -197,6 +172,26 @@
 				<main class="grow">
 					{@render children?.()}
 				</main>
+				<footer>
+					<div class="grid gap-4 sm:grid-cols-2">
+						{#if docNavigation.currentPage?.prev}
+							<a
+								href={docNavigation.currentPage.prev}
+								class="text-muted-foreground hover:text-accent flex items-center justify-center gap-2 rounded-lg border p-4 text-sm font-medium"
+							>
+								← Previous
+							</a>
+						{/if}
+						{#if docNavigation.currentPage?.next}
+							<a
+								href={docNavigation.currentPage.next}
+								class="text-muted-foreground hover:text-accent flex items-center justify-center gap-2 rounded-lg border p-4 text-sm font-medium sm:col-2"
+							>
+								Next →
+							</a>
+						{/if}
+					</div>
+				</footer>
 			{/if}
 		</div>
 		<div

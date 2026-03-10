@@ -142,11 +142,11 @@ export class DocNavigationContext {
 		return groupedPages;
 	});
 
-	constructor(params: DocNavigationParams) {
-		this.update(params);
+	constructor(params: () => DocNavigationParams) {
+		this.update(params());
 	}
 
-	public update(params: DocNavigationParams) {
+	private update(params: DocNavigationParams) {
 		this.pagesByHref.clear();
 		this.tabsById.clear();
 		this.groupsById.clear();
@@ -179,6 +179,6 @@ const [getDocNavigationContext, set] = createContext<DocNavigationContext>();
 
 export { getDocNavigationContext };
 
-export function setDocNavigationContext(params: DocNavigationParams) {
+export function setDocNavigationContext(params: () => DocNavigationParams) {
 	return set(new DocNavigationContext(params));
 }
