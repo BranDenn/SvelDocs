@@ -77,6 +77,18 @@ export class DocNavigationContext {
 		return resolveByHref(page.url.pathname, this.pagesByHref);
 	});
 
+	public readonly prevPage = $derived.by(() => {
+		const prevHref = this.currentPage?.prev;
+		if (!prevHref) return undefined;
+		return this.pagesByHref.get(prevHref);
+	});
+
+	public readonly nextPage = $derived.by(() => {
+		const nextHref = this.currentPage?.next;
+		if (!nextHref) return undefined;
+		return this.pagesByHref.get(nextHref);
+	});
+
 	public readonly mode = $derived.by(() => {
 		const tabId = this.currentPage?.tabId;
 		if (!tabId) return this.currentPage?.groupId ? 'group' : 'page';
@@ -89,10 +101,15 @@ export class DocNavigationContext {
 		return this.tabsById.get(tabId);
 	});
 
+	public getGroup(groupId: string | undefined) {
+		if (!groupId) return undefined;
+		return this.groupsById.get(groupId);
+	}
+
 	public readonly currentGroup = $derived.by(() => {
 		const groupId = this.currentPage?.groupId;
 		if (!groupId) return undefined;
-		return this.groupsById.get(groupId);
+		return this.getGroup(groupId);
 	});
 
 	public readonly tabs = $derived.by(() => [...this.tabsById.values()]);

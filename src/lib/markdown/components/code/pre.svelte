@@ -38,3 +38,58 @@
 		/>
 	{/if}
 </div>
+
+<style lang="postcss">
+	@reference "$css";
+
+	:global {
+		code[data-theme*=' '],
+		code[data-theme*=' '] span {
+			color: var(--shiki-light);
+			background-color: var(--shiki-light-bg);
+		}
+
+		.dark code[data-theme*=' '],
+		.dark code[data-theme*=' '] span {
+			color: var(--shiki-dark);
+			background-color: var(--shiki-dark-bg);
+		}
+
+		[data-rehype-pretty-code-figure] {
+			@apply overflow-hidden rounded-md border shadow-xs;
+		}
+		[data-rehype-pretty-code-title] {
+			@apply bg-primary border-b p-2 text-sm font-bold;
+		}
+		[data-rehype-pretty-code-caption] {
+			@apply text-muted-foreground bg-primary border-t p-2 text-sm;
+		}
+		[data-line] {
+			@apply inline-block px-4 hover:bg-[color-mix(in_oklch,var(--color-background),#808080_25%)];
+		}
+		[data-line-numbers] {
+			counter-reset: line;
+		}
+		[data-line-numbers] > [data-line] {
+			@apply pl-0;
+		}
+		[data-line-numbers] > [data-line]::before {
+			counter-increment: line;
+			content: counter(line);
+			@apply text-muted-foreground/75;
+		}
+		[data-line-numbers-max-digits] {
+			--w: attr(data-line-numbers-max-digits ch);
+			& > [data-line]:hover::before {
+				@apply text-foreground bg-[color-mix(in_oklch,var(--color-background),#808080_35%)];
+			}
+			& > [data-line]::before {
+				width: calc(var(--w) + 2rem);
+				@apply bg-secondary sticky left-0 mr-4 inline-block border-r px-4 text-right;
+			}
+		}
+		[data-highlighted-line] {
+			@apply bg-accent/10!;
+		}
+	}
+</style>

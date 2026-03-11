@@ -1,4 +1,4 @@
 export default {
-	siteName: 'SvelDocs',
-	siteOrigin: 'https://sveldocs.com'
+	name: 'SvelDocs',
+	origin: 'https://sveldocs.com'
 };

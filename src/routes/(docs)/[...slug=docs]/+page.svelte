@@ -148,7 +148,7 @@
 
 <hr class="border-border my-4" />
 
-<article class="prose">
+<article class="[&>*:not([class*='mt-'])]:mt-4">
 	{#each data.ast.children ?? [] as node, i (`node-${i}`)}
 		<BlueprintRenderer {node} {componentAliases} resolvedComponents={resolvedMdxComponents} />
 	{/each}

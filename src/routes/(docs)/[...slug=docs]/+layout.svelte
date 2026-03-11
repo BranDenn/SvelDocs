@@ -13,6 +13,11 @@
 	} from '$lib/doc-navigation-context.svelte';
 	import type { Snippet } from 'svelte';
 	import { cn } from '$utils';
+	import Link from '$components/ui/link/link.svelte';
+	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	import siteConfig from '$lib/site.config';
+	import GridPattern from '$lib/components/grid/grid-pattern.svelte';
 
 	let {
 		data,
@@ -34,10 +39,6 @@
 <Header />
 
 <div class="relative container flex grow">
-	<!-- <div
-		class="from-accent/10 pointer-events-none absolute inset-0 top-0 z-20 h-[50dvh] bg-radial-[50%_50%_at_50%_0%]"
-	></div> -->
-
 	<Sidebar.Root
 		class={cn(
 			'bg-background hidden border-r lg:block',
@@ -151,15 +152,21 @@
 	<div class="relative flex w-full min-w-0 flex-col wrap-break-word">
 		<div
 			class={cn(
-				'from-background pointer-events-none sticky z-10 h-8 shrink-0 bg-linear-to-b transition-[top] duration-300',
+				'from-background pointer-events-none sticky z-1 h-8 shrink-0 bg-linear-to-b transition-[top] duration-300',
 				docNavigation.tabs.length > 0
 					? 'top-[calc(var(--spacing-header)*2+1px)]'
 					: 'top-[calc(var(--spacing-header)*2+1px)] lg:top-[calc(var(--spacing-header)+1px)]'
 			)}
 		></div>
-		<div class="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-			<div class="from-accent/10 aspect-square bg-radial-[50%_50%_at_50%_0%]"></div>
+		<div class="pointer-events-none absolute inset-0 -z-1 overflow-hidden">
+			<GridPattern
+				class="absolute left-1/2 h-64 w-320 -translate-x-1/2 mask-[radial-gradient(ellipse_at_center,black,transparent)] opacity-50"
+				width={40}
+				height={40}
+				strokeDashArray="4 2"
+			/>
 		</div>
+
 		<div
 			id="content-area"
 			class="flex grow flex-col gap-8 px-4 transition-[padding] md:px-14 lg:py-6"
@@ -172,24 +179,41 @@
 				<main class="grow">
 					{@render children?.()}
 				</main>
-				<footer>
+				<footer class="flex flex-col gap-4 text-sm">
 					<div class="grid gap-4 sm:grid-cols-2">
-						{#if docNavigation.currentPage?.prev}
-							<a
-								href={docNavigation.currentPage.prev}
-								class="text-muted-foreground hover:text-accent flex items-center justify-center gap-2 rounded-lg border p-4 text-sm font-medium"
+						{#if docNavigation.prevPage}
+							{@const group = docNavigation.getGroup(docNavigation.prevPage.groupId)}
+							<Link
+								href={docNavigation.prevPage.href}
+								class="bg-secondary hover:bg-primary group text-muted-foreground hover:text-accent flex items-center justify-center gap-2 rounded-lg border p-4 text-sm font-medium transition-[background-color]"
 							>
-								← Previous
-							</a>
+								<ArrowLeft class="size-4 shrink-0 transition-[color,margin] group-hover:mr-1" />
+								<span class="transition-[color]">{docNavigation.prevPage.title}</span>
+								{#if group}
+									<div class="bg-border hidden h-4 w-px lg:block"></div>
+									<span class="text-muted-foreground hidden lg:block">{group.title}</span>
+								{/if}
+							</Link>
 						{/if}
-						{#if docNavigation.currentPage?.next}
-							<a
-								href={docNavigation.currentPage.next}
-								class="text-muted-foreground hover:text-accent flex items-center justify-center gap-2 rounded-lg border p-4 text-sm font-medium sm:col-2"
+						{#if docNavigation.nextPage}
+							{@const group = docNavigation.getGroup(docNavigation.nextPage.groupId)}
+							<Link
+								href={docNavigation.nextPage.href}
+								class="bg-secondary hover:bg-primary group text-muted-foreground hover:text-accent flex items-center justify-center gap-2 rounded-lg border p-4 text-sm font-medium transition-[background-color] sm:col-2"
 							>
-								Next →
-							</a>
+								{#if group}
+									<span class="text-muted-foreground hidden lg:block">{group.title}</span>
+									<div class="bg-border hidden h-4 w-px lg:block"></div>
+								{/if}
+								<span class="transition-[color]">{docNavigation.nextPage.title}</span>
+								<ArrowRight class="size-4 shrink-0 transition-[color,margin] group-hover:ml-1" />
+							</Link>
 						{/if}
+					</div>
+					<hr />
+					<div class="text-muted-foreground flex flex-wrap items-center justify-between gap-2">
+						<p>Copyright © {new Date().getFullYear()} {siteConfig.name}</p>
+						<p>Support Example</p>
 					</div>
 				</footer>
 			{/if}

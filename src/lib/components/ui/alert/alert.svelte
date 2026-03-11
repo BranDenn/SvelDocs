@@ -31,7 +31,7 @@
 <div
 	role="alert"
 	class={cn(
-		'grid gap-1 rounded border-l-4 border-current bg-current/5 fill-current p-4',
+		'grid gap-1 rounded-lg border border-current/25 bg-current/5 fill-current p-4',
 		Icons[type].class,
 		className
 	)}

@@ -1,5 +1,4 @@
 import type { Component } from 'svelte';
-import Alert from '$lib/components/ui/alert/alert.svelte';
 import H1 from './headings/h1.svelte';
 import H2 from './headings/h2.svelte';
 import H3 from './headings/h3.svelte';
@@ -17,6 +16,9 @@ import Th from './table/th.svelte';
 import Td from './table/td.svelte';
 import Hr from './separators/hr.svelte';
 import P from './text/p.svelte';
+import Blockquote from './code/blockquote.svelte';
+import Ol from './text/ol.svelte';
+import Ul from './text/ul.svelte';
 
 export type AstNode = {
 	type?: string;
@@ -93,7 +95,10 @@ export const astNodeRenderers = {
 	th: Th,
 	td: Td,
 	hr: Hr,
-	p: P
+	p: P,
+	blockquote: Blockquote,
+	ol: Ol,
+	ul: Ul
 } satisfies AstNodeRendererMap;
 
 export default astNodeRenderers;
