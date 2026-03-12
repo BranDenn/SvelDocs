@@ -14,12 +14,12 @@
 }
 
 @layer utilities {
-	.docs-layout[data-docs-tabs='true'] {
+	[data-docs-tabs='true'] {
 		@apply sm:[--spacing-docs-header:calc(var(--spacing-docs-header-main)+var(--spacing-docs-header-secondary)+var(--spacing-docs-header-main-border))];
 		@apply sm:[--spacing-docs-header-secondary:var(--spacing-docs-header-tabs)];
 	}
 
-	.docs-layout[data-docs-tabs='false'] {
+	[data-docs-tabs='false'] {
 		@apply sm:[--spacing-docs-header:calc(var(--spacing-docs-header-main)+var(--spacing-docs-header-main-border))];
 	}
 }

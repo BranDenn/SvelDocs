@@ -1,4 +1,5 @@
 export { default as Sidebar } from './sidebar.svelte';
+export { default as SidebarContainer } from './sidebar-container.svelte';
 export { default as SidebarContent } from './sidebar-content.svelte';
 export { default as SidebarHeader } from './sidebar-header.svelte';
 export { default as SidebarGroup } from './sidebar-group.svelte';
@@ -10,6 +11,7 @@ export { default as SidebarFooter } from './sidebar-footer.svelte';
 
 // Namespace-style aliases for `import * as Sidebar from '$ui/sidebar'`
 export { default as Root } from './sidebar.svelte';
+export { default as Container } from './sidebar-container.svelte';
 export { default as Content } from './sidebar-content.svelte';
 export { default as Header } from './sidebar-header.svelte';
 export { default as Group } from './sidebar-group.svelte';
