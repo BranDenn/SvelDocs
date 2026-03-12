@@ -8,13 +8,6 @@
 /* default theme */
 @theme {
 	--font-inter: 'Inter', var(--default-font-family);
-	--spacing-header: 3rem;
-	--spacing-sidebar-nav: 18rem;
-	--spacing-sidebar-toc: 16rem;
-	--spacing-desktop-header: calc(var(--spacing-header) + 1px); /* +1 to account for border */
-	--spacing-mobile-header: calc(
-		var(--spacing-header) * 2 + 1px
-	); /* *2 for mobile nav and +1 to account for border */
 
 	/* light mode colors */
 	--color-background: var(--color-zinc-50); /* background */

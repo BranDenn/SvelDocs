@@ -1,5 +1,4 @@
 <script lang="ts">
-	import './docs.css';
 	import SEO from '$components/seo';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
@@ -148,7 +147,7 @@
 
 <hr class="border-border my-4" />
 
-<article class="[&>*:not([class*='mt-'])]:mt-4">
+<article id="content" class="[&>*:not([class*='mt-'])]:mt-4">
 	{#each data.ast.children ?? [] as node, i (`node-${i}`)}
 		<BlueprintRenderer {node} {componentAliases} resolvedComponents={resolvedMdxComponents} />
 	{/each}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { cn } from '$utils';
 	import type { ClassValue } from 'clsx';
+	import { SvelteMap } from 'svelte/reactivity';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import TableOfContentsIcon from '@lucide/svelte/icons/table-of-contents';
 	import { Link } from '$ui/link';
@@ -11,13 +12,15 @@
 		level: number;
 		text: string;
 		id: string;
+		heading: HTMLHeadingElement;
+		parents: Set<string>;
+		prevId?: string;
 		isIntersectingPriority?: boolean;
-		parentIndex?: number;
 	}
 
 	type Props = {
 		class?: ClassValue;
-		container: HTMLElement | null;
+		container: HTMLElement | null | undefined;
 		highlightParents?: boolean;
 		topOffset?: number;
 		observerOptions?: IntersectionObserverInit;
@@ -35,104 +38,119 @@
 		reachedBottomObserverOptions = { threshold: 1 }
 	}: Props = $props();
 
-	// table of contents that is displayed in its sidebar
-	let toc: TOC[] = $state([]);
+	let toc = new SvelteMap<string, TOC>();
+	let tocEntries = $derived(Array.from(toc.entries()));
 
-	let reachedBottom = false;
-	let hashIndex = $state(-1);
-	let mostRecentEntry = $state(0);
-
-	// gets the content prioritized in the table of contents by id
-	let activeIndex = $derived.by(() => {
-		if (hashIndex > -1) return hashIndex;
-		const idx = toc.findLastIndex((c) => c.isIntersectingPriority);
-		if (idx > 0) return idx;
-		return mostRecentEntry;
+	let reachedBottom = $state(false);
+	let mostRecentKey = $state<string | null>(null);
+	let lastKey = $state<string | null>(null);
+	let warnedDuplicateIds = new Set<string>();
+	let routeHashKey = $derived.by(() => {
+		const hash = page.url.hash.replace('#', '');
+		return hash && toc.has(hash) ? hash : null;
 	});
 
-	// observer for finding which heading is in view
-	let priorityViewObserver: IntersectionObserver | null = null;
+	let activeKey = $derived.by(() => {
+		if (routeHashKey) return routeHashKey;
+		if (reachedBottom && lastKey) return lastKey;
 
+		let intersectingKey: string | null = null;
+		for (const [key, item] of tocEntries) {
+			if (item.isIntersectingPriority) intersectingKey = key;
+		}
+
+		if (intersectingKey) return intersectingKey;
+		if (mostRecentKey && toc.has(mostRecentKey)) return mostRecentKey;
+		return null;
+	});
+
+	let activeItem = $derived(activeKey ? (toc.get(activeKey) ?? null) : null);
+
+	let priorityViewObserver: IntersectionObserver | null = null;
+	let reachedBottomObserver: IntersectionObserver | null = null;
 	let lastScrollTop = 0;
 
-	function priorityInstersectionCallback(entries: IntersectionObserverEntry[]) {
+	function priorityIntersectionCallback(entries: IntersectionObserverEntry[]) {
 		entries.forEach((entry) => {
-			// find content index
-			const idx = toc.findIndex((c) => c.id === entry.target.id);
+			const id = entry.target.id;
+			const item = toc.get(id);
+			if (!item) return;
 
 			const currentScrollTop = window.scrollY;
 			const scrolledUp = currentScrollTop < lastScrollTop;
 			lastScrollTop = currentScrollTop;
 
-			if (idx < 0) return;
-
-			toc[idx].isIntersectingPriority = entry.isIntersecting;
+			toc.set(id, { ...item, isIntersectingPriority: entry.isIntersecting });
 
 			if (entry.isIntersecting) {
-				mostRecentEntry = idx;
+				mostRecentKey = id;
 				return;
 			}
 
-			if (idx === hashIndex && !entry.isIntersecting) {
-				hashIndex = -1;
-				goto('', { noScroll: true });
+			if (id === routeHashKey && !entry.isIntersecting) {
+				goto('', { noScroll: true, replaceState: true });
 				return;
 			}
 
-			if (idx === toc.length - 2 && reachedBottom) {
-				mostRecentEntry = toc.length - 1;
+			const currentLastKey = lastKey;
+			const currentLastItem = currentLastKey ? toc.get(currentLastKey) : null;
+			if (currentLastKey && currentLastItem?.prevId === id && reachedBottom) {
+				mostRecentKey = currentLastKey;
 				return;
 			}
 
-			const prevIdx = idx - 1;
-			if (prevIdx >= 0 && scrolledUp) {
-				const previous = toc[prevIdx];
-				if (!previous.isIntersectingPriority) mostRecentEntry = prevIdx;
-				return;
+			if (item.prevId && scrolledUp) {
+				const previous = toc.get(item.prevId);
+				if (previous && !previous.isIntersectingPriority) mostRecentKey = previous.id;
 			}
 		});
 	}
 
-	let reachedBottomObserver: IntersectionObserver | null = null;
-
 	function bottomIntersectionCallback(entries: IntersectionObserverEntry[]) {
 		entries.forEach((entry) => {
+			if (toc.size === 0 || !lastKey) return;
+
 			reachedBottom = entry.isIntersecting;
 
-			const lastIndex = toc.length - 1;
 			if (entry.isIntersecting) {
-				mostRecentEntry = lastIndex;
+				mostRecentKey = lastKey;
 				return;
 			}
 
-			if (lastIndex === hashIndex && !entry.isIntersecting) {
-				hashIndex = -1;
-				goto('', { noScroll: true });
+			if (lastKey === routeHashKey && !entry.isIntersecting) {
+				goto('', { noScroll: true, replaceState: true });
+				return;
 			}
 
-			if (toc[lastIndex].isIntersectingPriority) return;
+			const currentLastItem = toc.get(lastKey);
+			if (!currentLastItem || currentLastItem.isIntersectingPriority) return;
+			if (mostRecentKey !== lastKey || !currentLastItem.prevId) return;
 
-			if (mostRecentEntry !== lastIndex) return;
+			let initialKey: string | null = null;
+			for (const [key, { heading }] of toc) {
+				const top = heading.getBoundingClientRect().top - topOffset;
+				if (top <= 0) initialKey = key;
+			}
 
-			const prevIdx = lastIndex - 1;
-			if (prevIdx >= 0) mostRecentEntry = prevIdx;
+			mostRecentKey = initialKey;
 		});
 	}
 
 	function update() {
-		if (!container) return;
+		if (!container) {
+			toc.clear();
+			reachedBottom = false;
+			mostRecentKey = null;
+			lastKey = null;
+			return;
+		}
 
 		const headings = [
 			...container.querySelectorAll('h1, h2, h3, h4, h5, h6')
 		] as HTMLHeadingElement[];
 
-		if (headings.length < 1) {
-			toc = [];
-			return;
-		}
-
 		priorityViewObserver?.disconnect();
-		priorityViewObserver = new IntersectionObserver(priorityInstersectionCallback, observerOptions);
+		priorityViewObserver = new IntersectionObserver(priorityIntersectionCallback, observerOptions);
 
 		reachedBottomObserver?.disconnect();
 		if (detectIfReachedBottom) {
@@ -146,82 +164,70 @@
 			}
 		}
 
-		const tempTOC: TOC[] = [];
-
 		const filteredHeadings = headings.filter(
-			(heading) => heading.getAttribute('data-ignore-toc') !== 'true'
+			(heading) => heading.getAttribute('data-ignore-toc') !== 'true' && heading.id
 		);
 
-		let intialIndex = 0;
+		const stack: Array<{ id: string; level: number }> = [];
+		const seenIds = new Set<string>();
+		const nextEntries: Array<[string, TOC]> = [];
+		let initialKey: string | null = null;
+		let previousId: string | undefined;
+		let finalKey: string | null = null;
 
-		filteredHeadings.forEach((heading, i) => {
-			// get the heading level
-			const level = parseInt(heading.tagName[1]);
+		filteredHeadings.forEach((heading) => {
+			const level = Number(heading.tagName.slice(1));
+			while (stack.length > 0 && level <= stack[stack.length - 1].level) stack.pop();
 
-			// add the heading element to the observing to change its isIntersectingPriority key
+			const id = heading.id;
+			if (seenIds.has(id)) {
+				if (!warnedDuplicateIds.has(id)) {
+					console.warn(`Duplicate heading id "${id}" was ignored in table-of-contents.`);
+					warnedDuplicateIds.add(id);
+				}
+				return;
+			}
+
+			const item: TOC = {
+				id,
+				text: heading.textContent?.trim() ?? '',
+				level: stack.length + 1,
+				heading,
+				parents: new Set(stack.map(({ id: parentId }) => parentId)),
+				prevId: previousId
+			};
+
+			nextEntries.push([id, item]);
+			seenIds.add(id);
+			stack.push({ id, level });
 			priorityViewObserver?.observe(heading);
 
-			// push heading details to contents array
-			tempTOC.push({ level, text: heading.textContent.trim(), id: heading.id });
-
-			// get the initial index when page is loaded
 			const top = heading.getBoundingClientRect().top - topOffset;
-			if (top <= 0) intialIndex = i;
+			if (top <= 0) initialKey = id;
+
+			previousId = id;
+			finalKey = id;
 		});
 
-		mostRecentEntry = intialIndex;
-
-		toc = normalizeHeadingLevels(tempTOC);
-	}
-
-	function normalizeHeadingLevels(headings: TOC[]): TOC[] {
-		const result: TOC[] = [];
-		const stack: TOC[] = [];
-
-		for (const heading of headings) {
-			// Remove deeper or same-level parents
-			while (stack.length > 0 && heading.level <= stack[stack.length - 1].level) stack.pop();
-			stack.push(heading);
-
-			// The visual level is the current stack depth
-			result.push({
-				...heading,
-				level: stack.length
-			});
-
-			if (highlightParents && stack.length > 1) {
-				const parent = stack[stack.length - 2];
-				const parentIndex = result.findLastIndex((c) => c.id === parent.id);
-				if (parentIndex > -1) result[result.length - 1].parentIndex = parentIndex;
-			}
+		toc.clear();
+		for (const [key, item] of nextEntries) {
+			toc.set(key, item);
 		}
 
-		return result;
-	}
-
-	function isParent(startingIndex: number, finalIndex: number) {
-		if (!highlightParents || startingIndex < 0 || startingIndex >= toc.length) return false;
-
-		const parentIndex = toc[startingIndex].parentIndex;
-		if (parentIndex === undefined) return false;
-		if (parentIndex === finalIndex) return true;
-		return isParent(startingIndex - 1, finalIndex);
+		reachedBottom = false;
+		mostRecentKey = initialKey;
+		lastKey = finalKey;
 	}
 
 	afterNavigate(({ type }) => {
-		// if a page is intially loaded with a hash, then scroll to element
 		if (type === 'enter') {
 			const element = document.getElementById(page.url.hash.replace('#', ''));
 			element?.scrollIntoView();
 			return;
 		}
 
-		// if a page is loaded by being clicked on either from the sidebar or search, then make sure to update the toc
-		// the TOC does not automatically update as the docs is use a shared slug page
-		// type === 'link' ensures that this does not trigger from goto
 		if (type === 'link') {
 			update();
-			return;
 		}
 	});
 
@@ -233,43 +239,44 @@
 			priorityViewObserver = null;
 			reachedBottomObserver?.disconnect();
 			reachedBottomObserver = null;
-			toc = [];
+			toc.clear();
+			reachedBottom = false;
+			mostRecentKey = null;
+			lastKey = null;
 		};
-	});
-
-	$effect(() => {
-		const hash = page.url.hash;
-		if (!hash) return;
-
-		const index = toc.findIndex((c) => `#${c.id}` === hash);
-		hashIndex = index;
 	});
 </script>
 
-{#if toc.length}
-	<div class={cn('flex flex-col gap-4', className)}>
-		<div class="bg-background flex items-center gap-2 text-sm">
-			<TableOfContentsIcon class="size-4 shrink-0 stroke-3" />
-			On this page
-		</div>
+{#if toc.size}
+	<!-- <nav
+			aria-label="On this page"
+			class={cn('flex flex-col', className)}
+		>
+			<div class="sticky top-0">
+				<div class="flex items-center gap-2 bg-primary px-4 pt-4 text-sm">
+					<TableOfContentsIcon class="size-4 shrink-0 stroke-3" />
+					On this page
+				</div>
+			</div> -->
 
-		<div class="text-sm">
-			{#each toc as c, i (c.id)}
-				{@const isActive = i === activeIndex}
-				{@const isP = isParent(activeIndex, i)}
-				<Link
-					href="#{c.id}"
-					class={cn(
-						'transition-font text-muted-foreground block border-l py-1 pr-4 transition-colors',
-						!isActive && !isP && 'hover:text-foreground',
-						isP && 'border-accent/75 text-accent',
-						isActive && 'border-accent text-accent font-medium'
-					)}
-					style="padding-left: {c.level}rem"
-				>
-					{c.text}
-				</Link>
-			{/each}
-		</div>
+	<div class="text-sm">
+		{#each tocEntries as [key, c] (key)}
+			{@const isActive = key === activeKey}
+			{@const isParent = highlightParents && (activeItem?.parents.has(key) ?? false)}
+			<Link
+				href="#{key}"
+				aria-current={isActive ? 'location' : undefined}
+				class={cn(
+					'transition-font text-muted-foreground block border-l py-1 pr-4 transition-colors',
+					!isActive && !isParent && 'hover:text-foreground',
+					isParent && 'text-accent border-accent/75',
+					isActive && 'text-accent border-accent font-medium'
+				)}
+				style="padding-left: {c.level}rem"
+			>
+				{c.text}
+			</Link>
+		{/each}
 	</div>
+	<!-- </nav> -->
 {/if}

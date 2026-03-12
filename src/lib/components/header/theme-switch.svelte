@@ -11,10 +11,10 @@
 		class="text-muted-foreground hover:text-foreground grid aspect-square place-content-center overflow-hidden p-1 transition-colors"
 	>
 		<Sun
-			class="size-5 translate-y-1/2 transition-[translate,opacity]! dark:translate-y-0 dark:opacity-0"
+			class="size-4 translate-y-1/2 transition-[translate,opacity]! dark:translate-y-0 dark:opacity-0"
 		/>
 		<Moon
-			class="size-5 opacity-0 transition-[translate,opacity]! dark:-translate-y-1/2 dark:opacity-100"
+			class="size-4 opacity-0 transition-[translate,opacity]! dark:-translate-y-1/2 dark:opacity-100"
 		/>
 	</Tooltip.Trigger>
 	<Tooltip.Content>Toggle Theme</Tooltip.Content>

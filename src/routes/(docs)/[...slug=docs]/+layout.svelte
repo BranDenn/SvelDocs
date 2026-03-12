@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './docs.css';
 	import Header from '$components/header';
 	import { enhance } from '$app/forms';
 	import CheckCircle2 from '@lucide/svelte/icons/check-circle-2';
@@ -18,6 +19,7 @@
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import siteConfig from '$lib/site.config';
 	import GridPattern from '$lib/components/grid/grid-pattern.svelte';
+	import { TableOfContents } from '$ui/table-of-contents';
 
 	let {
 		data,
@@ -31,6 +33,12 @@
 	} = $props();
 
 	let isLoading = $state(false);
+
+	function getContentContainer() {
+		if (typeof document === 'undefined') return null;
+		return document.getElementById('content') as HTMLElement | null;
+	}
+
 	const docNavigation = setDocNavigationContext(
 		() => data.navigation ?? { tabs: [], groups: [], pages: [] }
 	);
@@ -38,13 +46,15 @@
 
 <Header />
 
-<div class="relative container flex grow">
+<div
+	class="docs-layout relative container flex grow"
+	data-docs-tabs={docNavigation.tabs.length > 0}
+>
 	<Sidebar.Root
 		class={cn(
-			'bg-background hidden border-r lg:block',
-			docNavigation.tabs.length > 0
-				? 'top-[calc(var(--spacing-header)*2+1px)] h-[calc(100dvh-var(--spacing-header)*2-1px)]'
-				: 'top-[calc(var(--spacing-header)+1px)] h-[calc(100dvh-var(--spacing-header)-1px)]'
+			'-ml-72 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 md:ml-0 md:overflow-y-auto md:opacity-100',
+			'bg-background border-r',
+			'top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
 		)}
 	>
 		<div
@@ -150,27 +160,18 @@
 	</Sidebar.Root>
 
 	<div class="relative flex w-full min-w-0 flex-col wrap-break-word">
-		<div
-			class={cn(
-				'from-background pointer-events-none sticky z-1 h-8 shrink-0 bg-linear-to-b transition-[top] duration-300',
-				docNavigation.tabs.length > 0
-					? 'top-[calc(var(--spacing-header)*2+1px)]'
-					: 'top-[calc(var(--spacing-header)*2+1px)] lg:top-[calc(var(--spacing-header)+1px)]'
-			)}
-		></div>
-		<div class="pointer-events-none absolute inset-0 -z-1 overflow-hidden">
-			<GridPattern
-				class="absolute left-1/2 h-64 w-320 -translate-x-1/2 mask-[radial-gradient(ellipse_at_center,black,transparent)] opacity-50"
-				width={40}
-				height={40}
-				strokeDashArray="4 2"
-			/>
-		</div>
+		<GridPattern
+			class="absolute top-0 left-1/2 -z-1 h-64 w-7xl -translate-x-1/2 mask-[radial-gradient(ellipse_at_center,black,transparent)] opacity-50"
+			width={40}
+			height={40}
+			strokeDashArray="4 2"
+		/>
 
 		<div
-			id="content-area"
-			class="flex grow flex-col gap-8 px-4 transition-[padding] md:px-14 lg:py-6"
-		>
+			class="top-docs-header pointer-events-none fixed z-1 h-[calc(100dvh-var(--spacing-docs-header))] w-full bg-linear-[180deg,var(--color-background),transparent_2rem,transparent_calc(100%-2rem),var(--color-background)]"
+		></div>
+
+		<div class="flex grow flex-col gap-8 p-6 transition-[padding] md:p-14">
 			{#if isLoading}
 				<div class="flex grow items-center justify-center">
 					<Loader class="text-muted-foreground size-8 shrink-0 animate-spin" />
@@ -218,8 +219,14 @@
 				</footer>
 			{/if}
 		</div>
-		<div
-			class="from-background pointer-events-none sticky bottom-0 z-10 h-8 shrink-0 bg-linear-to-t"
-		></div>
 	</div>
+
+	<Sidebar.Root
+		class={cn(
+			'-mr-72 overflow-y-hidden p-4 opacity-0 transition-[margin,opacity] duration-300 xl:mr-0 xl:overflow-y-auto xl:opacity-100',
+			'top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
+		)}
+	>
+		<TableOfContents container={getContentContainer()} />
+	</Sidebar.Root>
 </div>

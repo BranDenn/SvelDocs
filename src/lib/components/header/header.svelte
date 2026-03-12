@@ -14,9 +14,9 @@
 	}
 </script>
 
-<header class="bg-background sticky top-0 z-30 border-b">
+<header class="bg-background border-docs-header-main-border sticky top-0 z-30 border-b">
 	<nav
-		class="h-header bg-background isolate container flex items-center justify-between gap-4 px-4 md:grid md:grid-cols-3"
+		class="h-docs-header-main bg-background isolate container flex items-center justify-between gap-4 px-4 md:grid md:grid-cols-3"
 	>
 		<Logo />
 		<div></div>
@@ -28,8 +28,8 @@
 	<!-- Mobile & Tab navigation -->
 	<div
 		class={cn(
-			'h-header container box-content flex items-center gap-4 border-t px-4 sm:box-border sm:border-none',
-			docNavigation.tabs.length === 0 && 'lg:-mt-header transition-[margin] duration-300'
+			'h-docs-header-secondary container box-content flex items-center gap-4 border-t px-4 sm:box-border sm:border-none',
+			docNavigation.tabs.length === 0 && 'lg:-mt-docs-header-tabs transition-[margin] duration-300'
 		)}
 	>
 		{#if docNavigation.tabs.length > 0}
