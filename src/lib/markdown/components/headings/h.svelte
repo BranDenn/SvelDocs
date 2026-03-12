@@ -22,14 +22,7 @@
 		{@render children?.()}
 	</svelte:element>
 {:else}
-	<svelte:element
-		this={element}
-		class={cn(
-			'group relative scroll-mt-[calc(var(--spacing-docs-header)+2rem)] font-bold',
-			className
-		)}
-		{...restProps}
-	>
+	<svelte:element this={element} class={cn('group relative font-bold', className)} {...restProps}>
 		<div class="absolute top-1/2 left-0 hidden -translate-x-full -translate-y-1/2 pr-4 md:block">
 			<a
 				class="bg-secondary hover:bg-primary text-muted-foreground hover:text-foreground block rounded-md border p-1 opacity-0 transition-[opacity,background-color,color] group-hover:opacity-100"

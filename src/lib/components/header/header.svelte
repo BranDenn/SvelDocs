@@ -29,7 +29,8 @@
 	<div
 		class={cn(
 			'h-docs-header-secondary container box-content flex items-center gap-4 border-t px-4 sm:box-border sm:border-none',
-			docNavigation.tabs.length === 0 && 'lg:-mt-docs-header-tabs transition-[margin] duration-300'
+			docNavigation.tabs.length === 0 &&
+				'sm:-mt-docs-header-secondary transition-[margin] duration-300'
 		)}
 	>
 		{#if docNavigation.tabs.length > 0}

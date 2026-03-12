@@ -52,7 +52,7 @@
 >
 	<Sidebar.Root
 		class={cn(
-			'-ml-72 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 md:ml-0 md:overflow-y-auto md:opacity-100',
+			'-ml-64 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 lg:ml-0 lg:overflow-y-auto lg:opacity-100',
 			'bg-background border-r',
 			'top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
 		)}
@@ -171,15 +171,15 @@
 			class="top-docs-header pointer-events-none fixed z-1 h-[calc(100dvh-var(--spacing-docs-header))] w-full bg-linear-[180deg,var(--color-background),transparent_2rem,transparent_calc(100%-2rem),var(--color-background)]"
 		></div>
 
-		<div class="flex grow flex-col gap-8 p-6 transition-[padding] md:p-14">
+		<main class="flex grow flex-col gap-8 p-6 transition-[padding] md:p-14">
 			{#if isLoading}
 				<div class="flex grow items-center justify-center">
 					<Loader class="text-muted-foreground size-8 shrink-0 animate-spin" />
 				</div>
 			{:else}
-				<main class="grow">
+				<article class="grow">
 					{@render children?.()}
-				</main>
+				</article>
 				<footer class="flex flex-col gap-4 text-sm">
 					<div class="grid gap-4 sm:grid-cols-2">
 						{#if docNavigation.prevPage}
@@ -218,12 +218,12 @@
 					</div>
 				</footer>
 			{/if}
-		</div>
+		</main>
 	</div>
 
 	<Sidebar.Root
 		class={cn(
-			'-mr-72 overflow-y-hidden p-4 opacity-0 transition-[margin,opacity] duration-300 xl:mr-0 xl:overflow-y-auto xl:opacity-100',
+			'-mr-64 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 xl:mr-0 xl:overflow-y-auto xl:opacity-100',
 			'top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
 		)}
 	>

@@ -15,7 +15,7 @@
 	--color-muted-foreground: var(--color-zinc-600); /* muted font color */
 	--color-primary: var(--color-zinc-100); /* color 1 */
 	--color-border: var(--color-zinc-200); /* border color */
-	--color-accent: var(--color-rose-600); /* accent color */
+	--color-accent: var(--color-indigo-600); /* accent color */
 
 	--color-secondary: color-mix(
 		in oklch,
@@ -32,13 +32,13 @@
 		--color-muted-foreground: var(--color-zinc-400); /* muted font color */
 		--color-primary: var(--color-zinc-900); /* color 1 */
 		--color-border: var(--color-zinc-800); /* border color */
-		--color-accent: var(--color-rose-400); /* accent color */
+		--color-accent: var(--color-indigo-400); /* accent color */
 	}
 }
 
 @layer utilities {
 	.container {
-		@apply mx-auto max-w-[1440px];
+		@apply mx-auto max-w-360;
 	}
 }
 

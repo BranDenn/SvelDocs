@@ -259,7 +259,7 @@
 				</div>
 			</div> -->
 
-	<div class="text-sm">
+	<div class="p-4 text-sm">
 		{#each tocEntries as [key, c] (key)}
 			{@const isActive = key === activeKey}
 			{@const isParent = highlightParents && (activeItem?.parents.has(key) ?? false)}

@@ -2,33 +2,25 @@
 
 @theme {
 	--spacing-docs-header-main: 3rem;
-	--spacing-docs-header-mobile-bar: 2rem;
+	--spacing-docs-header-mobile: 2rem;
 	--spacing-docs-header-tabs: 2rem;
-	--spacing-docs-header-secondary: var(--spacing-docs-header-mobile-bar);
+	--spacing-docs-header-secondary: var(--spacing-docs-header-mobile);
 	--spacing-docs-header-main-border: 1px;
 	--spacing-docs-header-secondary-border: 1px;
 	--spacing-docs-header: calc(
-		var(--spacing-docs-header-main) + var(--spacing-docs-header-mobile-bar) +
+		var(--spacing-docs-header-main) + var(--spacing-docs-header-secondary) +
 			var(--spacing-docs-header-main-border) + var(--spacing-docs-header-secondary-border)
 	);
 }
 
 @layer utilities {
-	@media (width >= 40rem) {
-		.docs-layout {
-			--spacing-docs-header: calc(
-				var(--spacing-docs-header-main) + var(--spacing-docs-header-tabs) +
-					var(--spacing-docs-header-main-border)
-			);
-		}
+	.docs-layout[data-docs-tabs='true'] {
+		@apply sm:[--spacing-docs-header:calc(var(--spacing-docs-header-main)+var(--spacing-docs-header-secondary)+var(--spacing-docs-header-main-border))];
+		@apply sm:[--spacing-docs-header-secondary:var(--spacing-docs-header-tabs)];
 	}
 
-	@media (width >= 64rem) {
-		.docs-layout[data-docs-tabs='false'] {
-			--spacing-docs-header: calc(
-				var(--spacing-docs-header-main) + var(--spacing-docs-header-main-border)
-			);
-		}
+	.docs-layout[data-docs-tabs='false'] {
+		@apply sm:[--spacing-docs-header:calc(var(--spacing-docs-header-main)+var(--spacing-docs-header-main-border))];
 	}
 }
 
