@@ -1,3 +1,1 @@
-import Link from './link.svelte';
-
-export { Link };
+export { default } from './link.svelte';

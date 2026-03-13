@@ -1,0 +1,17 @@
+<script lang="ts">
+	import { cn } from '$utils';
+	import type { ClassValue } from 'clsx';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import TableOfContentsIcon from '@lucide/svelte/icons/table-of-contents';
+
+	type Props = {
+		class?: ClassValue;
+	} & HTMLAttributes<HTMLDivElement>;
+
+	let { class: className, ...restProps }: Props = $props();
+</script>
+
+<div class={cn('bg-primary flex items-center gap-2 px-4 pt-4 text-sm', className)} {...restProps}>
+	<TableOfContentsIcon class="size-4 shrink-0 stroke-3" />
+	On this page
+</div>

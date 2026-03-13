@@ -4,7 +4,7 @@
 	import { NAVIGATION } from '$lib/docs/docs.config';
 	import * as SearchDialog from '.';
 	import { getSearchContext } from './search-context.svelte';
-	import Highlight from '$ui/highlight';
+	import Highlight from '$components/ui/highlighter';
 
 	const searchContext = getSearchContext();
 </script>

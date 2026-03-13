@@ -1,24 +1,12 @@
-export { default as Sidebar } from './sidebar.svelte';
-export { default as SidebarContainer } from './sidebar-container.svelte';
-export { default as SidebarContent } from './sidebar-content.svelte';
-export { default as SidebarHeader } from './sidebar-header.svelte';
-export { default as SidebarGroup } from './sidebar-group.svelte';
-export { default as SidebarGroupLabel } from './sidebar-group-label.svelte';
-export { default as SidebarMenu } from './sidebar-menu.svelte';
-export { default as SidebarMenuItem } from './sidebar-menu-item.svelte';
-export { default as SidebarMenuButton } from './sidebar-menu-button.svelte';
-export { default as SidebarFooter } from './sidebar-footer.svelte';
-
-// Namespace-style aliases for `import * as Sidebar from '$ui/sidebar'`
-export { default as Root } from './sidebar.svelte';
-export { default as Container } from './sidebar-container.svelte';
-export { default as Content } from './sidebar-content.svelte';
-export { default as Header } from './sidebar-header.svelte';
-export { default as Group } from './sidebar-group.svelte';
-export { default as GroupLabel } from './sidebar-group-label.svelte';
-export { default as Menu } from './sidebar-menu.svelte';
-export { default as MenuItem } from './sidebar-menu-item.svelte';
-export { default as MenuButton } from './sidebar-menu-button.svelte';
-export { default as Footer } from './sidebar-footer.svelte';
+export { default as Sidebar, default as Root } from './sidebar.svelte';
+export { default as SidebarContainer, default as Container } from './sidebar-container.svelte';
+export { default as SidebarContent, default as Content } from './sidebar-content.svelte';
+export { default as SidebarHeader, default as Header } from './sidebar-header.svelte';
+export { default as SidebarGroup, default as Group } from './sidebar-group.svelte';
+export { default as SidebarGroupLabel, default as GroupLabel } from './sidebar-group-label.svelte';
+export { default as SidebarMenu, default as Menu } from './sidebar-menu.svelte';
+export { default as SidebarMenuItem, default as MenuItem } from './sidebar-menu-item.svelte';
+export { default as SidebarMenuButton, default as MenuButton } from './sidebar-menu-button.svelte';
+export { default as SidebarFooter, default as Footer } from './sidebar-footer.svelte';
 
 export type { SidebarMenuButtonSize, SidebarMenuButtonVariant } from './sidebar-menu-button.svelte';

@@ -1,3 +1,1 @@
-import CopyButton from './copy-button.svelte';
-
-export { CopyButton };
+export { default, default as CopyButton } from './copy-button.svelte';

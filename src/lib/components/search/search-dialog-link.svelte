@@ -4,7 +4,7 @@
 	import type { Snippet } from 'svelte';
 	import { Link } from '$ui/link';
 	import { getSearchContext } from './search-context.svelte';
-	import Highlight from '$ui/highlight';
+	import Highlight from '$components/ui/highlighter';
 
 	let { href, icon: Icon, title, children }: NavItem & { children?: Snippet } = $props();
 

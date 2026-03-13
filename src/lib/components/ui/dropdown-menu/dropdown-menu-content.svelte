@@ -1,60 +1,35 @@
 <script lang="ts">
+	import { DropdownMenu as DropdownMenuPrimitive } from 'bits-ui';
 	import { cn } from '$utils';
-	import { DropdownMenuPortal } from './';
-	import { DropdownMenu as DropdownMenuPrimitive, type WithoutChildrenOrChild } from 'bits-ui';
-	import type { ComponentProps } from 'svelte';
-	import { fly } from 'svelte/transition';
 
 	let {
 		ref = $bindable(null),
-		sideOffset = 8,
+		sideOffset = 4,
 		portalProps,
 		class: className,
-		side = 'bottom',
-		children,
 		...restProps
 	}: DropdownMenuPrimitive.ContentProps & {
-		portalProps?: WithoutChildrenOrChild<ComponentProps<typeof DropdownMenuPortal>>;
+		portalProps?: DropdownMenuPrimitive.PortalProps;
 	} = $props();
-
-	function getXY(side: DropdownMenuPrimitive.ContentProps['side'] | unknown) {
-		switch (side) {
-			case 'top':
-				return { x: 0, y: sideOffset };
-			case 'bottom':
-				return { x: 0, y: -sideOffset };
-			case 'left':
-				return { x: sideOffset, y: 0 };
-			case 'right':
-				return { x: -sideOffset, y: 0 };
-			default:
-				return { x: 0, y: 0 };
-		}
-	}
 </script>
 
-<DropdownMenuPortal {...portalProps}>
+<DropdownMenuPrimitive.Portal {...portalProps}>
 	<DropdownMenuPrimitive.Content
-		forceMount
 		bind:ref
 		data-slot="dropdown-menu-content"
-		collisionPadding={8}
 		{sideOffset}
-		{side}
+		collisionPadding={8}
 		class={cn(
-			'bg-background scrollbar-thin z-50 max-h-(--bits-dropdown-menu-content-available-height) min-w-[8rem] origin-(--bits-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-lg border p-1 shadow-md outline-none',
+			'scroll-thin bg-popover text-popover-foreground z-50 min-w-8 overflow-x-hidden overflow-y-auto rounded-sm border p-1 shadow-md outline-none',
+			'max-h-(--bits-dropdown-menu-content-available-height) origin-(--bits-dropdown-menu-content-transform-origin)',
+			'data-[side=bottom]:slide-in-from-top-2',
+			'data-[side=left]:slide-in-from-right-2',
+			'data-[side=right]:slide-in-from-left-2',
+			'data-[side=top]:slide-in-from-bottom-2',
+			'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+			'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
 			className
 		)}
 		{...restProps}
-	>
-		{#snippet child({ wrapperProps, props, open })}
-			{#if open}
-				<div {...wrapperProps}>
-					<div {...props} transition:fly={{ duration: 150, ...getXY(props['data-side']) }}>
-						{@render children?.()}
-					</div>
-				</div>
-			{/if}
-		{/snippet}
-	</DropdownMenuPrimitive.Content>
-</DropdownMenuPortal>
+	/>
+</DropdownMenuPrimitive.Portal>

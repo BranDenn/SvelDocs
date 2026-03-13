@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { getSearchContext } from './search-context.svelte';
-	import Highlight from '$components/ui/highlighter';
+	import { getSearch } from './context.svelte';
+	import Highlighter from '$ui/highlighter';
 	import { type Component } from 'svelte';
 
 	let {
@@ -10,7 +10,7 @@
 		icon: Icon
 	}: { children: Snippet; title: string; icon?: string | Component } = $props();
 
-	const searchContext = getSearchContext();
+	const searchContext = getSearch();
 </script>
 
 <section class="group">
@@ -23,12 +23,12 @@
 					<Icon class="size-4 shrink-0" />
 				{/if}
 				<h2 class="font-medium">
-					<Highlight text={title} query={searchContext.cleanQuery} />
+					<Highlighter text={title} query={searchContext.cleanQuery} />
 				</h2>
 			</div>
 		{:else}
 			<h2 class="bg-background pointer-events-auto px-4 pt-4 font-medium">
-				<Highlight text={title} query={searchContext.cleanQuery} />
+				<Highlighter text={title} query={searchContext.cleanQuery} />
 			</h2>
 		{/if}
 		<div class="from-background sticky top-0 h-4 bg-linear-to-b"></div>

@@ -1,6 +1,10 @@
+<script lang="ts" module>
+	export const overlayClass =
+		'fixed inset-0 z-50 bg-black/50 backdrop-blur-xs data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0';
+</script>
+
 <script lang="ts">
 	import { Dialog as DialogPrimitive } from 'bits-ui';
-	import { fade } from 'svelte/transition';
 	import { cn } from '$utils';
 
 	let {
@@ -11,15 +15,8 @@
 </script>
 
 <DialogPrimitive.Overlay
-	forceMount
 	bind:ref
 	data-slot="dialog-overlay"
-	class={cn('fixed inset-0 z-50 bg-black/50 blur-xl', className)}
+	class={cn(overlayClass, className)}
 	{...restProps}
->
-	{#snippet child({ props, open })}
-		{#if open}
-			<div {...props} transition:fade={{ duration: 150 }}></div>
-		{/if}
-	{/snippet}
-</DialogPrimitive.Overlay>
+/>
