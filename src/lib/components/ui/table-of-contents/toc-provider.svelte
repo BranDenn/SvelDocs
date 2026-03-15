@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { cn } from '$utils';
-	import type { ClassValue } from 'clsx';
-	import { onDestroy, type Snippet } from 'svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
-	import TOCLabel from './toc-label.svelte';
-	import TOCList from './toc-list.svelte';
+	import type { Snippet } from 'svelte';
 	import { setTOCContext } from './toc.context.svelte';
 
 	type Props = {
@@ -16,6 +11,7 @@
 		detectIfReachedBottom?: boolean;
 		reachedBottomObserverOptions?: IntersectionObserverInit;
 		children?: Snippet;
+		onInit?: (toc: ReturnType<typeof setTOCContext>) => void;
 	};
 
 	let {
@@ -25,7 +21,8 @@
 		observerOptions,
 		detectIfReachedBottom = true,
 		reachedBottomObserverOptions = { threshold: 1 },
-		children
+		children,
+		onInit = () => {}
 	}: Props = $props();
 
 	const toc = setTOCContext({
@@ -44,6 +41,10 @@
 	$effect(() => {
 		toc.update();
 		return () => toc.destroy();
+	});
+
+	$effect.pre(() => {
+		onInit(toc);
 	});
 </script>
 

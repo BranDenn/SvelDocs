@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Link } from '$ui/link';
+	import Link from '$ui/link';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
 

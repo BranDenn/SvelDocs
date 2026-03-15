@@ -25,15 +25,9 @@
 		</div>
 	</nav>
 
-	<!-- Mobile & Tab navigation -->
-	<div
-		class={cn(
-			'h-docs-header-secondary container box-content flex items-center gap-4 border-t px-4 sm:box-border sm:border-none',
-			docNavigation.tabs.length === 0 &&
-				'sm:-mt-docs-header-secondary transition-[margin] duration-300'
-		)}
-	>
-		{#if docNavigation.tabs.length > 0}
+	<!-- optional tab navigation -->
+	{#if docNavigation.tabs.length > 0}
+		<div class={cn('h-docs-header-tabs container hidden items-center gap-4 px-4 sm:flex')}>
 			{#each docNavigation.tabs as tab (tab.id)}
 				{@const active = isTabActive(tab.href)}
 				<a
@@ -51,7 +45,6 @@
 					{tab.title}
 				</a>
 			{/each}
-		{/if}
-		<!-- <MobileNav /> -->
-	</div>
+		</div>
+	{/if}
 </header>

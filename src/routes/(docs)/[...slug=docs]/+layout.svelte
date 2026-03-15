@@ -20,6 +20,8 @@
 	import siteConfig from '$lib/site.config';
 	import GridPattern from '$lib/components/grid/grid-pattern.svelte';
 	import * as TOC from '$ui/table-of-contents';
+	import * as Collapsible from '$ui/collapsible';
+	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 
 	let {
 		data,
@@ -36,24 +38,27 @@
 
 	function getContentContainer() {
 		if (typeof document === 'undefined') return null;
-		return document.getElementById('content') as HTMLElement | null;
+		return document.getElementById('$content') as HTMLElement | null;
 	}
 
 	const docNavigation = setDocNavigationContext(
 		() => data.navigation ?? { tabs: [], groups: [], pages: [] }
 	);
+
+	let toc: TOC.Context | null = $state.raw(null);
 </script>
 
-<TOC.Provider container={getContentContainer()}>
-	<Header />
+<Header />
 
+<TOC.Provider container={getContentContainer()} onInit={(ctx) => (toc = ctx)}>
 	<div
-		class="docs-layout relative container flex grow"
+		class="relative container flex grow"
 		data-docs-tabs={docNavigation.tabs.length > 0}
+		data-docs-toc={toc && toc.tocEntries.length > 0}
 	>
 		<Sidebar.Root
 			class={cn(
-				'-ml-64 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 lg:ml-0 lg:overflow-y-auto lg:opacity-100',
+				'-ml-64.25 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 lg:ml-0 lg:overflow-y-auto lg:opacity-100',
 				'bg-background border-r',
 				'top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
 			)}
@@ -165,24 +170,63 @@
 			</Sidebar.Container>
 		</Sidebar.Root>
 
-		<div class="relative flex w-full min-w-0 flex-col wrap-break-word">
-			<GridPattern
-				class="absolute top-0 left-1/2 -z-1 h-64 w-7xl -translate-x-1/2 mask-[radial-gradient(ellipse_at_center,black,transparent)] opacity-50"
-				width={40}
-				height={40}
-				strokeDashArray="4 2"
-			/>
-
-			<div
-				class="top-docs-header pointer-events-none fixed z-1 h-[calc(100dvh-var(--spacing-docs-header))] w-full bg-linear-[180deg,var(--color-background),transparent_2rem,transparent_calc(100%-2rem),var(--color-background)]"
-			></div>
-
-			<main class="flex grow flex-col gap-8 p-6 transition-[padding] md:p-14">
+		<div class="flex grow flex-col wrap-break-word">
+			<div class="top-docs-header pointer-events-none sticky z-1">
+				{#if toc && toc.tocEntries.length > 0}
+					<Collapsible.Root
+						class="bg-background h-docs-content-header pointer-events-auto border-b xl:hidden"
+					>
+						<Collapsible.Trigger
+							class="text-muted-foreground group hover:text-foreground flex w-full items-center gap-2 px-4 py-2 text-sm transition-[color]"
+						>
+							<TOC.RadialProgress class="mr-2" />
+							{#if docNavigation.currentGroup}
+								<span class="block lg:hidden">{docNavigation.currentGroup?.title}</span>
+								<ChevronRightIcon class="block size-4 shrink-0 lg:hidden" />
+							{/if}
+							<span class="block lg:hidden">{docNavigation.currentPage?.title}</span>
+							<ChevronRightIcon class="block size-4 shrink-0 lg:hidden" />
+							<span>{toc.activeItem?.text}</span>
+							<ChevronRightIcon
+								class=" ml-auto size-4 shrink-0 transition-[rotate] group-data-[state=open]:rotate-90"
+							/>
+						</Collapsible.Trigger>
+						<Collapsible.Content
+							class="bg-background max-h-[min(16rem,calc(100dvh-var(--spacing-docs-header)-var(--spacing-docs-content-header-toc)))] overflow-y-auto border-b px-4"
+						>
+							<TOC.Nav>
+								<TOC.Label />
+								<TOC.List />
+							</TOC.Nav>
+						</Collapsible.Content>
+					</Collapsible.Root>
+				{:else}
+					<div
+						class="bg-background h-docs-content-header text-muted-foreground pointer-events-auto flex items-center gap-2 border-b px-4 py-2 text-sm lg:hidden"
+					>
+						{#if docNavigation.currentGroup}
+							<span>{docNavigation.currentGroup?.title}</span>
+							<ChevronRightIcon class="size-4 shrink-0" />
+						{/if}
+						<span>{docNavigation.currentPage?.title}</span>
+					</div>
+				{/if}
+				<div class="from-background h-6 bg-linear-to-b"></div>
+			</div>
+			<main
+				class="relative flex min-w-0 grow flex-col gap-8 overflow-hidden px-6 transition-[padding] lg:px-14 lg:py-8"
+			>
 				{#if isLoading}
 					<div class="flex grow items-center justify-center">
 						<Loader class="text-muted-foreground size-8 shrink-0 animate-spin" />
 					</div>
 				{:else}
+					<GridPattern
+						class="absolute top-0 left-1/2 -z-1 h-64 w-7xl -translate-x-1/2 mask-[radial-gradient(ellipse_at_center,black,transparent)] opacity-50"
+						width={40}
+						height={40}
+						strokeDashArray="4 2"
+					/>
 					<article class="grow">
 						{@render children?.()}
 					</article>
@@ -225,6 +269,7 @@
 					</footer>
 				{/if}
 			</main>
+			<div class="from-background pointer-events-none sticky bottom-0 z-1 h-6 bg-linear-to-t"></div>
 		</div>
 
 		<Sidebar.Root

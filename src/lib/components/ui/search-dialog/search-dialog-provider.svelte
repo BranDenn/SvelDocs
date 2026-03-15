@@ -6,12 +6,11 @@
 	import { onNavigate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	let {
-		open = $bindable(false),
-		onInit = () => {},
-		children,
-		...restProps
-	}: DialogPrimitive.RootProps & { onInit?: (ctx: Search) => void } = $props();
+	type Props = DialogPrimitive.RootProps & {
+		onInit?: (ctx: Search) => void;
+	};
+
+	let { open = $bindable(false), onInit = () => {}, children, ...restProps }: Props = $props();
 
 	const search = setSearch({
 		getOpen: () => open,

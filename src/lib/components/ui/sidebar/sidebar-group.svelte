@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { cn } from '$utils';
-	import { Root as CollapsibleRoot } from '../collapsible/index';
+	import { Collapsible } from '$ui/collapsible';
 	import { setSidebarGroupCollapsibleContext } from './sidebar-group-collapsible-context';
 
 	let {
@@ -30,9 +30,9 @@
 </script>
 
 {#if collapsible}
-	<CollapsibleRoot bind:ref open={true} {...mergedProps}>
+	<Collapsible bind:ref open={true} {...mergedProps}>
 		{@render children?.()}
-	</CollapsibleRoot>
+	</Collapsible>
 {:else}
 	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}

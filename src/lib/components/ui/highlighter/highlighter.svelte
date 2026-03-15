@@ -1,30 +1,31 @@
 <script lang="ts">
 	import { escapeRegex } from '$utils';
 
-	let { text, query } = $props();
+	type Props = {
+		text: string;
+		query: string;
+	};
 
-	const normalized = $derived.by(() => {
-		return {
-			text: text == null ? '' : String(text),
-			query: query == null ? '' : String(query)
-		};
-	});
+	let { text, query }: Props = $props();
+
+	const lowerText = $derived(text.toLowerCase());
+	const lowerQuery = $derived(query.toLowerCase());
 
 	let parts = $derived.by(() => {
-		if (!normalized.query) return [normalized.text];
+		if (!query) return [text];
 
 		try {
-			const regex = new RegExp(`(${escapeRegex(normalized.query)})`, 'gi');
-			return normalized.text.split(regex);
+			const regex = new RegExp(`(${escapeRegex(lowerQuery)})`, 'gi');
+			return lowerText.split(regex);
 		} catch (e) {
 			console.log('Invalid regex query', e);
-			return [normalized.text];
+			return [text];
 		}
 	});
 </script>
 
 {#each parts as part, index (index)}
-	{#if normalized.query && String(part).toLowerCase() === normalized.query.toLowerCase()}
+	{#if part === lowerQuery}
 		<mark>{part}</mark>
 	{:else}
 		{part}

@@ -148,8 +148,8 @@
 <hr class="border-border my-4" />
 
 <div
-	id="content"
-	class="**:[[id]]:scroll-mt-[calc(var(--spacing-docs-header)+2rem)] [&>*:not([class*='mt-'])]:mt-4"
+	id="$content"
+	class="**:[[id]]:scroll-mt-[calc(var(--spacing-docs-header)+var(--spacing-docs-content-header)+1.5rem)] [&>*:not([class*='mt-'])]:mt-4"
 >
 	{#each data.ast.children ?? [] as node, i (`node-${i}`)}
 		<BlueprintRenderer {node} {componentAliases} resolvedComponents={resolvedMdxComponents} />

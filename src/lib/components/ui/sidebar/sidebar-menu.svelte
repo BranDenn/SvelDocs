@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { mergeProps, type WithElementRef } from 'bits-ui';
 	import { cn } from '$utils';
+	import type { Attachment } from 'svelte/attachments';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { Content as CollapsibleContent } from '../collapsible/index';
+	import { CollapsibleContent, collapsibleSlide } from '$ui/collapsible';
 	import { getSidebarGroupCollapsibleContext } from './sidebar-group-collapsible-context';
 
 	let {
@@ -20,18 +21,30 @@
 
 	const sidebar = getSidebarGroupCollapsibleContext();
 	const isCollapsible = !!sidebar?.isCollapsible;
+
+	const setRef: Attachment<HTMLUListElement> = (node) => {
+		ref = node;
+
+		return () => {
+			if (ref === node) {
+				ref = null;
+			}
+		};
+	};
 </script>
 
 {#if isCollapsible}
 	<CollapsibleContent>
-		{#snippet child({ props })}
-			<ul bind:this={ref} {...mergeProps(mergedProps, props)}>
-				{@render children?.()}
-			</ul>
+		{#snippet child({ props, open })}
+			{#if open}
+				<ul {...mergeProps(mergedProps, props)} transition:collapsibleSlide {@attach setRef}>
+					{@render children?.()}
+				</ul>
+			{/if}
 		{/snippet}
 	</CollapsibleContent>
 {:else}
-	<ul bind:this={ref} {...mergedProps}>
+	<ul {...mergedProps} {@attach setRef}>
 		{@render children?.()}
 	</ul>
 {/if}

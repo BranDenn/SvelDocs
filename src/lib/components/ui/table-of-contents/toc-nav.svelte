@@ -3,6 +3,7 @@
 	import type { ClassValue } from 'clsx';
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { getTOCContext } from './toc.context.svelte';
 
 	type Props = {
 		class?: ClassValue;
@@ -10,8 +11,12 @@
 	} & HTMLAttributes<HTMLElement>;
 
 	let { class: className, children, ...restProps }: Props = $props();
+
+	const toc = getTOCContext();
 </script>
 
-<nav aria-label="On this page" class={cn('flex flex-col', className)} {...restProps}>
-	{@render children?.()}
-</nav>
+{#if toc.tocEntries.length > 0}
+	<nav aria-label="On this page" class={cn('flex flex-col', className)} {...restProps}>
+		{@render children?.()}
+	</nav>
+{/if}

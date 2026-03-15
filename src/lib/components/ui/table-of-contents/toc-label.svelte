@@ -11,7 +11,7 @@
 	let { class: className, ...restProps }: Props = $props();
 </script>
 
-<div class={cn('bg-primary flex items-center gap-2 px-4 pt-4 text-sm', className)} {...restProps}>
-	<TableOfContentsIcon class="size-4 shrink-0 stroke-3" />
+<div class={cn('flex items-center gap-2 px-4 pt-4 text-sm', className)} {...restProps}>
+	<TableOfContentsIcon class="size-4 shrink-0" />
 	On this page
 </div>

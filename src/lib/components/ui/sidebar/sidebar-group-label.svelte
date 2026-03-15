@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { cn } from '$utils';
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import type { Snippet } from 'svelte';
-	import { Trigger as CollapsibleTrigger } from '../collapsible/index';
+	import { CollapsibleTrigger } from '$ui/collapsible';
 	import { getSidebarGroupCollapsibleContext } from './sidebar-group-collapsible-context';
 
 	let {
@@ -44,8 +44,8 @@
 {#if isCollapsible}
 	<CollapsibleTrigger bind:ref {...collapsibleProps}>
 		{@render children?.()}
-		<ChevronDown
-			class=" ml-auto transition-[rotate] group-data-[state=closed]/sidebar-group-label:-rotate-90"
+		<ChevronRight
+			class=" ml-auto transition-[rotate] group-data-[state=open]/sidebar-group-label:rotate-90"
 		/>
 	</CollapsibleTrigger>
 {:else if child}

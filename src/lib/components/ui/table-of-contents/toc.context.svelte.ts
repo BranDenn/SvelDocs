@@ -4,6 +4,7 @@ import { goto } from '$app/navigation';
 import { SvelteMap } from 'svelte/reactivity';
 
 type TOCItem = {
+	index: number;
 	level: number;
 	text: string;
 	id: string;
@@ -64,6 +65,11 @@ export class TOCContext {
 	public readonly activeItem = $derived.by(() => {
 		if (!this.activeKey) return null;
 		return this.#toc.get(this.activeKey) ?? null;
+	});
+
+	public readonly activeIndex = $derived.by(() => {
+		if (!this.activeKey) return 0;
+		return this.#toc.get(this.activeKey)?.index ?? 0;
 	});
 
 	public readonly hasEntries = $derived(this.#toc.size > 0);
@@ -202,6 +208,7 @@ export class TOCContext {
 			}
 
 			const item: TOCItem = {
+				index: nextEntries.length,
 				id,
 				text: heading.textContent?.trim() ?? '',
 				level: stack.length + 1,

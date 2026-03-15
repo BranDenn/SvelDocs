@@ -19,7 +19,7 @@
 		{@const isActive = key === toc.activeKey}
 		{@const isParent = toc.highlightParents && (toc.activeItem?.parents.has(key) ?? false)}
 		<Link
-			href="#${key}"
+			href="#{key}"
 			aria-current={isActive ? 'location' : undefined}
 			class={cn(
 				'transition-font text-muted-foreground block border-l py-1 pr-4 transition-colors',
