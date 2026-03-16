@@ -2,7 +2,7 @@
 	import { cn } from '$utils';
 	import type { ClassValue } from 'clsx';
 	import type { SVGAttributes } from 'svelte/elements';
-	import { getTOCContext } from './toc.context.svelte';
+	import { getTOCContext } from './toc-context.svelte';
 
 	type Props = {
 		class?: ClassValue;

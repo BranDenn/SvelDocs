@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { getSearch } from './context.svelte';
+	import { getSearch } from './search-context.svelte';
 	import Highlighter from '$ui/highlighter';
 	import { type Component } from 'svelte';
+	import DocIcon from '$components/icon';
 
 	let {
 		children,
@@ -18,7 +19,7 @@
 		{#if Icon}
 			<div class="bg-background pointer-events-auto flex items-center gap-2 px-4 pt-4">
 				{#if typeof Icon === 'string'}
-					<span class="size-4 shrink-0">{Icon}</span>
+					<DocIcon name={Icon} class="size-4 shrink-0" />
 				{:else}
 					<Icon class="size-4 shrink-0" />
 				{/if}

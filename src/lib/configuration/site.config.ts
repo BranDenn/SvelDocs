@@ -1,4 +1,4 @@
 export default {
 	name: 'SvelDocs',
-	origin: 'https://sveldocs.com'
+	origin: 'https://brandenn.github.io/SvelDocs'
 };

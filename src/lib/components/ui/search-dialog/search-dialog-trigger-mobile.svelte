@@ -14,7 +14,7 @@
 </script>
 
 <Tooltip.Root>
-	<Tooltip.Trigger bind:ref class={cn('lg:hidden', className)} {...restProps}>
+	<Tooltip.Trigger bind:ref class={cn('md:hidden', className)} {...restProps}>
 		{#snippet child({ props: tooltipProps })}
 			<Dialog.Trigger {...tooltipProps}>
 				{#snippet child({ props: dialogProps })}

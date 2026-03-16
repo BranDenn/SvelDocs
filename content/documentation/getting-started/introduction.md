@@ -13,16 +13,16 @@ The files are structured for quick iterations and detailed understanding, while 
 
 ## Features
 
-- Simple structure for adding tabs, groups, and pages
+- Supports both Static Site Generation (SSG) and Server Side Rendered (SSR)
+- Simple structure for adding Tabs, Groups, and or Pages
 - Table of Contents
 - Searching
 - Remark / Rehype plugins
-- API to expose markdown text
+- Automatically generated `.md` and `llms.txt` routes for Artificial Intelligence
 - Syntax highlighted code blocks
-- Code copy button
-- SEO
+- Search Engine Optimization (SEO) and `sitemap.xml`
 - Light and Dark mode
-- Clean and modern look
+- Clean and Modern look
 
 ---
 
@@ -46,3 +46,4 @@ Commonly used documentation websites that I used for research include:
 - [Shadcn UI](https://ui.shadcn.com/docs)
 - [Mintlify](https://mintlify.com/docs)
 - [Bits UI](https://bits-ui.com/docs)
+- [Turborepo](https://turborepo.dev/docs)

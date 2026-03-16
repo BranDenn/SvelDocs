@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>Error {page.status} - {siteConfig.siteName}</title>
+	<title>Error {page.status} - {siteConfig.name}</title>
 </svelte:head>
 
 <div class="grid grow content-center justify-items-center gap-4 p-4">

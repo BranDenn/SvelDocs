@@ -17,6 +17,7 @@ const docNavigationConfig = defineDocNavigation<Roles>({
 			groups: [
 				{
 					title: 'Getting Started',
+					icon: 'goal',
 					showTitle: false,
 					combineHref: false,
 					pages: [

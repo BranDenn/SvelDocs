@@ -8,11 +8,15 @@ description: How to clone the repo and get the boilerplate running.
 git clone https://github.com/BranDenn/SvelDocs
 ```
 
+---
+
 ## Install The Packages
 
 ```bash
 npm i
 ```
+
+---
 
 ## Run The Development Server
 

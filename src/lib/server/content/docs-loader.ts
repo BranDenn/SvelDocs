@@ -159,6 +159,20 @@ export type DocSidebarTab = {
 	data: DocSidebarGroup[] | DocSidebarPage[];
 };
 
+export type DocSearchItem = {
+	href: string;
+	title: string;
+	description: string;
+	keywords?: string[];
+	icon?: string;
+};
+
+export type DocSearchGroup = {
+	title: string;
+	icon?: string;
+	items: DocSearchItem[];
+};
+
 function normalizeSegment(value: string): string {
 	return value
 		.trim()
@@ -599,6 +613,80 @@ function mapSidebarPage(page: DocPage, tab?: DocTab, group?: DocGroup): DocSideb
 	};
 }
 
+function normalizeSearchKeywords(value: unknown): string[] {
+	if (Array.isArray(value)) {
+		return value
+			.filter((item): item is string => typeof item === 'string')
+			.map((item) => item.trim())
+			.filter(Boolean);
+	}
+
+	if (typeof value === 'string') {
+		const keywords = value
+			.split(',')
+			.map((item) => item.trim())
+			.filter(Boolean);
+
+		return keywords;
+	}
+
+	return [];
+}
+
+function getSearchMetadataByHref(href: string): { description: string; keywords?: string[] } {
+	const slug = normalizeRouteSlug(href);
+	const entry = docEntriesBySlug.get(slug);
+
+	if (!entry) {
+		return { description: '' };
+	}
+
+	const module = findModuleByBasePath(entry.fileBasePath);
+	if (!module) {
+		return { description: '' };
+	}
+
+	const metadata = getModuleMetadata(module);
+	const description = typeof metadata.description === 'string' ? metadata.description : '';
+	const keywords = normalizeSearchKeywords(metadata.keywords);
+
+	if (!keywords.length) {
+		return { description };
+	}
+
+	return { description, keywords };
+}
+
+function mapSearchItem(pageItem: DocSidebarPage): DocSearchItem {
+	const metadata = getSearchMetadataByHref(pageItem.href);
+
+	return {
+		href: pageItem.href,
+		title: pageItem.title,
+		description: metadata.description,
+		...(metadata.keywords ? { keywords: metadata.keywords } : {}),
+		...(pageItem.icon !== undefined ? { icon: pageItem.icon } : {})
+	};
+}
+
+function buildSearchGroup(
+	title: string,
+	icon: string | undefined,
+	pages: DocSidebarPage[]
+): DocSearchGroup | null {
+	const items = pages.map(mapSearchItem);
+
+	if (!items.length) {
+		return null;
+	}
+
+	return {
+		title,
+		...(icon !== undefined ? { icon } : {}),
+		items
+	};
+}
+
 function buildSidebarTab(tab: DocTab, locals: unknown): DocSidebarTab {
 	const tabHref =
 		getDocTabs().find((item) => item.title === tab.title)?.href ?? resolveTabHref(tab);
@@ -679,6 +767,30 @@ export function getDocSidebarTabs(locals: unknown): DocSidebarTab[] {
 				? (tab.data as DocSidebarGroup[]).length > 0
 				: (tab.data as DocSidebarPage[]).length > 0
 		);
+}
+
+export function buildDocSearchGroups(sidebarTabs: DocSidebarTab[]): DocSearchGroup[] {
+	const searchGroups: DocSearchGroup[] = [];
+
+	for (const tab of sidebarTabs) {
+		if (tab.mode === 'group') {
+			for (const group of tab.data as DocSidebarGroup[]) {
+				const searchGroup = buildSearchGroup(group.title, group.icon, group.pages);
+				if (searchGroup) {
+					searchGroups.push(searchGroup);
+				}
+			}
+
+			continue;
+		}
+
+		const searchGroup = buildSearchGroup(tab.title, tab.icon, tab.data as DocSidebarPage[]);
+		if (searchGroup) {
+			searchGroups.push(searchGroup);
+		}
+	}
+
+	return searchGroups;
 }
 
 function addGroupedTabNavigation(

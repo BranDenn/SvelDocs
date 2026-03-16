@@ -6,7 +6,10 @@
 		type DocNavigationParams
 	} from '$lib/doc-navigation-context.svelte';
 	import type { Snippet } from 'svelte';
+	import type { Pathname } from '$app/types';
 	import * as TOC from '$ui/table-of-contents';
+	import { SearchDialogProvider, Search } from '$ui/search-dialog';
+	import { untrack } from 'svelte';
 
 	let {
 		data,
@@ -14,6 +17,17 @@
 	}: {
 		data: {
 			navigation?: DocNavigationParams;
+			searchGroups?: {
+				title: string;
+				icon?: string;
+				items: {
+					href: string;
+					title: string;
+					description: string;
+					keywords?: string[];
+					icon?: string;
+				}[];
+			}[];
 			emulated?: boolean;
 		};
 		children?: Snippet;
@@ -25,12 +39,38 @@
 	}
 
 	setDocNavigationContext(() => data.navigation ?? { tabs: [], groups: [], pages: [] });
+
+	let searchContext: Search | null = $state.raw(null);
+
+	$effect(() => {
+		if (searchContext) {
+			searchContext.clearSearch();
+
+			for (const group of data.searchGroups ?? []) {
+				searchContext.addGroup({
+					title: group.title,
+					icon: group.icon,
+					items: group.items.map((item) => ({
+						href: item.href as Pathname,
+						title: item.title,
+						description: item.description,
+						keywords: item.keywords,
+						icon: item.icon
+					}))
+				});
+			}
+
+			untrack(() => searchContext?.signalUpdate());
+		}
+	});
 </script>
 
-<Header />
+<SearchDialogProvider onInit={(search) => (searchContext = search)}>
+	<Header />
 
-<TOC.Provider container={getContentContainer()}>
-	<Body>
-		{@render children?.()}
-	</Body>
-</TOC.Provider>
+	<TOC.Provider container={getContentContainer()}>
+		<Body>
+			{@render children?.()}
+		</Body>
+	</TOC.Provider>
+</SearchDialogProvider>

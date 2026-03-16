@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '$css';
-
+	import favicon from '$lib/assets/favicon.png';
 	import siteConfig from '$lib/configuration/site.config';
 	import { ModeWatcher } from 'mode-watcher';
 	import * as Tooltip from '$ui/tooltip';
@@ -9,7 +9,8 @@
 </script>
 
 <svelte:head>
-	<meta property="og:site_name" content={siteConfig.siteName} />
+	<meta property="og:site_name" content={siteConfig.name} />
+	<link rel="icon" href={favicon} />
 </svelte:head>
 
 <ModeWatcher defaultMode="dark" />

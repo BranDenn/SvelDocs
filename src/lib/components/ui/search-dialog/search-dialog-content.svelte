@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$ui/dialog';
 	import * as SearchDialog from '.';
-	import { getSearch } from './context.svelte';
+	import { getSearch } from './search-context.svelte';
 	import Highlighter from '$ui/highlighter';
 	import { SearchInput } from '$ui/input';
 

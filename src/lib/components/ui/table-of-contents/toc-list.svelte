@@ -3,7 +3,7 @@
 	import type { ClassValue } from 'clsx';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import Link from '$ui/link';
-	import { getTOCContext } from './toc.context.svelte';
+	import { getTOCContext } from './toc-context.svelte';
 
 	type Props = {
 		class?: ClassValue;

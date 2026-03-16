@@ -6,4 +6,4 @@ export {
 	default as TableOfContentsRadialProgress,
 	default as RadialProgress
 } from './toc-radial-progress.svelte';
-export { TOCContext as Context, getTOCContext, setTOCContext } from './toc.context.svelte';
+export { TOCContext as Context, getTOCContext, setTOCContext } from './toc-context.svelte';

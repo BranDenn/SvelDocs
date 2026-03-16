@@ -1,4 +1,5 @@
-import adapter from '@sveltejs/adapter-auto';
+// import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 const config = {
@@ -11,6 +12,9 @@ const config = {
 			$ui: 'src/lib/components/ui',
 			$utils: 'src/lib/utils',
 			$css: 'src/app.css'
+		},
+		paths: {
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		},
 		prerender: {
 			handleHttpError: 'warn',

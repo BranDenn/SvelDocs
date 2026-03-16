@@ -4,6 +4,10 @@
 	import Icon from '$components/icon';
 	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
 	import ThemeSwitch from './theme-switch.svelte';
+	import {
+		SearchDialogTriggerDesktop,
+		SearchDialogTriggerMobile
+	} from '$components/ui/search-dialog';
 
 	const docNavigation = getDocNavigationContext();
 </script>
@@ -13,8 +17,9 @@
 		class="h-docs-header-main bg-background isolate container flex items-center justify-between gap-4 px-4 md:grid md:grid-cols-3"
 	>
 		<Logo />
-		<div></div>
+		<SearchDialogTriggerDesktop class="max-w-64 justify-self-center" />
 		<div class="flex items-center gap-4 justify-self-end">
+			<SearchDialogTriggerMobile />
 			<ThemeSwitch />
 		</div>
 	</nav>

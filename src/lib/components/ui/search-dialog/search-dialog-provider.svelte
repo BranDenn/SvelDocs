@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setSearch, type Search } from './context.svelte';
+	import { setSearch, type Search } from './search-context.svelte';
 	import { SearchDialogContent } from './';
 	import * as Dialog from '$ui/dialog';
 	import { Dialog as DialogPrimitive } from 'bits-ui';

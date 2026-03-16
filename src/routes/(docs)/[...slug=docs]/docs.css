@@ -28,27 +28,3 @@
 		@apply lg:[--spacing-docs-content-header:0px];
 	}
 }
-
-@layer base {
-	.prose {
-		/* all */
-		> * {
-			@apply mt-4;
-		}
-
-		/* lists */
-		ul > *,
-		ol > * {
-			@apply text-muted-foreground mt-4;
-		}
-		ul:not(.contains-task-list) {
-			@apply list-disc pl-4;
-		}
-		ol:not(.contains-task-list) {
-			@apply list-decimal pl-4;
-		}
-		.task-list-item > input[type='checkbox'] {
-			@apply mr-1;
-		}
-	}
-}

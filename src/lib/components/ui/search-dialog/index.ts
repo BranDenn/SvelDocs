@@ -13,3 +13,4 @@ export {
 } from './search-dialog-trigger-mobile.svelte';
 export { default as SearchDialogLink, default as Link } from './search-dialog-link.svelte';
 export { default as SearchDialogSection, default as Section } from './search-dialog-section.svelte';
+export { Search, setSearch, getSearch } from './search-context.svelte';

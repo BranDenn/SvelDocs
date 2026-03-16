@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
 	import type { Snippet } from 'svelte';
-	import { setTOCContext } from './toc.context.svelte';
+	import { setTOCContext } from './toc-context.svelte';
 
 	type Props = {
 		container?: HTMLElement | null;

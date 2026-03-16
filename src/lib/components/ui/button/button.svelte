@@ -5,20 +5,16 @@
 	import { type VariantProps, tv } from 'tailwind-variants';
 
 	export const buttonVariants = tv({
-		base: 'inline-flex shrink-0 items-center justify-center gap-2 text-sm font-medium whitespace-nowrap transition-all outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0',
+		base: 'rounded-md inline-flex shrink-0 items-center justify-center gap-2 text-sm font-medium whitespace-nowrap transition-all outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0',
 		variants: {
 			variant: {
 				default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-xs',
-				destructive: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-xs',
+				destructive: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow',
 				outline:
-					'bg-card text-foreground hover:bg-background border shadow-xs disabled:hover:bg-background/90 aria-disabled:hover:bg-background/90',
-				'outline-secondary':
-					'bg-background text-foreground hover:bg-background/90 hover:border-foreground border shadow-xs disabled:hover:bg-background/90 aria-disabled:hover:bg-background/90',
-				'outline-destructive':
-					'bg-background hover:bg-background/90 hover:border-foreground border shadow-xs disabled:hover:bg-background/90 aria-disabled:hover:bg-background/90',
+					'bg-secondary text-foreground hover:bg-primary border shadow disabled:hover:bg-secondary/90 aria-disabled:hover:bg-secondary/90',
 				ghost:
-					'hover:bg-secondary rounded-sm hover:shadow text-muted-foreground hover:text-foreground',
+					'bg-background hover:bg-secondary rounded-sm hover:shadow text-muted-foreground hover:text-foreground',
 				link: 'text-primary underline-offset-4 hover:underline',
 				foreground: 'bg-foreground hover:bg-foreground/90 shadow-xs text-background'
 			},
