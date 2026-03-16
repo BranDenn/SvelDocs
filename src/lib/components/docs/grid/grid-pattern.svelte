@@ -40,10 +40,7 @@
 
 <svg
 	aria-hidden="true"
-	class={cn(
-		'fill-border stroke-border pointer-events-none absolute inset-0 h-full w-full',
-		className
-	)}
+	class={cn('fill-border stroke-border pointer-events-none absolute inset-0', className)}
 	{...props}
 >
 	<defs>

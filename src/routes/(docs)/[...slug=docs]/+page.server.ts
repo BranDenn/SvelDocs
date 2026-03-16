@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const docAstData = await loadDocAst(params.slug);
 
 	if (docAstData.access !== false && !locals.emulated) {
-		throw error(404, 'Document not found');
+		error(404, 'Document not found');
 	}
 
 	return docAstData;

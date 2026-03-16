@@ -1,6 +1,4 @@
 <script lang="ts">
-	// import MobileNav from './mobile-nav.svelte';
-	// import Nav from './nav.svelte';
 	import Logo from './logo.svelte';
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
@@ -8,10 +6,6 @@
 	import ThemeSwitch from './theme-switch.svelte';
 
 	const docNavigation = getDocNavigationContext();
-
-	function isTabActive(tabHref: string) {
-		return docNavigation.currentTab?.href === tabHref;
-	}
 </script>
 
 <header class="bg-background border-docs-header-main-border sticky top-0 z-30 border-b">
@@ -29,7 +23,7 @@
 	{#if docNavigation.tabs.length > 0}
 		<div class={cn('h-docs-header-tabs container hidden items-center gap-4 px-4 sm:flex')}>
 			{#each docNavigation.tabs as tab (tab.id)}
-				{@const active = isTabActive(tab.href)}
+				{@const active = docNavigation.currentTab?.href === tab.href}
 				<a
 					href={tab.href}
 					class={cn(

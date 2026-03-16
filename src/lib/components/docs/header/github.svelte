@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { SETTINGS } from '$lib/docs/docs.config';
-	import Link from '../ui/link/link.svelte';
+	import docConfig from '$lib/configuration/docs.config';
+	import Link from '$ui/link';
 </script>
 
 <Link
 	aria-label="GitHub repository"
-	href={SETTINGS.GITHUB_URL}
+	href={docConfig.github}
 	class="fill-muted-foreground hover:fill-foreground p-1 transition-colors"
 >
 	<svg viewBox="0 0 20 20" class="size-5">

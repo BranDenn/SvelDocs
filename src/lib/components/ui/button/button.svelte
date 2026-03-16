@@ -17,7 +17,8 @@
 					'bg-background text-foreground hover:bg-background/90 hover:border-foreground border shadow-xs disabled:hover:bg-background/90 aria-disabled:hover:bg-background/90',
 				'outline-destructive':
 					'bg-background hover:bg-background/90 hover:border-foreground border shadow-xs disabled:hover:bg-background/90 aria-disabled:hover:bg-background/90',
-				ghost: 'hover:bg-muted rounded-sm hover:shadow',
+				ghost:
+					'hover:bg-secondary rounded-sm hover:shadow text-muted-foreground hover:text-foreground',
 				link: 'text-primary underline-offset-4 hover:underline',
 				foreground: 'bg-foreground hover:bg-foreground/90 shadow-xs text-background'
 			},
@@ -47,6 +48,8 @@
 </script>
 
 <script lang="ts">
+	import Link from '$ui/link';
+
 	let {
 		class: className,
 		variant = 'default',
@@ -61,8 +64,8 @@
 </script>
 
 {#if href}
-	<a
-		bind:this={ref}
+	<Link
+		{ref}
 		data-slot="button"
 		class={cn(buttonVariants({ variant, size }), className)}
 		href={disabled ? undefined : href}
@@ -72,7 +75,7 @@
 		{...restProps}
 	>
 		{@render children?.()}
-	</a>
+	</Link>
 {:else}
 	<button
 		bind:this={ref}

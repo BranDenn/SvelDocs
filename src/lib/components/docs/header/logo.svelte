@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Link from '../ui/link/link.svelte';
+	import Link from '$ui/link';
 </script>
 
 <Link

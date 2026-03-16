@@ -11,12 +11,8 @@
 	} & HTMLAttributes<HTMLElement>;
 
 	let { class: className, children, ...restProps }: Props = $props();
-
-	const toc = getTOCContext();
 </script>
 
-{#if toc.tocEntries.length > 0}
-	<nav aria-label="On this page" class={cn('flex flex-col', className)} {...restProps}>
-		{@render children?.()}
-	</nav>
-{/if}
+<nav aria-label="On this page" class={cn('flex flex-col gap-4', className)} {...restProps}>
+	{@render children?.()}
+</nav>

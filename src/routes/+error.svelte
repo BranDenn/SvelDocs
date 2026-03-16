@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Link } from '$ui/link';
-	import siteConfig from '$lib/site.config';
+	import siteConfig from '$lib/configuration/site.config';
 </script>
 
 <svelte:head>

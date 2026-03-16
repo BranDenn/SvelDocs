@@ -14,7 +14,7 @@
 <div
 	bind:this={ref}
 	data-slot="sidebar-content"
-	class={cn('flex grow flex-col gap-8 px-2', className)}
+	class={cn('flex grow flex-col gap-8 px-4', className)}
 	{...restProps}
 >
 	{@render children?.()}

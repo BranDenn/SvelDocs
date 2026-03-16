@@ -11,11 +11,20 @@
 	}: WithElementRef<HTMLAttributes<HTMLElement>> = $props();
 </script>
 
-<div
-	bind:this={ref}
-	data-slot="sidebar-footer"
-	class={cn('flex flex-col gap-8 px-2 pt-2', className)}
-	{...restProps}
->
-	{@render children?.()}
-</div>
+{#if children}
+	<div class="pointer-events-none sticky bottom-0">
+		<div class="from-background z-10 h-4 shrink-0 bg-linear-to-t"></div>
+		<div
+			bind:this={ref}
+			data-slot="sidebar-footer"
+			class={cn('bg-background pointer-events-auto flex flex-col gap-2 p-4', className)}
+			{...restProps}
+		>
+			{@render children()}
+		</div>
+	</div>
+{:else}
+	<div
+		class="from-background pointer-events-none sticky bottom-0 z-10 h-4 shrink-0 bg-linear-to-t"
+	></div>
+{/if}

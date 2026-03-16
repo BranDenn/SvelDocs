@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '$css';
 
-	import siteConfig from '$lib/site.config';
+	import siteConfig from '$lib/configuration/site.config';
 	import { ModeWatcher } from 'mode-watcher';
 	import * as Tooltip from '$ui/tooltip';
 

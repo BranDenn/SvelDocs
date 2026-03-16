@@ -14,7 +14,7 @@
 	const toc = getTOCContext();
 </script>
 
-<ul class={cn('p-4 text-sm', className)} {...restProps}>
+<ul class={cn('text-sm', className)} {...restProps}>
 	{#each toc.tocEntries as [key, item] (key)}
 		{@const isActive = key === toc.activeKey}
 		{@const isParent = toc.highlightParents && (toc.activeItem?.parents.has(key) ?? false)}

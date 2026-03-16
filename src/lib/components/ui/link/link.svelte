@@ -2,8 +2,11 @@
 	import { resolve } from '$app/paths';
 	import type { Pathname } from '$app/types';
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
+	import type { WithElementRef } from 'bits-ui';
 
-	let { href, children, ...restProps }: HTMLAnchorAttributes = $props();
+	type Props = WithElementRef<HTMLAnchorAttributes>;
+
+	let { ref = $bindable(null), href, children, ...restProps }: Props = $props();
 
 	const hasSlash = $derived(href?.startsWith('/'));
 	const hasHash = $derived(href?.startsWith('#'));
@@ -14,6 +17,6 @@
 </script>
 
 <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-<a href={resolvedHref} {target} {rel} {...restProps}>
+<a bind:this={ref} href={resolvedHref} {target} {rel} {...restProps}>
 	{@render children?.()}
 </a>

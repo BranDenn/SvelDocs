@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import siteConfig from '$lib/site.config';
+	import siteConfig from '$lib/configuration/site.config';
 
 	type SeoProps = {
 		title: string;
