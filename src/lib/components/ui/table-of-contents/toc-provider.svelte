@@ -8,6 +8,7 @@
 		highlightParents?: boolean;
 		topOffset?: number;
 		observerOptions?: IntersectionObserverInit;
+		debugObserver?: boolean;
 		detectIfReachedBottom?: boolean;
 		reachedBottomObserverOptions?: IntersectionObserverInit;
 		children?: Snippet;
@@ -19,11 +20,25 @@
 		highlightParents = true,
 		topOffset = 0,
 		observerOptions,
+		debugObserver = false,
 		detectIfReachedBottom = true,
 		reachedBottomObserverOptions = { threshold: 1 },
 		children,
 		onInit = () => {}
 	}: Props = $props();
+
+	const observerRootMargin = $derived(
+		typeof observerOptions?.rootMargin === 'string' ? observerOptions.rootMargin : '0px 0px 0px 0px'
+	);
+
+	const observerBottomMargin = $derived.by(() => {
+		const parts = observerRootMargin.trim().split(/\s+/);
+
+		if (parts.length === 1) return parts[0];
+		if (parts.length === 2) return parts[0];
+		if (parts.length === 3) return parts[2];
+		return parts[2] ?? '0px';
+	});
 
 	const toc = setTOCContext({
 		getContainer: () => container,
@@ -47,5 +62,12 @@
 		onInit(toc);
 	});
 </script>
+
+{#if debugObserver}
+	<div
+		class="pointer-events-none fixed z-100 border border-red-500"
+		style={`left: 0; right: 0; top: ${topOffset}px; bottom: calc(${observerBottomMargin} * -1)`}
+	></div>
+{/if}
 
 {@render children?.()}

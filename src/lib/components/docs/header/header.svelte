@@ -18,7 +18,7 @@
 	>
 		<Logo />
 		<SearchDialogTriggerDesktop class="max-w-64 justify-self-center" />
-		<div class="flex items-center gap-4 justify-self-end">
+		<div class="flex items-center gap-2 justify-self-end">
 			<SearchDialogTriggerMobile />
 			<ThemeSwitch />
 		</div>

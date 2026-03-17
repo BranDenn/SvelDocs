@@ -3,7 +3,7 @@
 		'flex flex-col gap-4',
 		'transition-[max-width,max-height,top] w-full max-w-[calc(100%-2rem)] sm:max-w-xl',
 		'max-h-[min(32rem,calc(100%-2rem))]',
-		'overflow-auto scroll-thin fixed top-1/2 left-1/2 z-50 -translate-1/2 border bg-background rounded-md p-4 shadow-lg',
+		'overflow-auto scroll-thin fixed top-1/2 left-1/2 z-40 -translate-1/2 border bg-background rounded-md p-4 shadow-lg',
 		'data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in',
 		'data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=closed]:fade-out'
 	];

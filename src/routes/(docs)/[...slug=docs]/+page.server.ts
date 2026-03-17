@@ -1,17 +1,18 @@
 import { error } from '@sveltejs/kit';
 import type { EntryGenerator, PageServerLoad } from './$types';
-import { getPublicDocEntries, loadDocAst } from '$lib/server/content/docs-loader';
+import { canAccessDoc } from '$lib/server/content/docs-access';
+import { getDocsData, getPublicDocEntries, toDocPayload } from '$lib/server/content/docs-data';
 
 export const entries: EntryGenerator = () => {
 	return getPublicDocEntries();
 };
 
 export const load: PageServerLoad = async ({ params, locals }) => {
-	const docAstData = await loadDocAst(params.slug);
+	const docData = getDocsData(params.slug);
 
-	if (docAstData.access !== false && !locals.emulated) {
+	if (!canAccessDoc(locals.emulated, docData.private)) {
 		error(404, 'Document not found');
 	}
 
-	return docAstData;
+	return toDocPayload(docData);
 };

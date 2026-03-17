@@ -59,7 +59,7 @@ export class TOCContext {
 
 		if (intersectingKey) return intersectingKey;
 		if (this.#mostRecentKey && this.#toc.has(this.#mostRecentKey)) return this.#mostRecentKey;
-		return null;
+		return this.tocEntries[0]?.[0] ?? null;
 	});
 
 	public readonly activeItem = $derived.by(() => {

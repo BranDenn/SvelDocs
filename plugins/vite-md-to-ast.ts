@@ -5,6 +5,12 @@ import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
 import remarkRehype, { type Options as RemarkRehypeOptions } from 'remark-rehype';
 import type { MarkdownConfig } from '../src/lib/markdown/define-config';
+import {
+	extractImportDataFromMdast,
+	extractImportDataFromRaw,
+	stripImportLines,
+	stripMdxEsmNodes
+} from '../src/lib/markdown/mdx-import-utils';
 
 type RehypeNode = { type: string; children?: RehypeNode[]; [key: string]: unknown };
 type MdastNode = { type?: string; value?: string; children?: MdastNode[]; [key: string]: unknown };
@@ -22,124 +28,6 @@ function hasScriptTagNodes(root: MdastNode): boolean {
 		return (node.children ?? []).some(visit);
 	}
 	return visit(root);
-}
-
-type MdxComponentAliasMap = Record<string, string[]>;
-type MdxComponentImportMap = Record<string, string>;
-
-function getImportSourceBaseName(source: string): string {
-	const normalized = source.replaceAll('\\', '/');
-	const filename = normalized.split('/').pop() ?? normalized;
-	return filename.replace(/\.(svelte|ts|js|mjs|cjs)$/i, '');
-}
-
-function toPascalCase(value: string): string {
-	return value
-		.replaceAll(/[-_]+/g, ' ')
-		.split(' ')
-		.filter(Boolean)
-		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-		.join('');
-}
-
-function addAlias(map: MdxComponentAliasMap, key: string, candidates: string[]) {
-	if (!key.trim()) return;
-	const uniqueCandidates = Array.from(new Set(candidates.filter(Boolean)));
-	if (!uniqueCandidates.length) return;
-	const previous = map[key] ?? [];
-	map[key] = Array.from(new Set([...previous, ...uniqueCandidates]));
-}
-
-const RE_DEFAULT_IMPORT = /^import\s+([\w$]+)\s+from\s+['"]([^'"]+)['"]/;
-const RE_NAMED_IMPORT = /^import\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"]/;
-
-function applyDefaultImport(
-	aliases: MdxComponentAliasMap,
-	imports: MdxComponentImportMap,
-	localName: string,
-	source: string
-) {
-	const baseName = getImportSourceBaseName(source);
-	addAlias(aliases, localName, [
-		localName,
-		'default',
-		baseName,
-		baseName.toLowerCase(),
-		toPascalCase(baseName)
-	]);
-	imports[localName] = source;
-}
-
-function applyNamedImports(
-	aliases: MdxComponentAliasMap,
-	imports: MdxComponentImportMap,
-	specifierBlock: string,
-	source: string
-) {
-	const baseName = getImportSourceBaseName(source);
-	for (const specifier of specifierBlock.split(',')) {
-		const parts = specifier.trim().split(/\s+as\s+/);
-		const importedName = parts[0].trim();
-		const localName = (parts[1] ?? parts[0]).trim();
-		if (!localName) continue;
-		addAlias(aliases, localName, [
-			localName,
-			importedName,
-			baseName,
-			baseName.toLowerCase(),
-			toPascalCase(baseName)
-		]);
-		imports[localName] = source;
-	}
-}
-
-function extractImportData(rawContent: string): {
-	aliases: MdxComponentAliasMap;
-	imports: MdxComponentImportMap;
-} {
-	const aliases: MdxComponentAliasMap = {};
-	const imports: MdxComponentImportMap = {};
-	const lines = rawContent.split('\n');
-	let inCodeFence = false;
-
-	for (const line of lines) {
-		const trimmed = line.trim();
-		if (/^(`{3,}|~{3,})/.test(trimmed)) {
-			inCodeFence = !inCodeFence;
-			continue;
-		}
-		if (inCodeFence || !/^import\s/.test(trimmed)) continue;
-
-		const defaultMatch = RE_DEFAULT_IMPORT.exec(trimmed);
-		if (defaultMatch) {
-			applyDefaultImport(aliases, imports, defaultMatch[1], defaultMatch[2]);
-			continue;
-		}
-
-		const namedMatch = RE_NAMED_IMPORT.exec(trimmed);
-		if (namedMatch) {
-			applyNamedImports(aliases, imports, namedMatch[1], namedMatch[2]);
-		}
-	}
-
-	return { aliases, imports };
-}
-
-function stripImportLines(content: string): string {
-	const lines = content.split('\n');
-	let inCodeFence = false;
-
-	return lines
-		.filter((line) => {
-			const trimmed = line.trim();
-			if (/^(`{3,}|~{3,})/.test(trimmed)) {
-				inCodeFence = !inCodeFence;
-				return true;
-			}
-			if (inCodeFence) return true;
-			return !/^import\s/.test(trimmed);
-		})
-		.join('\n');
 }
 
 function isWhitespaceTextNode(node: RehypeNode): boolean {
@@ -173,6 +61,35 @@ function shouldUnwrapParagraph(node: RehypeNode): boolean {
 }
 
 function normalizeMdxParagraphs(root: RehypeNode) {
+	function isMdxJsxNode(node: RehypeNode): boolean {
+		return String(node.type ?? '').startsWith('mdxJsx');
+	}
+
+	function unwrapSingleParagraphChildInMdxComponent(node: RehypeNode): RehypeNode {
+		if (!isMdxJsxNode(node) || !Array.isArray(node.children)) {
+			return node;
+		}
+
+		const meaningfulChildren = node.children.filter((child) => !isWhitespaceTextNode(child));
+		if (meaningfulChildren.length !== 1) {
+			return node;
+		}
+
+		const onlyChild = meaningfulChildren[0];
+		if (
+			onlyChild.type !== 'element' ||
+			onlyChild.tagName !== 'p' ||
+			!Array.isArray(onlyChild.children)
+		) {
+			return node;
+		}
+
+		return {
+			...node,
+			children: onlyChild.children
+		};
+	}
+
 	function visit(node: RehypeNode) {
 		if (!Array.isArray(node.children)) return;
 
@@ -181,9 +98,11 @@ function normalizeMdxParagraphs(root: RehypeNode) {
 		}
 
 		node.children = node.children.flatMap((child) => {
-			if (!shouldUnwrapParagraph(child)) return [child];
+			if (shouldUnwrapParagraph(child)) {
+				return (child.children ?? []).filter((grandChild) => !isWhitespaceTextNode(grandChild));
+			}
 
-			return (child.children ?? []).filter((grandChild) => !isWhitespaceTextNode(grandChild));
+			return [unwrapSingleParagraphChildInMdxComponent(child)];
 		});
 	}
 
@@ -241,8 +160,6 @@ export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 			}
 
 			const { data: metadata, content: rawContent } = matter(code);
-			const mdxImportData = extractImportData(rawContent);
-			const content = stripImportLines(rawContent);
 			const remarkPlugins = (markdownConfig.remarkPlugins ?? []) as unknown[];
 
 			const remarkPluginsWithoutBridge = remarkPlugins.filter((plugin) => {
@@ -264,7 +181,18 @@ export function mdToAst(markdownConfig: MarkdownConfig): PluginOption {
 			});
 			usePlugins(processor, (markdownConfig.rehypePlugins ?? []) as unknown[]);
 
-			const markdownTree = processor.parse(content) as MdastNode;
+			let markdownTree: MdastNode;
+			let mdxImportData: { aliases: Record<string, string[]>; imports: Record<string, string> };
+
+			try {
+				markdownTree = processor.parse(rawContent) as MdastNode;
+				mdxImportData = extractImportDataFromMdast(markdownTree);
+				stripMdxEsmNodes(markdownTree);
+			} catch {
+				const parseContent = stripImportLines(rawContent);
+				markdownTree = processor.parse(parseContent) as MdastNode;
+				mdxImportData = extractImportDataFromRaw(rawContent);
+			}
 
 			if (hasScriptTagNodes(markdownTree)) {
 				this.warn(

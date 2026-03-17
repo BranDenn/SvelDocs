@@ -32,7 +32,7 @@
 					class="bg-background h-docs-content-header pointer-events-auto border-b xl:hidden"
 				>
 					<Collapsible.Trigger
-						class="text-muted-foreground group hover:text-foreground flex w-full items-center gap-2 px-4 py-2 text-sm transition-[color]"
+						class="h-docs-content-header-toc text-muted-foreground group hover:text-foreground flex w-full items-center gap-2 px-4 py-2 text-sm transition-[color]"
 					>
 						<TOC.RadialProgress class="mr-2" />
 						{#if docNavigation.currentGroup}

@@ -10,7 +10,7 @@
 
 <Dialog.Content
 	hideClose
-	class="top-4 z-100 translate-y-0 gap-0 overflow-y-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(34rem,calc(100%-max(1rem,10%)-1rem))]"
+	class="top-4 translate-y-0 gap-0 overflow-y-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(34rem,calc(100%-max(1rem,10%)-1rem))]"
 >
 	<div class="relative flex items-center gap-2 border-b p-2">
 		<SearchInput bind:value={searchContext.query} class="w-full border-none shadow-none" />

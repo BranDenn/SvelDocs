@@ -1,14 +1,11 @@
 import type { LayoutServerLoad } from './$types';
-import {
-	getDocSidebarTabs,
-	buildDocNavigationParams,
-	buildDocSearchGroups
-} from '$lib/server/content/docs-loader';
+import { canAccessDoc } from '$lib/server/content/docs-access';
+import { getDocLayoutData } from '$lib/server/content/docs-data';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-	const sidebarTabs = getDocSidebarTabs(locals);
-	const navigation = buildDocNavigationParams(sidebarTabs);
-	const searchGroups = buildDocSearchGroups(sidebarTabs);
+	const { navigation, searchGroups } = getDocLayoutData((doc) =>
+		canAccessDoc(locals.emulated, doc.private)
+	);
 
 	return {
 		navigation,
