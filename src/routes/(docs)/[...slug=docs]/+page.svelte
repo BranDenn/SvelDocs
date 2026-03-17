@@ -79,7 +79,9 @@
 		<div
 			class="bg-secondary flex items-center divide-x overflow-hidden rounded-lg border text-xs shadow"
 		>
-			<div class="hover:bg-primary flex items-center gap-2 px-2 py-1.5 transition-[background-color]">
+			<div
+				class="hover:bg-primary flex items-center gap-2 px-2 py-1.5 transition-[background-color]"
+			>
 				<CopyIcon class="size-4 shrink-0" />
 				Copy Page
 			</div>

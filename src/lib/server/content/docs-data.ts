@@ -1,6 +1,9 @@
 import { error } from '@sveltejs/kit';
 import searchJsonData from 'virtual:doc-search-json';
-import { buildDocLayoutData, normalizeRouteSlug } from '../../../../plugins/processed-docs/layout-data';
+import {
+	buildDocLayoutData,
+	normalizeRouteSlug
+} from '../../../../plugins/processed-docs/layout-data';
 import type { BuiltDocRecord } from '../../../../plugins/processed-docs/types';
 
 export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () => true) {
@@ -32,7 +35,7 @@ export function getDocsData(slugParam: string): BuiltDocRecord {
 
 export function toDocPayload(doc: BuiltDocRecord) {
 	const ast = doc.markdown.ast;
-	
+
 	if (!ast) {
 		throw error(500, 'Document AST was not generated');
 	}

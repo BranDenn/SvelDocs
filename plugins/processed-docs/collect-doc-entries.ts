@@ -142,11 +142,7 @@ function createTab(ctx: CollectorContext, tab: DocTab): number {
 	return tabId;
 }
 
-function createGroup(
-	ctx: CollectorContext,
-	group: DocGroup,
-	tabId?: number
-): number {
+function createGroup(ctx: CollectorContext, group: DocGroup, tabId?: number): number {
 	const groupId = ctx.nextGroupId++;
 	const groupData: DocsNavigationMaps['groups'][number] = {
 		title: group.title,

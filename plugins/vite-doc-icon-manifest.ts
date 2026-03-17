@@ -29,9 +29,9 @@ function extractNavigationIcons(source: string): string[] {
 function getAvailableLucideIcons(): Set<string> {
 	try {
 		const req = createRequire(import.meta.url);
-		const packageJsonPath = req.resolve('@lucide/svelte/package.json');
-		const packageRoot = path.dirname(packageJsonPath);
-		const iconsDir = path.join(packageRoot, 'icons');
+		const lucideEntrypointPath = req.resolve('@lucide/svelte');
+		const distDir = path.dirname(lucideEntrypointPath);
+		const iconsDir = path.join(distDir, 'icons');
 
 		if (!fs.existsSync(iconsDir)) {
 			console.warn('[doc-icon-manifest] Could not find @lucide/svelte/icons directory.');
@@ -40,13 +40,13 @@ function getAvailableLucideIcons(): Set<string> {
 
 		const iconFiles = fs.readdirSync(iconsDir);
 		const icons = iconFiles
-			.filter((file) => /\.(js|mjs|cjs|ts|svelte)$/.test(file))
-			.map((file) => file.replace(/\.(js|mjs|cjs|ts|svelte)$/, ''))
+			.filter((file) => /\.(js|mjs|cjs)$/.test(file))
+			.map((file) => file.replace(/\.(js|mjs|cjs)$/, ''))
 			.filter((name) => name !== 'index');
 
 		return new Set(icons);
-	} catch {
-		console.warn('[doc-icon-manifest] Failed to resolve @lucide/svelte package.');
+	} catch (error) {
+		console.warn('[doc-icon-manifest] Failed to resolve @lucide/svelte package.', error);
 		return new Set();
 	}
 }

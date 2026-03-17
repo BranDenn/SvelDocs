@@ -34,7 +34,10 @@ function collectContentFiles(root: string): string[] {
 
 function extractImportSources(markdownSource: string): string[] {
 	const sources = new Set<string>();
-	const strippedSource = markdownSource.replaceAll(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+	const strippedSource = markdownSource
+		.replaceAll(/```[\s\S]*?```/g, '')
+		.replaceAll(/`[^`]*`/g, '')
+		.replaceAll(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 	const importMatches = strippedSource.matchAll(
 		/^\s*import\s+(?:type\s+)?(?:[\w*${}\s,]+)\s+from\s+['"]([^'"\n\r]+)['"]/gm
 	);

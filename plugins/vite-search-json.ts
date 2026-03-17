@@ -31,7 +31,8 @@ function getMarkdownRecord(): Map<string, string> {
 				walk(fullPath);
 			} else if (isMarkdownModulePath(entry.name)) {
 				const relativePath =
-					'/content/' + path.relative(path.join(process.cwd(), 'content'), fullPath).replaceAll('\\', '/');
+					'/content/' +
+					path.relative(path.join(process.cwd(), 'content'), fullPath).replaceAll('\\', '/');
 				map.set(relativePath, fs.readFileSync(fullPath, 'utf-8'));
 			}
 		}
@@ -143,13 +144,16 @@ function getOrderedNavigationPages(manifest: DocsManifestData): ManifestNavigati
 	return Object.values(manifest.navigation.pages);
 }
 
-function buildDocRecord(entry: {
-	slug: string;
-	filepath: string;
-	title: string;
-	icon?: string;
-	private: DocPrivateAccess | false;
-}, raw: string): Promise<BuiltDocRecord> {
+function buildDocRecord(
+	entry: {
+		slug: string;
+		filepath: string;
+		title: string;
+		icon?: string;
+		private: DocPrivateAccess | false;
+	},
+	raw: string
+): Promise<BuiltDocRecord> {
 	return markdownToAst(raw).then((markdown) => {
 		const metadata = markdown.metadata ?? {};
 		const metadataDescription =
@@ -173,12 +177,12 @@ function buildDocRecord(entry: {
 			private: privateAccess,
 			markdown,
 			search: {
-					href: `/${entry.slug}`,
+				href: `/${entry.slug}`,
 				title,
 				description,
 				...(keywords.length ? { keywords } : {}),
 				...(icon ? { icon } : {})
-				}
+			}
 		};
 	});
 }

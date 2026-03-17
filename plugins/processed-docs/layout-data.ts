@@ -1,4 +1,8 @@
-import type { NavigationGroup, NavigationPage, NavigationTab } from '../../src/lib/doc-navigation-context.svelte';
+import type {
+	NavigationGroup,
+	NavigationPage,
+	NavigationTab
+} from '../../src/lib/doc-navigation-context.svelte';
 import docNavigationConfig from '../../src/lib/server/navigation/doc-navigation.config';
 import type { DocNavigationConfig } from '../../src/lib/server/navigation/define-doc-navigation';
 import type {
@@ -87,7 +91,9 @@ function toIndexedTabs(tabs: DocsManifestData['navigation']['tabs']): IndexedNav
 		.sort((a, b) => a.id - b.id);
 }
 
-function toIndexedGroups(groups: DocsManifestData['navigation']['groups']): IndexedNavigationGroup[] {
+function toIndexedGroups(
+	groups: DocsManifestData['navigation']['groups']
+): IndexedNavigationGroup[] {
 	return Object.entries(groups)
 		.map(([id, group]) => ({ id: Number(id), ...group }))
 		.sort((a, b) => a.id - b.id);
@@ -120,11 +126,17 @@ function filterNavigationTabs(
 		}));
 }
 
-function toSearchItem(docsBySlug: Map<string, BuiltDocRecord>, slug: string): DocSearchItem | undefined {
+function toSearchItem(
+	docsBySlug: Map<string, BuiltDocRecord>,
+	slug: string
+): DocSearchItem | undefined {
 	return docsBySlug.get(slug)?.search;
 }
 
-function toSearchItems(docsBySlug: Map<string, BuiltDocRecord>, pages: ManifestNavigationPage[]): DocSearchItem[] {
+function toSearchItems(
+	docsBySlug: Map<string, BuiltDocRecord>,
+	pages: ManifestNavigationPage[]
+): DocSearchItem[] {
 	return pages
 		.map((page) => toSearchItem(docsBySlug, page.slug))
 		.filter((item): item is DocSearchItem => Boolean(item));
@@ -263,9 +275,7 @@ export function buildDocLayoutData(
 			.map((page) => page.groupId)
 			.filter((groupId): groupId is number => groupId !== undefined)
 	);
-	const navigationGroups = indexedGroups.filter((group) =>
-		visibleGroupIds.has(group.id)
-	);
+	const navigationGroups = indexedGroups.filter((group) => visibleGroupIds.has(group.id));
 
 	return {
 		navigation: {

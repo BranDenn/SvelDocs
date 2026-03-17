@@ -54,7 +54,7 @@ export class DocNavigationContext {
 	private readonly pageOrderByTab = new SvelteMap<number, string[]>();
 
 	public readonly currentPage = $derived.by(() => {
-		return this.pagesByHref.get(page.url.pathname)
+		return this.pagesByHref.get(page.url.pathname);
 	});
 
 	public readonly prevPage = $derived.by(() => {
@@ -84,7 +84,12 @@ export class DocNavigationContext {
 		for (const tab of this.tabsById.values()) {
 			const tabSegments = normalizePathname(tab.href).split('/');
 			let i = 0;
-			while (i < tabSegments.length && i < pathSegments.length && tabSegments[i] === pathSegments[i]) i++;
+			while (
+				i < tabSegments.length &&
+				i < pathSegments.length &&
+				tabSegments[i] === pathSegments[i]
+			)
+				i++;
 			if (i > bestScore) {
 				bestScore = i;
 				bestTab = tab;
@@ -103,31 +108,30 @@ export class DocNavigationContext {
 	});
 
 	public readonly mode = $derived.by(() => {
-		const tabMode = this.currentTab?.mode
-		if (tabMode) return tabMode
+		const tabMode = this.currentTab?.mode;
+		if (tabMode) return tabMode;
 		return this.groupsById.size > 0 ? 'group' : 'page';
 	});
 
 	public readonly tabs = $derived.by(() => [...this.tabsById.values()]);
 
-	public readonly currentTabPages = $derived.by(() => {
+	public readonly visiblePages = $derived.by(() => {
 		if (!this.currentTab) {
 			return [...this.pagesByHref.values()];
 		}
 
 		const hrefs = this.pageOrderByTab.get(this.currentTab.id) ?? [];
 		return hrefs.flatMap((href) => this.pagesByHref.get(href) ?? []);
-
 	});
 
 	public readonly data = $derived.by(() => {
 		if (this.mode === 'page') {
-			return this.currentTabPages.filter((pageItem) => !pageItem.groupId);
+			return this.visiblePages.filter((pageItem) => !pageItem.groupId);
 		}
 
 		const grouped = new Map<number, NavigationPage[]>();
 
-		for (const pageItem of this.currentTabPages) {
+		for (const pageItem of this.visiblePages) {
 			if (pageItem.groupId === undefined) continue;
 			if (!grouped.has(pageItem.groupId)) {
 				grouped.set(pageItem.groupId, []);
