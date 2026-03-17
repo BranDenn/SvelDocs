@@ -4,7 +4,6 @@
 	import * as TOC from '$ui/table-of-contents';
 	import * as Collapsible from '$ui/collapsible';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
-	import GridPattern from '$lib/components/docs/grid/grid-pattern.svelte';
 	import { Footer } from '$components/docs';
 	import type { Snippet } from 'svelte';
 
@@ -71,15 +70,7 @@
 		<main
 			class="relative flex min-w-0 grow flex-col gap-8 overflow-hidden px-6 transition-[padding] lg:px-14 lg:py-8"
 		>
-			<GridPattern
-				class="absolute top-0 left-1/2 -z-1 h-64 w-7xl -translate-x-1/2 mask-[radial-gradient(ellipse_at_center,black,transparent)] opacity-50"
-				width={40}
-				height={40}
-				strokeDashArray="4 2"
-			/>
-			<article class="grow">
-				{@render children?.()}
-			</article>
+			{@render children?.()}
 			<Footer />
 		</main>
 		<div class="from-background pointer-events-none sticky bottom-0 z-1 h-6 bg-linear-to-t"></div>

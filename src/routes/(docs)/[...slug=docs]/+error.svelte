@@ -7,7 +7,7 @@
 	<title>Error {page.status} - {siteConfig.name}</title>
 </svelte:head>
 
-<div class="grid h-full content-center text-center">
+<div class="grow grid content-center text-center">
 	<h2 class="text-lg">Error {page.status}</h2>
 	{page.error?.message}
 </div>

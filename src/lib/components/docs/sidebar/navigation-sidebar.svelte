@@ -23,7 +23,7 @@
 		<Sidebar.Content>
 			{#if docNavigation.mode === 'group'}
 				{@const data = docNavigation.data as GroupedPages[]}
-				{#each data as navGroup (navGroup.id)}
+				{#each data as navGroup, index (index)}
 					{#if navGroup.showTitle}
 						<Sidebar.Group collapsible={navGroup.collapsible}>
 							<Sidebar.GroupLabel>
@@ -41,7 +41,7 @@
 			{:else if docNavigation.mode === 'page'}
 				<Sidebar.Menu>
 					{@const data = docNavigation.data as NavigationPage[]}
-					{#each data as navPage (navPage.href)}
+					{#each data as navPage, index (index)}
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton
 								href={navPage.href}
@@ -65,7 +65,7 @@
 
 {#snippet groupMenu(navGroup: GroupedPages)}
 	<Sidebar.Menu>
-		{#each navGroup.pages as pageItem (pageItem.href)}
+		{#each navGroup.pages as pageItem, index (index)}
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton
 					href={pageItem.href}

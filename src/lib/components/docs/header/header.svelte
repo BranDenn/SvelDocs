@@ -27,7 +27,7 @@
 	<!-- optional tab navigation -->
 	{#if docNavigation.tabs.length > 0}
 		<div class={cn('h-docs-header-tabs container hidden items-center gap-4 px-4 sm:flex')}>
-			{#each docNavigation.tabs as tab (tab.id)}
+			{#each docNavigation.tabs as tab, index (index)}
 				{@const active = docNavigation.currentTab?.href === tab.href}
 				<a
 					href={tab.href}

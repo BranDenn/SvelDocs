@@ -3,13 +3,13 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
 import remarkRehype, { type Options as RemarkRehypeOptions } from 'remark-rehype';
-import markdownConfig from '$lib/markdown/markdown.config';
+import markdownConfig from '../../src/lib/markdown/markdown.config';
 import {
 	extractImportDataFromMdast,
 	extractImportDataFromRaw,
 	stripImportLines,
 	stripMdxEsmNodes
-} from '$lib/markdown/mdx-import-utils';
+} from '../../src/lib/markdown/mdx-import-utils';
 
 type RehypeNode = { type: string; children?: RehypeNode[]; [key: string]: unknown };
 type MdastNode = { type?: string; value?: string; children?: MdastNode[]; [key: string]: unknown };

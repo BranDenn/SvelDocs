@@ -5,24 +5,24 @@ import { SvelteMap } from 'svelte/reactivity';
 export type NavigationPage = {
 	href: string;
 	title: string;
-	groupId?: string;
-	tabId?: string;
+	groupId?: number;
+	tabId?: number;
 	icon?: string;
 	prev?: string;
 	next?: string;
 };
 
 export type NavigationGroup = {
-	id: string;
+	id: number;
 	title: string;
-	tabId?: string;
+	tabId?: number;
 	icon?: string;
 	showTitle?: boolean;
 	collapsible?: boolean;
 };
 
 export type NavigationTab = {
-	id: string;
+	id: number;
 	title: string;
 	icon?: string;
 	href: string;
@@ -36,7 +36,6 @@ export type DocNavigationParams = {
 };
 
 export type GroupedPages = {
-	id: string;
 	title: string;
 	icon?: string;
 	showTitle?: boolean;
@@ -48,33 +47,14 @@ function normalizePathname(pathname: string): string {
 	return pathname.length > 1 ? pathname.replaceAll(/\/+$/g, '') : pathname;
 }
 
-function resolveByHref(pathname: string, hrefMap: SvelteMap<string, NavigationPage>) {
-	const normalizedPathname = normalizePathname(pathname);
-	const exact = hrefMap.get(normalizedPathname);
-	if (exact) return exact;
-
-	const candidates: NavigationPage[] = [];
-	for (const pageItem of hrefMap.values()) {
-		if (
-			normalizedPathname === pageItem.href ||
-			normalizedPathname.startsWith(`${pageItem.href}/`)
-		) {
-			candidates.push(pageItem);
-		}
-	}
-
-	if (candidates.length === 0) return undefined;
-	return candidates.toSorted((a, b) => b.href.length - a.href.length)[0];
-}
-
 export class DocNavigationContext {
 	private readonly pagesByHref = new SvelteMap<string, NavigationPage>();
-	private readonly tabsById = new SvelteMap<string, NavigationTab>();
-	private readonly groupsById = new SvelteMap<string, NavigationGroup>();
-	private readonly pageOrderByTab = new SvelteMap<string, string[]>();
+	private readonly tabsById = new SvelteMap<number, NavigationTab>();
+	private readonly groupsById = new SvelteMap<number, NavigationGroup>();
+	private readonly pageOrderByTab = new SvelteMap<number, string[]>();
 
 	public readonly currentPage = $derived.by(() => {
-		return resolveByHref(page.url.pathname, this.pagesByHref);
+		return this.pagesByHref.get(page.url.pathname)
 	});
 
 	public readonly prevPage = $derived.by(() => {
@@ -89,41 +69,55 @@ export class DocNavigationContext {
 		return this.pagesByHref.get(nextHref);
 	});
 
-	public readonly mode = $derived.by(() => {
-		const tabId = this.currentPage?.tabId;
-		if (!tabId) return this.currentPage?.groupId ? 'group' : 'page';
-		return this.tabsById.get(tabId)?.mode ?? 'page';
-	});
+	public getTab(tabId: number | undefined) {
+		if (tabId === undefined) return undefined;
+		return this.tabsById.get(tabId);
+	}
 
 	public readonly currentTab = $derived.by(() => {
-		const tabId = this.currentPage?.tabId;
-		if (!tabId) return undefined;
-		return this.tabsById.get(tabId);
+		if (this.currentPage) {
+			return this.getTab(this.currentPage.tabId);
+		}
+		const pathSegments = normalizePathname(page.url.pathname).split('/');
+		let bestTab: NavigationTab | undefined;
+		let bestScore = -1;
+		for (const tab of this.tabsById.values()) {
+			const tabSegments = normalizePathname(tab.href).split('/');
+			let i = 0;
+			while (i < tabSegments.length && i < pathSegments.length && tabSegments[i] === pathSegments[i]) i++;
+			if (i > bestScore) {
+				bestScore = i;
+				bestTab = tab;
+			}
+		}
+		return bestTab;
 	});
 
-	public getGroup(groupId: string | undefined) {
-		if (!groupId) return undefined;
+	public getGroup(groupId: number | undefined) {
+		if (groupId === undefined) return undefined;
 		return this.groupsById.get(groupId);
 	}
 
 	public readonly currentGroup = $derived.by(() => {
-		const groupId = this.currentPage?.groupId;
-		if (!groupId) return undefined;
-		return this.getGroup(groupId);
+		return this.getGroup(this.currentPage?.groupId);
+	});
+
+	public readonly mode = $derived.by(() => {
+		const tabMode = this.currentTab?.mode
+		if (tabMode) return tabMode
+		return this.groupsById.size > 0 ? 'group' : 'page';
 	});
 
 	public readonly tabs = $derived.by(() => [...this.tabsById.values()]);
 
 	public readonly currentTabPages = $derived.by(() => {
-		const tabId = this.currentTab?.id;
-		if (!tabId) {
-			return [...this.pagesByHref.values()].filter((pageItem) => !pageItem.tabId);
+		if (!this.currentTab) {
+			return [...this.pagesByHref.values()];
 		}
 
-		const hrefs = this.pageOrderByTab.get(tabId) ?? [];
-		return hrefs
-			.map((href) => this.pagesByHref.get(href))
-			.filter((pageItem): pageItem is NavigationPage => Boolean(pageItem));
+		const hrefs = this.pageOrderByTab.get(this.currentTab.id) ?? [];
+		return hrefs.flatMap((href) => this.pagesByHref.get(href) ?? []);
+
 	});
 
 	public readonly data = $derived.by(() => {
@@ -131,10 +125,10 @@ export class DocNavigationContext {
 			return this.currentTabPages.filter((pageItem) => !pageItem.groupId);
 		}
 
-		const grouped = new Map<string, NavigationPage[]>();
+		const grouped = new Map<number, NavigationPage[]>();
 
 		for (const pageItem of this.currentTabPages) {
-			if (!pageItem.groupId) continue;
+			if (pageItem.groupId === undefined) continue;
 			if (!grouped.has(pageItem.groupId)) {
 				grouped.set(pageItem.groupId, []);
 			}
@@ -147,7 +141,6 @@ export class DocNavigationContext {
 			if (!group) continue;
 
 			groupedPages.push({
-				id: group.id,
 				title: group.title,
 				icon: group.icon,
 				showTitle: group.showTitle,
@@ -182,7 +175,7 @@ export class DocNavigationContext {
 			const href = normalizePathname(pageItem.href);
 			this.pagesByHref.set(href, { ...pageItem, href });
 
-			if (pageItem.tabId) {
+			if (pageItem.tabId !== undefined) {
 				const tabOrder = this.pageOrderByTab.get(pageItem.tabId);
 				if (tabOrder) {
 					tabOrder.push(href);
