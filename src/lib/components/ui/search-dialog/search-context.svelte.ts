@@ -10,6 +10,9 @@ export type SearchProps = {
 	setOpen: (open: boolean) => void;
 };
 
+export type SearchQuery = string | string[];
+export type SearchResult = ReturnType<Search['getResults']>;
+
 /**
  * Search props for flexsearch Document indexing.
  */
@@ -112,21 +115,47 @@ export class Search {
 		return groupedResults;
 	}
 
-	public getResults(q: string, limit = 10) {
+	private normalizeQueries(query: SearchQuery): string[] {
+		if (Array.isArray(query)) {
+			return [...new Set(query.map((value) => value.trim()).filter(Boolean))];
+		}
+
+		const clean = query.trim();
+		return clean ? [clean] : [];
+	}
+
+	private getSnippetMatch(text: string, queries: string[]): string {
+		const lowerText = text.toLowerCase();
+		return queries.find((query) => lowerText.includes(query.toLowerCase())) ?? queries[0] ?? '';
+	}
+
+	public getResults(q: SearchQuery, limit = 10) {
 		// create a map to group the results
 		const groupedResults: Map<string, OutputData> = new Map();
+		const queries = this.normalizeQueries(q);
 
-		if (!q) return groupedResults;
+		if (!queries.length) return groupedResults;
 
-		// return most relevant results
-		const indexResults = this.index.search(q, {
-			limit,
-			merge: true,
-			enrich: false
-		});
+		const uniqueHrefs = new Set<Pathname>();
 
-		for (const result of indexResults) {
-			const href = result.id as Pathname;
+		for (const query of queries) {
+			// return most relevant results for each query term
+			const indexResults = this.index.search(query, {
+				limit,
+				merge: true,
+				enrich: false
+			});
+
+			for (const result of indexResults) {
+				if (uniqueHrefs.size >= limit) break;
+				const href = result.id as Pathname;
+				uniqueHrefs.add(href);
+			}
+
+			if (uniqueHrefs.size >= limit) break;
+		}
+
+		for (const href of uniqueHrefs) {
 			const data = this.itemMap.get(href);
 
 			if (!data) continue;
@@ -141,7 +170,10 @@ export class Search {
 			items?.push({
 				href,
 				title: data.title,
-				description: stripContent(data.description, q),
+				description: stripContent(
+					data.description,
+					this.getSnippetMatch(data.description, queries)
+				),
 				icon: data.icon
 			});
 		}

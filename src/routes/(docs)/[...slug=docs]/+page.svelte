@@ -17,9 +17,7 @@
 			children?: Array<Record<string, unknown>>;
 		};
 		metadata: Record<string, unknown>;
-		slug: string;
 		title: string;
-		access: 'public' | 'private';
 	};
 
 	let { data }: { data: PageData } = $props();

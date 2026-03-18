@@ -66,7 +66,7 @@
 {#if debugObserver}
 	<div
 		class="pointer-events-none fixed z-100 border border-red-500"
-		style={`left: 0; right: 0; top: ${topOffset}px; bottom: calc(${observerBottomMargin} * -1)`}
+		style={`left: 0; right: 0; top: ${topOffset}px; bottom: -${observerBottomMargin}`}
 	></div>
 {/if}
 

@@ -1,12 +1,14 @@
-// import adapter from '@sveltejs/adapter-auto';
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-auto';
+import adapterStatic from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+export const IS_STATIC_BUILD = true;
 
 const config = {
 	preprocess: vitePreprocess(),
 	extensions: ['.svelte'],
 	kit: {
-		adapter: adapter(),
+		adapter: IS_STATIC_BUILD ? adapterStatic() : adapter(),
 		alias: {
 			$components: 'src/lib/components',
 			$ui: 'src/lib/components/ui',

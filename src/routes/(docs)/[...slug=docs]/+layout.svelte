@@ -9,7 +9,7 @@
 	import { onMount, type Snippet } from 'svelte';
 	import type { Pathname } from '$app/types';
 	import * as TOC from '$ui/table-of-contents';
-	import { SearchDialogProvider, Search } from '$ui/search-dialog';
+	import { SearchDialogProvider } from '$ui/search-dialog';
 	import { afterNavigate } from '$app/navigation';
 
 	let {

@@ -3,8 +3,6 @@ import type { EntryGenerator, RequestHandler } from './$types';
 import { canAccessDoc } from '$lib/server/content/docs-access';
 import { getDocsData, getPublicDocEntries } from '$lib/server/content/docs-data';
 
-export const prerender = true;
-
 export const entries: EntryGenerator = () => {
 	return getPublicDocEntries();
 };

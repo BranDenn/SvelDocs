@@ -33,7 +33,7 @@ export function getDocsData(slugParam: string): BuiltDocRecord {
 	return data;
 }
 
-export function toDocPayload(doc: BuiltDocRecord) {
+export function getDocPageData(doc: BuiltDocRecord) {
 	const ast = doc.markdown.ast;
 
 	if (!ast) {
@@ -43,8 +43,6 @@ export function toDocPayload(doc: BuiltDocRecord) {
 	return {
 		ast,
 		metadata: doc.markdown.metadata ?? {},
-		slug: doc.slug,
-		title: doc.title,
-		access: doc.private
+		title: doc.title
 	} as const;
 }
