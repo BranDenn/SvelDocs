@@ -12,10 +12,13 @@
 	hideClose
 	class="top-4 translate-y-0 gap-0 overflow-y-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(34rem,calc(100%-max(1rem,10%)-1rem))]"
 >
-	<div class="relative flex items-center gap-2 border-b p-2">
-		<SearchInput bind:value={searchContext.query} class="w-full border-none shadow-none" />
+	<div class="bg-secondary relative flex items-center gap-2 border-b p-2">
+		<SearchInput
+			bind:value={searchContext.query}
+			class="w-full border-none bg-transparent py-2 shadow-none"
+		/>
 		<Dialog.Close
-			class="bg-card text-muted-foreground hover:bg-muted hover:text-foreground rounded border px-1 py-0.5 text-xs shadow-xs transition-colors"
+			class="hover:bg-primary bg-background bg-card text-muted-foreground hover:bg-muted hover:text-foreground mr-2 rounded border px-1 py-0.5 text-xs shadow-xs transition-colors"
 		>
 			ESC
 		</Dialog.Close>

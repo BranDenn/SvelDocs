@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
 	import type { Snippet } from 'svelte';
-	import { setTOCContext } from './toc-context.svelte';
+	import { setTOCContext, type TOCSeedEntry } from './toc-context.svelte';
 
 	type Props = {
 		container?: HTMLElement | null;
+		initialEntries?: TOCSeedEntry[];
 		highlightParents?: boolean;
 		topOffset?: number;
 		observerOptions?: IntersectionObserverInit;
@@ -17,6 +18,7 @@
 
 	let {
 		container,
+		initialEntries = [],
 		highlightParents = true,
 		topOffset = 0,
 		observerOptions,
@@ -44,6 +46,7 @@
 		getContainer: () => container,
 		getHighlightParents: () => highlightParents,
 		getTopOffset: () => topOffset,
+		getInitialEntries: () => initialEntries,
 		getObserverOptions: () => observerOptions,
 		getDetectIfReachedBottom: () => detectIfReachedBottom,
 		getReachedBottomObserverOptions: () => reachedBottomObserverOptions
@@ -65,8 +68,8 @@
 
 {#if debugObserver}
 	<div
-		class="pointer-events-none fixed z-100 border border-red-500"
-		style={`left: 0; right: 0; top: ${topOffset}px; bottom: -${observerBottomMargin}`}
+		class="pointer-events-none fixed z-10 border border-red-500"
+		style={`left: 0; right: 0; top: ${topOffset}px; bottom: calc(${observerBottomMargin} * -1)`}
 	></div>
 {/if}
 

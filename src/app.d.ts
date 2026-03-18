@@ -3,9 +3,6 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		interface Locals {
-			emulated: boolean;
-		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

@@ -10,7 +10,8 @@ export const entries: EntryGenerator = () => {
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const docData = getDocsData(params.slug);
 
-	if (!canAccessDoc(locals.emulated, docData.private)) {
+	// replace `false` with `locals` for checking authentication
+	if (!canAccessDoc(false, docData.private)) {
 		error(404, 'Document not found');
 	}
 

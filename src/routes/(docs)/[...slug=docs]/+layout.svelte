@@ -11,6 +11,7 @@
 	import * as TOC from '$ui/table-of-contents';
 	import { SearchDialogProvider } from '$ui/search-dialog';
 	import { afterNavigate } from '$app/navigation';
+	import { page } from '$app/state';
 
 	let {
 		data,
@@ -29,7 +30,6 @@
 					icon?: string;
 				}[];
 			}[];
-			emulated?: boolean;
 		};
 		children?: Snippet;
 	} = $props();
@@ -86,6 +86,9 @@
 	}
 
 	type DocsBreakpoint = 'base' | 'sm' | 'md' | 'lg' | 'xl';
+	type DocsPageData = {
+		tocEntries?: TOC.TOCSeedEntry[];
+	};
 
 	const tailwindBreakpointFallbacks = {
 		sm: 640,
@@ -145,6 +148,10 @@
 	const tocObserverOptions = $derived<IntersectionObserverInit>({
 		rootMargin: tocObserverRootMargin
 	});
+
+	const initialTocEntries = $derived.by(
+		() => (page.data as DocsPageData | undefined)?.tocEntries ?? []
+	);
 
 	afterNavigate(() => {
 		syncOffsets();
@@ -208,6 +215,7 @@
 
 	<TOC.Provider
 		container={getContentContainer()}
+		initialEntries={initialTocEntries}
 		topOffset={tocTopOffset}
 		observerOptions={tocObserverOptions}
 		debugObserver={dev}

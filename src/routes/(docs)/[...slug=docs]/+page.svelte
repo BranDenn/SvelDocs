@@ -18,6 +18,7 @@
 		};
 		metadata: Record<string, unknown>;
 		title: string;
+		tocEntries?: Array<{ id: string; text: string; level: number }>;
 	};
 
 	let { data }: { data: PageData } = $props();

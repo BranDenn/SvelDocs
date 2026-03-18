@@ -16,7 +16,7 @@ This keeps private docs out of navigation, search, page loads, and the raw markd
 
 The starter currently uses a simple boolean flag.
 
-In [src/hooks.server.ts](/workspaces/SvelDocs/src/hooks.server.ts), a cookie is read and stored on `locals`:
+In `src/hooks.server.ts`, a cookie is read and stored on `locals`:
 
 ```ts
 import { type Handle } from '@sveltejs/kit';
@@ -30,7 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 ```
 
-The local type is declared in [src/app.d.ts](/workspaces/SvelDocs/src/app.d.ts):
+The local type is declared in `src/app.d.ts`:
 
 ```ts
 interface Locals {
@@ -40,11 +40,11 @@ interface Locals {
 
 That value is then used in the docs routes:
 
-- [src/routes/(docs)/[...slug=docs]/+layout.server.ts](/workspaces/SvelDocs/src/routes/(docs)/[...slug=docs]/+layout.server.ts)
-- [src/routes/(docs)/[...slug=docs]/+page.server.ts](/workspaces/SvelDocs/src/routes/(docs)/[...slug=docs]/+page.server.ts)
-- [src/routes/(docs)/[...slug=docs].md/+server.ts](/workspaces/SvelDocs/src/routes/(docs)/[...slug=docs].md/+server.ts)
+- `src/routes/(docs)/[...slug=docs]/+layout.server.ts`
+- `src/routes/(docs)/[...slug=docs]/+page.server.ts`
+- `src/routes/(docs)/[...slug=docs].md/+server.ts`
 
-Each route passes the local auth value into [src/lib/server/content/docs-access.ts](/workspaces/SvelDocs/src/lib/server/content/docs-access.ts).
+Each route passes the local auth value into `src/lib/server/content/docs-access.ts`.
 
 ## The Access Helper
 
@@ -55,13 +55,13 @@ Each route passes the local auth value into [src/lib/server/content/docs-access.
 - `'admin'` for a single role
 - `['admin', 'editor']` for multiple allowed roles
 
-That logic lives in [src/lib/server/content/docs-access.ts](/workspaces/SvelDocs/src/lib/server/content/docs-access.ts).
+That logic lives in `src/lib/server/content/docs-access.ts`.
 
 ## Marking Docs As Private
 
 You can mark access in your navigation config or per document metadata, depending on how you want to model the content.
 
-The navigation types support `private` on tabs, groups, and pages in [src/lib/server/navigation/define-doc-navigation.ts](/workspaces/SvelDocs/src/lib/server/navigation/define-doc-navigation.ts).
+The navigation types support `private` on tabs, groups, and pages in `src/lib/server/navigation/define-doc-navigation.ts`.
 
 Example:
 
@@ -84,7 +84,7 @@ Example:
 
 ## Replacing The Demo Cookie With Real Auth
 
-For a real project, replace the demo cookie check in [src/hooks.server.ts](/workspaces/SvelDocs/src/hooks.server.ts) with your actual session logic.
+For a real project, replace the demo cookie check in `src/hooks.server.ts` with your actual session logic.
 
 Typical examples:
 

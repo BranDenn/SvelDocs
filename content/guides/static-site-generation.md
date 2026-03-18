@@ -17,7 +17,7 @@ The benefits are straightforward:
 
 ## The Current Static Setup
 
-Static output is configured in [svelte.config.js](/workspaces/SvelDocs/svelte.config.js):
+Static output is configured in `svelte.config.js`:
 
 ```js
 import adapter from '@sveltejs/adapter-static';
@@ -31,9 +31,9 @@ SvelDocs uses public doc entries to decide what should be available in static ou
 
 The core pieces are:
 
-- [src/lib/server/content/docs-data.ts](/workspaces/SvelDocs/src/lib/server/content/docs-data.ts)
-- [src/routes/(docs)/[...slug=docs]/+page.server.ts](/workspaces/SvelDocs/src/routes/(docs)/[...slug=docs]/+page.server.ts)
-- [src/routes/(docs)/[...slug=docs].md/+server.ts](/workspaces/SvelDocs/src/routes/(docs)/[...slug=docs].md/+server.ts)
+- `src/lib/server/content/docs-data.ts`
+- `src/routes/(docs)/[...slug=docs]/+page.server.ts`
+- `src/routes/(docs)/[...slug=docs].md/+server.ts`
 
 `getPublicDocEntries()` only returns docs where `private === false`, so private content is excluded from the generated entries list.
 
@@ -53,14 +53,14 @@ If a page needs user-specific access checks, it should not be treated as a stati
 
 For a fully static docs site, keep these patterns:
 
-1. Use `@sveltejs/adapter-static` in [svelte.config.js](/workspaces/SvelDocs/svelte.config.js).
+1. Use `@sveltejs/adapter-static` in `svelte.config.js`.
 2. Keep docs public, or ensure protected docs are excluded from prerendered entries.
-3. Use [src/lib/server/navigation/doc-navigation.config.ts](/workspaces/SvelDocs/src/lib/server/navigation/doc-navigation.config.ts) to organize tabs, groups, and pages.
+3. Use `src/lib/server/navigation/doc-navigation.config.ts` to organize tabs, groups, and pages.
 4. Continue authoring content in `content/` and let the processed docs pipeline build navigation and search data.
 
 ## Base Path Support
 
-This repo already supports a deployment base path in [svelte.config.js](/workspaces/SvelDocs/svelte.config.js):
+This repo already supports a deployment base path in `svelte.config.js`:
 
 ```js
 paths: {

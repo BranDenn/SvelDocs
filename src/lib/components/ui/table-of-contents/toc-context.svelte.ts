@@ -8,16 +8,23 @@ type TOCItem = {
 	level: number;
 	text: string;
 	id: string;
-	heading: HTMLHeadingElement;
+	heading: HTMLHeadingElement | null;
 	parents: Set<string>;
 	prevId?: string;
 	isIntersectingPriority?: boolean;
+};
+
+export type TOCSeedEntry = {
+	id: string;
+	text: string;
+	level: number;
 };
 
 export type TOCContextProps = {
 	getContainer: () => HTMLElement | null | undefined;
 	getHighlightParents: () => boolean;
 	getTopOffset: () => number;
+	getInitialEntries: () => TOCSeedEntry[];
 	getObserverOptions: () => IntersectionObserverInit | undefined;
 	getDetectIfReachedBottom: () => boolean;
 	getReachedBottomObserverOptions: () => IntersectionObserverInit | undefined;
@@ -27,6 +34,7 @@ export class TOCContext {
 	readonly #getContainer: TOCContextProps['getContainer'];
 	readonly #getHighlightParents: TOCContextProps['getHighlightParents'];
 	readonly #getTopOffset: TOCContextProps['getTopOffset'];
+	readonly #getInitialEntries: TOCContextProps['getInitialEntries'];
 	readonly #getObserverOptions: TOCContextProps['getObserverOptions'];
 	readonly #getDetectIfReachedBottom: TOCContextProps['getDetectIfReachedBottom'];
 	readonly #getReachedBottomObserverOptions: TOCContextProps['getReachedBottomObserverOptions'];
@@ -78,9 +86,11 @@ export class TOCContext {
 		this.#getContainer = props.getContainer;
 		this.#getHighlightParents = props.getHighlightParents;
 		this.#getTopOffset = props.getTopOffset;
+		this.#getInitialEntries = props.getInitialEntries;
 		this.#getObserverOptions = props.getObserverOptions;
 		this.#getDetectIfReachedBottom = props.getDetectIfReachedBottom;
 		this.#getReachedBottomObserverOptions = props.getReachedBottomObserverOptions;
+		this.applyInitialEntries();
 	}
 
 	get highlightParents() {
@@ -145,6 +155,7 @@ export class TOCContext {
 
 			let initialKey: string | null = null;
 			for (const [key, { heading }] of this.#toc) {
+				if (!heading) continue;
 				const top = heading.getBoundingClientRect().top - this.#getTopOffset();
 				if (top <= 0) initialKey = key;
 			}
@@ -264,6 +275,51 @@ export class TOCContext {
 		this.#reachedBottom = false;
 		this.#mostRecentKey = null;
 		this.#lastKey = null;
+	}
+
+	private applyInitialEntries() {
+		const initialEntries = this.#getInitialEntries();
+		if (initialEntries.length === 0) return;
+
+		const nextEntries: Array<[string, TOCItem]> = [];
+		const stack: Array<{ id: string; level: number }> = [];
+		const seenIds = new Set<string>();
+		let previousId: string | undefined;
+		let finalKey: string | null = null;
+
+		for (const entry of initialEntries) {
+			const id = entry.id.trim();
+			if (!id || seenIds.has(id)) continue;
+
+			const level = Math.max(1, Math.floor(entry.level));
+			while (stack.length > 0 && level <= (stack.at(-1)?.level ?? 0)) stack.pop();
+
+			const item: TOCItem = {
+				index: nextEntries.length,
+				id,
+				text: entry.text.trim() || id,
+				level: stack.length + 1,
+				heading: null,
+				parents: new Set(stack.map(({ id: parentId }) => parentId)),
+				prevId: previousId
+			};
+
+			nextEntries.push([id, item]);
+			seenIds.add(id);
+			stack.push({ id, level });
+			previousId = id;
+			finalKey = id;
+		}
+
+		if (nextEntries.length === 0) return;
+
+		this.#toc.clear();
+		for (const [key, item] of nextEntries) {
+			this.#toc.set(key, item);
+		}
+
+		this.#mostRecentKey = this.routeHashKey;
+		this.#lastKey = finalKey;
 	}
 }
 
