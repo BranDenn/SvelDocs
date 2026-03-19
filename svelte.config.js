@@ -6,7 +6,9 @@ const config = {
 	preprocess: vitePreprocess(),
 	extensions: ['.svelte'],
 	kit: {
-		adapter: adapterStatic(),
+		adapter: adapterStatic({
+			fallback: '404.html'
+		}),
 		alias: {
 			$components: 'src/lib/components',
 			$ui: 'src/lib/components/ui',

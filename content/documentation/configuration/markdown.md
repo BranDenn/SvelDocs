@@ -2,7 +2,7 @@
 description: How markdown files are parsed, rendered, and customized in SvelDocs.
 ---
 
-import Alert from '$lib/components/ui/alert/alert.svelte';
+import Alert from '$ui/alert';
 
 ## Supported File Types
 

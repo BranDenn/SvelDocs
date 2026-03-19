@@ -31,18 +31,32 @@
 		(data.metadata.mdxComponentImports as Record<string, string> | undefined) ?? {}
 	);
 
-	type ModuleExport = { default?: Component<any> };
-	type MdxManifest = Record<string, ModuleExport | undefined>;
+	type MdxModule = Record<string, unknown> & { default?: unknown };
+	type MdxManifest = Record<string, MdxModule | undefined>;
 
 	const resolvedMdxComponents = $derived.by(() => {
-		const resolved: Record<string, Component<any>> = {};
+		const resolved: Record<string, unknown> = {};
 		const manifest = mdxComponentManifest as MdxManifest;
 
 		for (const [name, source] of Object.entries(componentImports)) {
 			const module = manifest[source];
-			if (module?.default) {
-				resolved[name] = module.default;
+			if (!module) continue;
+
+			const candidates = [name, ...(componentAliases[name] ?? [])];
+			for (const candidate of candidates) {
+				const componentExport = module[candidate];
+				if (typeof componentExport === 'function') {
+					resolved[name] = componentExport as Component<any>;
+					break;
+				}
 			}
+
+			if (!resolved[name] && typeof module.default === 'function') {
+				resolved[name] = module.default as Component<any>;
+			}
+
+			// Keep the full module for namespace lookups like Steps.Root.
+			resolved[`$module:${name}`] = module;
 		}
 
 		return resolved;

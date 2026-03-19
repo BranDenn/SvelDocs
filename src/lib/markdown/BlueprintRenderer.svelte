@@ -33,6 +33,35 @@
 		inheritNodeProps: boolean;
 	};
 
+	function isRenderableComponent(value: unknown): value is Component<any> {
+		return typeof value === 'function';
+	}
+
+	function getResolvedComponentCandidate(key: string): unknown {
+		const direct = resolvedComponents[key];
+		if (direct !== undefined) return direct;
+
+		if (!key.includes('.')) return undefined;
+
+		const [rootKey, ...pathParts] = key.split('.');
+		if (!rootKey || pathParts.length === 0) return undefined;
+
+		let current: unknown = resolvedComponents[rootKey];
+		if (
+			(typeof current !== 'object' || current === null) &&
+			resolvedComponents[`$module:${rootKey}`]
+		) {
+			current = resolvedComponents[`$module:${rootKey}`];
+		}
+
+		for (const part of pathParts) {
+			if (typeof current !== 'object' || current === null) return undefined;
+			current = (current as Record<string, unknown>)[part];
+		}
+
+		return current;
+	}
+
 	let {
 		node,
 		parentElement,
@@ -42,7 +71,7 @@
 		node: AstNode;
 		parentElement?: string;
 		componentAliases?: Record<string, string[]>;
-		resolvedComponents?: Record<string, Component<any>>;
+		resolvedComponents?: Record<string, unknown>;
 	} = $props();
 
 	function getAliasCandidates(key: string): string[] {
@@ -57,16 +86,21 @@
 		}, {});
 	}
 
-	function toResolvedRenderer(renderResult: AstNodeRendererResult): ResolvedRenderer | null {
+	function toResolvedRenderer(renderResult: unknown): ResolvedRenderer | null {
 		if (!renderResult) return null;
 
 		if (typeof renderResult === 'object' && 'component' in renderResult) {
+			const component = (renderResult as { component?: unknown }).component;
+			if (!isRenderableComponent(component)) return null;
+
 			return {
-				component: renderResult.component,
-				props: renderResult.props ?? {},
-				inheritNodeProps: renderResult.inheritNodeProps ?? true
+				component,
+				props: (renderResult as { props?: Record<string, unknown> }).props ?? {},
+				inheritNodeProps: (renderResult as { inheritNodeProps?: boolean }).inheritNodeProps ?? true
 			};
 		}
+
+		if (!isRenderableComponent(renderResult)) return null;
 
 		return {
 			component: renderResult,
@@ -77,9 +111,10 @@
 
 	function getMappedRenderer(node: AstNode, key: string): ResolvedRenderer | null {
 		for (const candidate of getAliasCandidates(key)) {
-			const resolvedComponent = resolvedComponents[candidate];
-			if (resolvedComponent) {
-				return toResolvedRenderer(resolvedComponent);
+			const resolvedCandidate = getResolvedComponentCandidate(candidate);
+			const resolvedRenderer = toResolvedRenderer(resolvedCandidate);
+			if (resolvedRenderer) {
+				return resolvedRenderer;
 			}
 
 			const mapped = componentMap[candidate as keyof typeof componentMap];

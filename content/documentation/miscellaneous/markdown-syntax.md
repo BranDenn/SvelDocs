@@ -213,7 +213,7 @@ Footnote[^second].
 Alerts are components to increase their customizability. View how to use them [here](/docs/components/alerts).
 
 ```svelte
-import Alert from '$lib/components/ui/alert/alert.svelte';
+import Alert from '$ui/alert';
 
 <Alert type="note">This is a note alert.</Alert>
 <Alert type="tip">This is a tip alert.</Alert>
@@ -221,7 +221,7 @@ import Alert from '$lib/components/ui/alert/alert.svelte';
 <Alert type="caution">This is a caution alert.</Alert>
 ```
 
-import Alert from '$lib/components/ui/alert/alert.svelte';
+import Alert from '$ui/alert';
 
 <Alert type="note">This is a note alert.</Alert>
 <Alert type="tip">This is a tip alert.</Alert>

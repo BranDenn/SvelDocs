@@ -1,0 +1,220 @@
+---
+description: How to configure code blocks in markdown.
+---
+
+## Overview
+
+SvelDocs uses `rehype-pretty-code` in the markdown pipeline to transform fenced code blocks into themed, styleable HTML. The plugin uses `shiki` behind the scenes.
+
+Configuration is split across:
+
+- `src/lib/markdown/markdown.config.ts` for plugin options
+- `src/lib/markdown/components/code/pre.svelte` for rendering and styling
+- Markdown fence metadata for per-block features (title, footer, line highlights, line numbers)
+
+## Theme
+
+Edit the code block theme in the `src/lib/markdown/markdown.config.ts`. By default it uses the github color theme, but you can use any supported by `shiki`.
+
+```ts
+import rehypePrettyCode from 'rehype-pretty-code';
+
+const markdownConfig = defineConfig({
+	...
+	rehypePlugins: [
+		[
+			rehypePrettyCode,
+			{
+				theme: {
+					light: 'github-light',
+					dark: 'github-dark'
+				},
+				keepBackground: false
+			}
+		]
+	]
+});
+```
+
+## Component
+
+`$lib/markdown/components/code/pre.svelte` is the component that replaces the default html `pre` element. This allow for:
+
+- Language badge
+- Code Copy button
+- CSS styling
+
+### Styling
+
+Styling is configured within the component. You can style the component elements themselves inline, but `rehype-pretty-code` and `shiki` styling must be configured in the `style` section using `:global`.
+
+Here is the provided default:
+
+```postcss title="$lib/markdown/components/code/pre.svelte"
+<style lang="postcss">
+	@reference "$css";
+
+	:global {
+		code[data-theme*=' '],
+		code[data-theme*=' '] span {
+			color: var(--shiki-light);
+		}
+
+		.dark code[data-theme*=' '],
+		.dark code[data-theme*=' '] span {
+			color: var(--shiki-dark);
+		}
+
+		[data-rehype-pretty-code-figure] {
+			@apply overflow-hidden rounded-md border shadow-xs;
+		}
+		[data-rehype-pretty-code-title] {
+			@apply bg-primary border-b p-2 text-sm font-bold;
+		}
+		[data-rehype-pretty-code-caption] {
+			@apply text-muted-foreground bg-primary border-t p-2 text-sm;
+		}
+		[data-line] {
+			@apply inline-block px-4 hover:bg-[color-mix(in_oklch,var(--color-background),#808080_25%)];
+		}
+		[data-line-numbers] {
+			counter-reset: line;
+		}
+		[data-line-numbers] > [data-line] {
+			@apply pl-0;
+		}
+		[data-line-numbers] > [data-line]::before {
+			counter-increment: line;
+			content: counter(line);
+			@apply text-muted-foreground/75;
+		}
+		[data-line-numbers-max-digits] {
+			--w: attr(data-line-numbers-max-digits ch);
+			& > [data-line]:hover::before {
+				@apply text-foreground bg-[color-mix(in_oklch,var(--color-background),#808080_35%)];
+			}
+			& > [data-line]::before {
+				width: calc(var(--w) + 2rem);
+				@apply bg-secondary sticky left-0 mr-4 inline-block border-r px-4 text-right;
+			}
+		}
+		[data-highlighted-line] {
+			@apply bg-accent/10!;
+		}
+	}
+</style>
+```
+
+## Markdown Features
+
+Use fenced-code metadata to control each block from markdown:
+
+````md
+```ts
+console.log('hello world');
+```
+````
+
+```ts
+console.log('hello world');
+```
+
+You can declare the language at top. `ts` is shortened for `typescript`.
+
+### Title
+
+You can add a title to the code block by adding title="your title here":
+
+````md
+```ts title="src/lib/my-awesome-file.ts"
+console.log('hello world');
+```
+````
+
+```ts title="src/lib/my-awesome-file.ts"
+console.log('hello world');
+```
+
+### Footer (Caption)
+
+You can add a caption to the code block by adding caption="your caption here":
+
+````md
+```ts caption="This runs during page load"
+console.log('loaded');
+```
+````
+
+```ts caption="This runs during page load"
+console.log('loaded');
+```
+
+### Highlight Lines
+
+You can higlight specific lines by using curly-brace ranges after the language:
+
+````md
+```ts {2,4-6}
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```
+````
+
+```ts {2,4-6}
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```
+
+### Line Numbers
+
+You can show line numbers by using `showLineNumbers`:
+
+````md
+```ts showLineNumbers
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```
+````
+
+```ts showLineNumbers
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```
+
+You can start the line number at a specific number by using a curly-brace and a number:
+
+````md
+```ts showLineNumbers{5}
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```
+````
+
+```ts showLineNumbers{5}
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```

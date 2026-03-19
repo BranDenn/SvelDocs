@@ -46,13 +46,11 @@
 		code[data-theme*=' '],
 		code[data-theme*=' '] span {
 			color: var(--shiki-light);
-			background-color: var(--shiki-light-bg);
 		}
 
 		.dark code[data-theme*=' '],
 		.dark code[data-theme*=' '] span {
 			color: var(--shiki-dark);
-			background-color: var(--shiki-dark-bg);
 		}
 
 		[data-rehype-pretty-code-figure] {

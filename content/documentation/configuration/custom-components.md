@@ -36,7 +36,7 @@ All docs pages will use the new renderer automatically.
 You can import components directly in `.mdx` (and supported markdown with import syntax), for example:
 
 ```mdx
-import Alert from '$lib/components/ui/alert/alert.svelte';
+import Alert from '$ui/alert';
 
 <Alert type="note">This is a custom component in markdown.</Alert>
 ```

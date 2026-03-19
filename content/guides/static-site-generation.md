@@ -1,12 +1,10 @@
 ---
-description: How to keep SvelDocs as a static site and which files control prerendered output.
+description: How to run SvelDocs as a prerendered static site.
 ---
 
 ## When To Use SSG
 
-Use static site generation when your docs are public and can be built ahead of time.
-
-This is the current default in the starter.
+Use static site generation when your all of your docs are public and can be built ahead of time. This is the current default provided from this project.
 
 The benefits are straightforward:
 
@@ -15,68 +13,105 @@ The benefits are straightforward:
 - CDN-friendly output
 - no runtime server requirements
 
+If you are looking to have private docs protected by auth, please refer to the [Server Side Rendering Guide](/docs/guides/server-side-rendering).
+
 ## The Current Static Setup
 
 Static output is configured in `svelte.config.js`:
 
-```js
-import adapter from '@sveltejs/adapter-static';
+```js title="svelte.config.js"
+import adapterStatic from '@sveltejs/adapter-static';
+
+const config = {
+	...
+	kit: {
+		adapter: adapterStatic({
+			fallback: '404.html'
+		}),,
+		...
+	}
+};
 ```
 
-That adapter generates deployable static files instead of running a server for each request.
+The adapter-static generates static `.html` and `.md` files instead of running a server for each request.
 
-## What Gets Generated
+import Alert from '$ui/alert';
 
-SvelDocs uses public doc entries to decide what should be available in static output.
-
-The core pieces are:
-
-- `src/lib/server/content/docs-data.ts`
-- `src/routes/(docs)/[...slug=docs]/+page.server.ts`
-- `src/routes/(docs)/[...slug=docs].md/+server.ts`
-
-`getPublicDocEntries()` only returns docs where `private === false`, so private content is excluded from the generated entries list.
-
-## Why That Matters
-
-Static hosting cannot protect already-generated private files.
-
-Because of that, the safe pattern is:
-
-- prerender public docs
-- do not generate protected docs into the build output
-- reserve authenticated docs for SSR deployments
-
-If a page needs user-specific access checks, it should not be treated as a static asset.
-
-## Keeping SSG Working Well
-
-For a fully static docs site, keep these patterns:
-
-1. Use `@sveltejs/adapter-static` in `svelte.config.js`.
-2. Keep docs public, or ensure protected docs are excluded from prerendered entries.
-3. Use `src/lib/server/navigation/doc-navigation.config.ts` to organize tabs, groups, and pages.
-4. Continue authoring content in `content/` and let the processed docs pipeline build navigation and search data.
+<Alert type="warning">
+	If any of the docs are private, the build will fail and result in this error:
+	`@sveltejs/adapter-static: all routes must be fully prerenderable.`
+</Alert>
 
 ## Base Path Support
 
-This repo already supports a deployment base path in `svelte.config.js`:
+This project already supports a deployment base path in `svelte.config.js` for hosting on websites such as Github:
 
-```js
-paths: {
-	base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
-}
+```js title="svelte.config.js"
+const config = {
+	...
+	kit: {
+		...
+		paths: {
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
+		},
+		...
+	}
+};
 ```
 
-That is useful when deploying the static site under a subpath such as `/docs` instead of the domain root.
+That is useful when deploying the static site under a subpath such as `your-username.github.io` instead of the domain root.
 
-## When To Leave SSG
+### Github Pages
 
-Move to SSR when you need:
 
-- authenticated docs
-- role-based private pages
-- request-time server data
-- per-user navigation or search filtering
+This project provides a deploy workflow automatically for github pages. Feel free to remove it if you do not use it.
 
-If your entire site is public documentation, SSG should remain the simplest deployment model.
+```yml title=".github/workflows/deploy.yml"
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: 'main'
+
+jobs:
+  build_site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: build
+        env:
+          BASE_PATH: '/${{ github.event.repository.name }}'
+        run: bun run build
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'build/'
+
+  deploy:
+    needs: build_site
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+```

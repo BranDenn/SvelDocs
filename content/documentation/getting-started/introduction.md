@@ -7,13 +7,13 @@ description: SvelDocs is a free boilerplate project for creating documentation w
 
 SvelDocs provides you with all of the code for creating modern markdown documentation websites. In fact, this very site is the boilerplate code.
 
-The files are structured for quick iterations and detailed understanding, while still offering easy expansion. SvelDocs provides a settings file with preset options that should fit most needs, but in the chance that something does not match your taste, you can always customize the code to your liking.
+The files are structured for quick iterations and detailed understanding, while still offering easy expansion. SvelDocs provides configuration files for an easy setup, but in the chance that something does not match your taste, you can always customize the code to your liking.
 
 ---
 
 ## Features
 
-- Supports both Static Site Generation (SSG) and Server Side Rendered (SSR)
+- Supports both Static Site Generation (SSG) and Server Side Rendering (SSR)
 - Simple structure for adding Tabs, Groups, and or Pages
 - Table of Contents
 - Searching
