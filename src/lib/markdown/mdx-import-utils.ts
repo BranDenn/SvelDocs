@@ -155,6 +155,22 @@ function applyImportStatement(
 	}
 }
 
+function applyImportBlock(
+	aliases: MdxComponentAliasMap,
+	imports: MdxComponentImportMap,
+	block: string
+) {
+	const importMatches = block.matchAll(
+		/import\s+(?:type\s+)?[\s\S]*?\s+from\s+['"][^'"\n\r]+['"]\s*;?/gm
+	);
+
+	for (const match of importMatches) {
+		const statement = match[0]?.trim();
+		if (!statement) continue;
+		applyImportStatement(aliases, imports, statement);
+	}
+}
+
 export function extractImportDataFromMdast(root: MdastNode): {
 	aliases: MdxComponentAliasMap;
 	imports: MdxComponentImportMap;
@@ -164,7 +180,7 @@ export function extractImportDataFromMdast(root: MdastNode): {
 
 	for (const child of root.children ?? []) {
 		if (child.type !== 'mdxjsEsm' || typeof child.value !== 'string') continue;
-		applyImportStatement(aliases, imports, child.value);
+		applyImportBlock(aliases, imports, child.value);
 	}
 
 	return { aliases, imports };
