@@ -3,6 +3,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeSlug from 'rehype-slug';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { defineConfig } from './define-config';
+import { rehypeMarkdownAstPlugins } from './plugins/rehype';
 
 const markdownConfig = defineConfig({
 	extensions: ['.md', '.mdx'],
@@ -26,7 +27,8 @@ const markdownConfig = defineConfig({
 				},
 				keepBackground: false
 			}
-		]
+		],
+		...rehypeMarkdownAstPlugins
 	]
 });
 

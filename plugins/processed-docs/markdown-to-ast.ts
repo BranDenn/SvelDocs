@@ -41,85 +41,6 @@ function getRemarkRehypeOptions(plugins: unknown[] | undefined): RemarkRehypeOpt
 	return {};
 }
 
-function isWhitespaceTextNode(node: RehypeNode): boolean {
-	return node.type === 'text' && typeof node.value === 'string' && node.value.trim() === '';
-}
-
-function isMdxComponentNode(node: RehypeNode): boolean {
-	if (!String(node.type ?? '').startsWith('mdxJsx')) return false;
-	const name = typeof node.name === 'string' ? node.name : '';
-	return /^[A-Z]/.test(name);
-}
-
-function shouldUnwrapParagraph(node: RehypeNode): boolean {
-	if (node.type !== 'element' || node.tagName !== 'p' || !Array.isArray(node.children)) {
-		return false;
-	}
-
-	let hasComponent = false;
-
-	for (const child of node.children) {
-		if (isWhitespaceTextNode(child)) continue;
-		if (isMdxComponentNode(child)) {
-			hasComponent = true;
-			continue;
-		}
-
-		return false;
-	}
-
-	return hasComponent;
-}
-
-function normalizeMdxParagraphs(root: RehypeNode) {
-	function isMdxJsxNode(node: RehypeNode): boolean {
-		return String(node.type ?? '').startsWith('mdxJsx');
-	}
-
-	function unwrapSingleParagraphChildInMdxComponent(node: RehypeNode): RehypeNode {
-		if (!isMdxJsxNode(node) || !Array.isArray(node.children)) {
-			return node;
-		}
-
-		const meaningfulChildren = node.children.filter((child) => !isWhitespaceTextNode(child));
-		if (meaningfulChildren.length !== 1) {
-			return node;
-		}
-
-		const onlyChild = meaningfulChildren[0];
-		if (
-			onlyChild.type !== 'element' ||
-			onlyChild.tagName !== 'p' ||
-			!Array.isArray(onlyChild.children)
-		) {
-			return node;
-		}
-
-		return {
-			...node,
-			children: onlyChild.children
-		};
-	}
-
-	function visit(node: RehypeNode) {
-		if (!Array.isArray(node.children)) return;
-
-		for (const child of node.children) {
-			visit(child);
-		}
-
-		node.children = node.children.flatMap((child) => {
-			if (shouldUnwrapParagraph(child)) {
-				return (child.children ?? []).filter((grandChild) => !isWhitespaceTextNode(grandChild));
-			}
-
-			return [unwrapSingleParagraphChildInMdxComponent(child)];
-		});
-	}
-
-	visit(root);
-}
-
 function extractTextFromAstNode(node: unknown, buffer: string[]): void {
 	if (!node || typeof node !== 'object') {
 		return;
@@ -199,7 +120,6 @@ export async function markdownToAst(rawMarkdown: string): Promise<MarkdownAstRes
 
 	const tree = await processor.run(markdownTree);
 	const ast = tree as RehypeNode;
-	normalizeMdxParagraphs(ast);
 
 	const enrichedMetadata = {
 		...metadata,
