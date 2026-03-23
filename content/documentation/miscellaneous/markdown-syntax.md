@@ -210,7 +210,7 @@ Footnote[^second].
 
 ## Alerts
 
-Alerts are components to increase their customizability. View how to use them [here](/docs/components/alerts).
+Alerts are components to increase their customizability. View how to use them [here](/docs/components/alert).
 
 ```svelte
 import Alert from '$ui/alert';

@@ -22,20 +22,20 @@
 		class="scrollbar-thin bg-secondary max-h-96 overflow-auto py-4 text-sm"
 		{...restProps}
 		{@attach codeAttach}>{@render children?.()}</pre>
-	{#if language}
-		<span
-			class="text-muted-foreground bg-secondary/50 absolute top-2 rounded p-1 text-xs transition-opacity group-hover:opacity-0"
-			style="right: calc(0.5rem + {scrollbarWidth}px);"
+	{#if language || codeContent}
+		<div
+			class="bg-secondary/50 pointer-events-none absolute top-0 flex items-center gap-2 p-1 transition-[background-color] group-hover:bg-transparent"
+			style="right: {scrollbarWidth}px;"
 		>
-			.{language}
-		</span>
-	{/if}
-	{#if codeContent}
-		<CopyButton
-			content={codeContent}
-			class="absolute top-2 opacity-0 transition group-hover:opacity-100"
-			style="right: calc(0.5rem + {scrollbarWidth}px);"
-		/>
+			{#if language}
+				<span class="text-xs transition-opacity group-hover:opacity-0">
+					.{language}
+				</span>
+			{/if}
+			{#if codeContent}
+				<CopyButton content={codeContent} class="pointer-events-auto" />
+			{/if}
+		</div>
 	{/if}
 </div>
 

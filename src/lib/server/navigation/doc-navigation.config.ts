@@ -31,6 +31,11 @@ const docNavigationConfig = defineDocNavigation<Roles>({
 					pages: 'auto'
 				},
 				{
+					title: 'Components',
+					icon: 'blocks',
+					pages: 'auto'
+				},
+				{
 					title: 'Miscellaneous',
 					icon: 'dices',
 					pages: 'auto'

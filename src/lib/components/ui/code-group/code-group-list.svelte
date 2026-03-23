@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Tabs as TabsPrimitive } from 'bits-ui';
 	import { cn } from '$utils';
-	import './tabs.css';
+	import './code-group.css';
 
 	let {
 		ref = $bindable(null),
@@ -13,13 +13,13 @@
 
 <TabsPrimitive.List
 	bind:ref
-	data-slot="tabs-list"
+	data-slot="code-group-list"
 	class={cn('relative inline-flex w-fit items-center justify-center overflow-hidden', className)}
 	{...restProps}
 >
 	<div
 		aria-hidden="true"
-		data-slot="tabs-list-indicator"
+		data-slot="code-group-list-indicator"
 		class="bg-background pointer-events-none absolute hidden rounded-md border border-transparent shadow-sm"
 	></div>
 	{@render children?.()}

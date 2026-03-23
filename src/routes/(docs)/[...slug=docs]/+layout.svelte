@@ -6,6 +6,7 @@
 		setDocNavigationContext,
 		type DocNavigationParams
 	} from '$lib/doc-navigation-context.svelte';
+	import { createSharedValueContext } from '$ui/shared-value-context.svelte';
 	import { onMount, type Snippet } from 'svelte';
 	import type { Pathname } from '$app/types';
 	import * as TOC from '$ui/table-of-contents';
@@ -33,6 +34,13 @@
 		};
 		children?: Snippet;
 	} = $props();
+
+	// Create shared context for tabs and code groups
+	createSharedValueContext({
+		id: 'js-pkg-managers',
+		initialValue: 'bun',
+		useLocalStorage: true
+	});
 
 	function getContentContainer() {
 		if (typeof document === 'undefined') return null;
@@ -218,7 +226,6 @@
 		initialEntries={initialTocEntries}
 		topOffset={tocTopOffset}
 		observerOptions={tocObserverOptions}
-		debugObserver={dev}
 	>
 		<Body>
 			{@render children?.()}

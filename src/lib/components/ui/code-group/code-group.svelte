@@ -26,7 +26,7 @@
 	bind:ref
 	value={resolvedValue}
 	{onValueChange}
-	data-slot="tabs"
+	data-slot="code-group"
 	class={cn('bg-primary flex flex-col gap-2 rounded-lg border p-2 shadow', className)}
 	{...restProps}
 />

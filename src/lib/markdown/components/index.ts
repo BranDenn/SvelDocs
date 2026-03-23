@@ -19,6 +19,7 @@ import P from './text/p.svelte';
 import Blockquote from './code/blockquote.svelte';
 import Ol from './text/ol.svelte';
 import Ul from './text/ul.svelte';
+import { CodeGroup, CodeGroupContent, CodeGroupList, CodeGroupTrigger } from '$ui/code-group';
 
 export type AstNode = {
 	type?: string;
@@ -98,7 +99,11 @@ export const astNodeRenderers = {
 	p: P,
 	blockquote: Blockquote,
 	ol: Ol,
-	ul: Ul
+	ul: Ul,
+	CodeGroup,
+	CodeGroupList,
+	CodeGroupTrigger,
+	CodeGroupContent
 } satisfies AstNodeRendererMap;
 
 export default astNodeRenderers;

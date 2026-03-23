@@ -73,7 +73,9 @@ export function rehypeNormalizeMdxParagraphs() {
 			if (!shouldUnwrapParagraph(node)) return;
 			if (typeof index !== 'number' || !parent || !Array.isArray(parent.children)) return;
 
-			const unwrappedChildren = (node.children ?? []).filter((child) => !isWhitespaceTextNode(child));
+			const unwrappedChildren = (node.children ?? []).filter(
+				(child) => !isWhitespaceTextNode(child)
+			);
 			parent.children.splice(index, 1, ...unwrappedChildren);
 			return index + unwrappedChildren.length;
 		});

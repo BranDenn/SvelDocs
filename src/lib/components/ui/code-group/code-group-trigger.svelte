@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Tabs as TabsPrimitive } from 'bits-ui';
 	import { cn } from '$utils';
-	import './tabs.css';
+	import './code-group.css';
 
 	let {
 		ref = $bindable(null),
@@ -12,7 +12,7 @@
 
 <TabsPrimitive.Trigger
 	bind:ref
-	data-slot="tabs-trigger"
+	data-slot="code-group-trigger"
 	class={cn(
 		'text-muted-foreground hover:text-foreground data-[state=active]:text-foreground',
 		'data-[state=active]:bg-background',
