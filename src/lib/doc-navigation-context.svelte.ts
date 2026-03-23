@@ -43,6 +43,8 @@ export type GroupedPages = {
 	pages: NavigationPage[];
 };
 
+export type NavigationData = GroupedPages[] | NavigationPage[];
+
 function normalizePathname(pathname: string): string {
 	return pathname.length > 1 ? pathname.replaceAll(/\/+$/g, '') : pathname;
 }
@@ -115,23 +117,47 @@ export class DocNavigationContext {
 
 	public readonly tabs = $derived.by(() => [...this.tabsById.values()]);
 
-	public readonly visiblePages = $derived.by(() => {
-		if (!this.currentTab) {
+	private resolveTab(tab?: NavigationTab | number) {
+		if (tab === undefined) {
+			return this.currentTab;
+		}
+
+		if (typeof tab === 'number') {
+			return this.tabsById.get(tab);
+		}
+
+		return tab;
+	}
+
+	public getMode(tab?: NavigationTab | number) {
+		const resolvedTab = this.resolveTab(tab);
+		const tabMode = resolvedTab?.mode;
+		if (tabMode) return tabMode;
+		return this.groupsById.size > 0 ? 'group' : 'page';
+	}
+
+	public getVisiblePages(tab?: NavigationTab | number) {
+		const resolvedTab = this.resolveTab(tab);
+
+		if (!resolvedTab) {
 			return [...this.pagesByHref.values()];
 		}
 
-		const hrefs = this.pageOrderByTab.get(this.currentTab.id) ?? [];
+		const hrefs = this.pageOrderByTab.get(resolvedTab.id) ?? [];
 		return hrefs.flatMap((href) => this.pagesByHref.get(href) ?? []);
-	});
+	}
 
-	public readonly data = $derived.by(() => {
-		if (this.mode === 'page') {
-			return this.visiblePages.filter((pageItem) => !pageItem.groupId);
+	public getData(tab?: NavigationTab | number): NavigationData {
+		const mode = this.getMode(tab);
+		const visiblePages = this.getVisiblePages(tab);
+
+		if (mode === 'page') {
+			return visiblePages.filter((pageItem) => !pageItem.groupId);
 		}
 
 		const grouped = new Map<number, NavigationPage[]>();
 
-		for (const pageItem of this.visiblePages) {
+		for (const pageItem of visiblePages) {
 			if (pageItem.groupId === undefined) continue;
 			if (!grouped.has(pageItem.groupId)) {
 				grouped.set(pageItem.groupId, []);
@@ -154,7 +180,7 @@ export class DocNavigationContext {
 		}
 
 		return groupedPages;
-	});
+	}
 
 	constructor(params: () => DocNavigationParams) {
 		this.update(params());

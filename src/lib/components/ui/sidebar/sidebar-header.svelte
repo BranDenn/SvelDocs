@@ -12,8 +12,7 @@
 </script>
 
 {#if children}
-	<div class="pointer-events-none sticky top-0">
-		<div class="from-background z-10 h-4 shrink-0 bg-linear-to-b"></div>
+	<div class="pointer-events-none sticky top-0 z-10">
 		<div
 			bind:this={ref}
 			data-slot="sidebar-header"
@@ -22,6 +21,7 @@
 		>
 			{@render children()}
 		</div>
+		<div class="from-background h-4 shrink-0 bg-linear-to-b"></div>
 	</div>
 {:else}
 	<div

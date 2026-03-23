@@ -45,7 +45,7 @@
 @layer base {
 	body {
 		@apply bg-background text-foreground font-inter flex min-h-dvh flex-col overflow-x-hidden;
-		scrollbar-color: var(--color-border) transparent;
+		scrollbar-color: var(--color-border) var(--color-background);
 	}
 
 	*,

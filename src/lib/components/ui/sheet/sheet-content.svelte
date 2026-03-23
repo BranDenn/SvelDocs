@@ -1,72 +1,53 @@
+<script lang="ts" module>
+	export type Side = 'top' | 'right' | 'bottom' | 'left';
+</script>
+
 <script lang="ts">
-	import { Dialog as SheetPrimitive } from 'bits-ui';
-	import XIcon from '@lucide/svelte/icons/x';
+	import { Dialog as SheetPrimitive, type WithoutChildrenOrChild } from 'bits-ui';
 	import type { Snippet } from 'svelte';
-	import * as Sheet from './';
-	import { type WithoutChildrenOrChild } from 'bits-ui';
+	import { SheetOverlay, SheetPortal, SheetClose } from './';
 	import { cn } from '$utils';
-	import { fly } from 'svelte/transition';
+	import type { ComponentProps } from 'svelte';
 
 	let {
 		ref = $bindable(null),
 		class: className,
+		side = 'right',
+		showCloseButton = true,
 		portalProps,
 		children,
-		side = 'left',
-		hideClose = false,
 		...restProps
 	}: WithoutChildrenOrChild<SheetPrimitive.ContentProps> & {
-		portalProps?: SheetPrimitive.PortalProps;
-		children?: Snippet;
-		side?: 'left' | 'right' | 'top' | 'bottom';
-		hideClose?: boolean;
+		portalProps?: WithoutChildrenOrChild<ComponentProps<typeof SheetPortal>>;
+		side?: Side;
+		showCloseButton?: boolean;
+		children: Snippet;
 	} = $props();
-
-	function getXY(side: 'left' | 'right' | 'top' | 'bottom') {
-		switch (side) {
-			case 'top':
-				return { x: 0, y: '-100%' };
-			case 'bottom':
-				return { x: 0, y: '100%' };
-			case 'left':
-				return { x: '-100%', y: 0 };
-			case 'right':
-				return { x: '100%', y: 0 };
-			default:
-				return { x: 0, y: 0 };
-		}
-	}
 </script>
 
-<Sheet.Portal {...portalProps}>
-	<Sheet.Overlay />
+<SheetPortal {...portalProps}>
+	<SheetOverlay />
 	<SheetPrimitive.Content
-		forceMount
 		bind:ref
 		data-slot="sheet-content"
+		data-side={side}
 		class={cn(
-			'bg-background fixed z-50',
-			side === 'left' && 'top-0 bottom-0 left-0 w-full max-w-92 border-r',
-			side === 'right' && 'top-0 right-0 bottom-0 w-full max-w-92 border-l',
-			side === 'top' && 'top-0 right-0 left-0 h-full max-h-64 border-b',
-			side === 'bottom' && 'right-0 bottom-0 left-0 h-full max-h-64 border-t',
+			'bg-background data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 fixed z-50 flex flex-col bg-clip-padding text-sm shadow-lg transition duration-300 ease-in-out',
+			side === 'left' &&
+				'data-[state=open]:slide-in-from-left-full data-[state=closed]:slide-out-to-left-full inset-y-0 left-0 h-full w-[min(calc(100vw+1px),24rem)] overflow-y-auto border-r',
+			side === 'right' &&
+				'data-[state=open]:slide-in-from-right-full data-[state=closed]:slide-out-to-right-full inset-y-0 right-0 h-full w-[min(calc(100vw+1px),24rem)] overflow-y-auto border-l',
+			side === 'top' &&
+				'data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-top-full inset-x-0 top-0 h-auto border-b',
+			side === 'bottom' &&
+				'data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full inset-x-0 bottom-0 h-auto border-t',
 			className
 		)}
 		{...restProps}
 	>
-		{#snippet child({ props, open })}
-			{#if open}
-				<div {...props} transition:fly={{ duration: 300, ...getXY(side) }}>
-					{@render children?.()}
-					{#if !hideClose}
-						<Sheet.Close
-							class="ring-offset-background focus:ring-ring absolute end-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
-						>
-							<XIcon class="size-5 shrink-0" />
-						</Sheet.Close>
-					{/if}
-				</div>
-			{/if}
-		{/snippet}
+		{@render children?.()}
+		{#if showCloseButton}
+			<SheetClose class="absolute top-4 right-4" />
+		{/if}
 	</SheetPrimitive.Content>
-</Sheet.Portal>
+</SheetPortal>

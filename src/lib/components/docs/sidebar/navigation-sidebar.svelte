@@ -21,8 +21,8 @@
 	<Sidebar.Container>
 		<Sidebar.Header />
 		<Sidebar.Content>
-			{#if docNavigation.mode === 'group'}
-				{@const data = docNavigation.data as GroupedPages[]}
+			{#if docNavigation.getMode() === 'group'}
+				{@const data = docNavigation.getData() as GroupedPages[]}
 				{#each data as navGroup, index (index)}
 					{#if navGroup.showTitle}
 						<Sidebar.Group collapsible={navGroup.collapsible}>
@@ -38,9 +38,9 @@
 						{@render groupMenu(navGroup)}
 					{/if}
 				{/each}
-			{:else if docNavigation.mode === 'page'}
+			{:else if docNavigation.getMode() === 'page'}
 				<Sidebar.Menu>
-					{@const data = docNavigation.data as NavigationPage[]}
+					{@const data = docNavigation.getData() as NavigationPage[]}
 					{#each data as navPage, index (index)}
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton

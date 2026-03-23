@@ -4,7 +4,7 @@
 
 <Link
 	href="/docs"
-	class="hover:text-accent flex items-center gap-2 justify-self-start p-1 text-lg font-bold transition-colors"
+	class="hover:text-accent flex items-center gap-2 justify-self-start text-lg font-bold transition-colors"
 >
 	<svg
 		height="16"

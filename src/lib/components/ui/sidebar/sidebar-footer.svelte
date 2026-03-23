@@ -12,8 +12,8 @@
 </script>
 
 {#if children}
-	<div class="pointer-events-none sticky bottom-0">
-		<div class="from-background z-10 h-4 shrink-0 bg-linear-to-t"></div>
+	<div class="pointer-events-none sticky bottom-0 z-10">
+		<div class="from-background h-4 shrink-0 bg-linear-to-t"></div>
 		<div
 			bind:this={ref}
 			data-slot="sidebar-footer"

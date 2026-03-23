@@ -63,8 +63,6 @@
 	});
 
 	const docNavigation = getDocNavigationContext();
-
-	// $inspect(data.ast);
 </script>
 
 <SEO
@@ -103,7 +101,7 @@
 					class="hover:bg-primary data-[state=open]:bg-primary group p-1.5 transition-[background-color]"
 				>
 					<ChevronDownIcon
-						class="size-4 shrink-0 transition-[translate] group-data-[state=open]:translate-y-0.25"
+						class="size-4 shrink-0 transition-[translate] group-data-[state=open]:translate-y-px"
 					/>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content

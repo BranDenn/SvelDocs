@@ -1,15 +1,26 @@
 <script lang="ts">
+	import MenuIcon from '@lucide/svelte/icons/menu';
+	import { onNavigate } from '$app/navigation';
 	import Logo from './logo.svelte';
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
+	import { MobileSidebar } from '$components/docs/sidebar';
 	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
 	import ThemeSwitch from './theme-switch.svelte';
+	import Button from '$ui/button';
+	import * as Sheet from '$ui/sheet';
 	import {
 		SearchDialogTriggerDesktop,
 		SearchDialogTriggerMobile
 	} from '$components/ui/search-dialog';
 
 	const docNavigation = getDocNavigationContext();
+
+	let mobileNavigationOpen = $state(false);
+
+	onNavigate(() => {
+		mobileNavigationOpen = false;
+	});
 </script>
 
 <header class="bg-background border-docs-header-main-border sticky top-0 z-30 border-b">
@@ -21,6 +32,15 @@
 		<div class="flex items-center gap-2 justify-self-end">
 			<SearchDialogTriggerMobile />
 			<ThemeSwitch />
+			<Button
+				variant="ghost"
+				size="icon"
+				onclick={() => (mobileNavigationOpen = !mobileNavigationOpen)}
+				class="lg:hidden"
+			>
+				<MenuIcon />
+				<span class="sr-only">Open navigation</span>
+			</Button>
 		</div>
 	</nav>
 
@@ -47,3 +67,7 @@
 		</div>
 	{/if}
 </header>
+
+<Sheet.Root bind:open={mobileNavigationOpen}>
+	<MobileSidebar />
+</Sheet.Root>
