@@ -1,54 +1,59 @@
+<script lang="ts" module>
+	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
+	import type { ButtonProps } from '$ui/button';
+
+	export type CopyButtonChildSnippetProps = { copied: boolean };
+
+	export type CopyButtonProps = Omit<ButtonProps, 'children'> & {
+		class?: ClassValue;
+		content: string | (() => string | Promise<string>);
+		timeout?: number;
+		copied?: boolean;
+		children?: Snippet<[CopyButtonChildSnippetProps]>;
+	};
+</script>
+
 <script lang="ts">
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import CheckIcon from '@lucide/svelte/icons/check';
-	import type { ClassValue } from 'svelte/elements';
-	import * as Tooltip from '$ui/tooltip';
-	import { Tooltip as TooltipPrimitive } from 'bits-ui';
-	import { cn } from '$utils';
+	import { Button } from '$ui/button';
 
-	type Props = {
-		class?: ClassValue;
-		content: string | (() => string);
-		timeout?: number;
-	} & TooltipPrimitive.TriggerProps;
-
-	let { class: className, content, timeout = 3000, ...restProps }: Props = $props();
-
-	let copied = $state(false);
+	let {
+		class: className,
+		content,
+		timeout = 3000,
+		copied = $bindable(false),
+		variant = 'outline',
+		size = 'default',
+		children,
+		...restProps
+	}: CopyButtonProps = $props();
 
 	async function copyToClipboard() {
 		if (copied) return;
 
 		try {
-			await navigator.clipboard.writeText(typeof content === 'function' ? content() : content);
-			copied = true;
-			setTimeout(() => (copied = false), timeout);
+			const textToCopy = typeof content === 'function' ? await content() : content;
+			await navigator.clipboard.writeText(textToCopy);
+			if (timeout > 0) {
+				copied = true;
+				setTimeout(() => (copied = false), timeout);
+			}
 		} catch (err) {
 			console.error('Failed to copy text: ', err);
 		}
 	}
 </script>
 
-<Tooltip.Root>
-	<Tooltip.Trigger
-		onclick={copyToClipboard}
-		class={cn(
-			'bg-background text-muted-foreground hover:bg-primary hover:text-foreground rounded-md border p-1 shadow transition-colors',
-			className
-		)}
-		{...restProps}
-	>
-		{#if copied}
-			<CheckIcon class="size-4" />
-		{:else}
-			<CopyIcon class="size-4" />
-		{/if}
-	</Tooltip.Trigger>
-	<Tooltip.Content>
-		{#if copied}
-			Copied!
-		{:else}
-			Copy to clipboard
-		{/if}
-	</Tooltip.Content>
-</Tooltip.Root>
+<Button onclick={copyToClipboard} {variant} {size} class={className} {...restProps}>
+	{#if children}
+		{@render children({ copied })}
+	{:else if copied}
+		<CheckIcon />
+		Copied!
+	{:else}
+		<CopyIcon />
+		Copy
+	{/if}
+</Button>

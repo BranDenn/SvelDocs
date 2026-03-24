@@ -22,8 +22,8 @@
 			href="#{key}"
 			aria-current={isActive ? 'location' : undefined}
 			class={cn(
-				'transition-font text-muted-foreground block border-l py-1 pr-4 transition-colors',
-				!isActive && !isParent && 'hover:text-foreground',
+				'transition-font text-muted-foreground block border-l py-1 pr-4 transition-[color,border-color,box-shadow]',
+				!isActive && !isParent && 'hover:text-foreground focus-visible:border-border',
 				isParent && 'text-accent border-accent/75',
 				isActive && 'text-accent border-accent font-medium'
 			)}

@@ -41,8 +41,7 @@
 		bind:this={ref}
 		data-slot={dataSlot}
 		class={cn(
-			'border-input bg-background/50 selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground w-full min-w-0 border px-3 py-1.5 text-base shadow-xs transition-[color,box-shadow,border-color] outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-			'hover:border-ring focus-visible:border-ring',
+			'bg-background/50 selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground w-full min-w-0 rounded-md border px-3 py-1.5 text-base shadow-xs transition-[color,box-shadow,border-color] outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
 			'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
 			className
 		)}

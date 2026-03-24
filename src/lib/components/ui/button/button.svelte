@@ -5,26 +5,26 @@
 	import { type VariantProps, tv } from 'tailwind-variants';
 
 	export const buttonVariants = tv({
-		base: 'rounded-md inline-flex items-center justify-center gap-2 text-sm font-medium transition-all outline-none [&_svg]:pointer-events-none [&_svg]:shrink-0',
+		base: 'rounded-md flex items-center justify-center gap-2 font-medium transition-all [&_svg]:pointer-events-none [&_svg]:shrink-0',
 		variants: {
 			variant: {
 				default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-xs',
 				destructive: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow',
 				outline:
-					'bg-secondary text-foreground hover:bg-primary border shadow disabled:hover:bg-secondary/90 aria-disabled:hover:bg-secondary/90',
+					'bg-background text-muted-foreground hover:bg-primary hover:text-foreground border shadow disabled:hover:bg-secondary/90 aria-disabled:hover:bg-secondary/90 focus-visible:bg-primary focus-visible:text-foreground',
 				ghost:
-					'bg-background hover:bg-secondary rounded-sm hover:shadow text-muted-foreground hover:text-foreground',
+					'bg-background hover:bg-secondary rounded-sm hover:shadow text-muted-foreground hover:text-foreground focus-visible:bg-secondary focus-visible:text-foreground',
 				link: 'text-primary underline-offset-4 hover:underline',
 				foreground: 'bg-foreground hover:bg-foreground/90 shadow-xs text-background'
 			},
 			size: {
-				default: 'gap-2 px-4 py-2 has-[>svg]:px-3 [&_svg]:size-4 text-sm',
-				sm: 'gap-2 px-4 py-2 has-[>svg]:px-2.5 [&_svg]:size-3.5 text-xs',
-				lg: 'gap-2 px-6 py-3 has-[>svg]:px-4 [&_svg]:size-4.5 text-base',
+				default: 'gap-2 px-4 py-2 [&_svg]:size-4 text-sm',
+				sm: 'gap-2 px-2 py-1.5 [&_svg]:size-3.5 text-xs',
+				lg: 'gap-2 px-6 py-3 [&_svg]:size-4.5 text-base',
 				icon: 'p-2 [&_svg]:size-4',
-				'icon-sm': 'p-2 [&_svg]:size-3.5',
-				'icon-lg': 'p-2 [&_svg]:size-4.5'
+				'icon-sm': 'p-1.5 [&_svg]:size-3.5',
+				'icon-lg': 'p-2.5 [&_svg]:size-4.5'
 			}
 		},
 		defaultVariants: {
@@ -40,6 +40,7 @@
 		WithElementRef<HTMLAnchorAttributes> & {
 			variant?: ButtonVariant;
 			size?: ButtonSize;
+			unstyled?: boolean;
 		};
 </script>
 
@@ -53,6 +54,7 @@
 		ref = $bindable(null),
 		href = undefined,
 		type = 'button',
+		unstyled = false,
 		disabled,
 		children,
 		...restProps
@@ -63,7 +65,7 @@
 	<Link
 		{ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={cn(!unstyled && buttonVariants({ variant, size }), className)}
 		href={disabled ? undefined : href}
 		aria-disabled={disabled}
 		role={disabled ? 'link' : undefined}
@@ -76,7 +78,7 @@
 	<button
 		bind:this={ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={cn(!unstyled && buttonVariants({ variant, size }), className)}
 		{type}
 		{disabled}
 		{...restProps}

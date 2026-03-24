@@ -43,7 +43,12 @@
 	>
 		<div class="absolute top-1/2 left-0 hidden -translate-x-full -translate-y-1/2 pr-4 lg:block">
 			<a
-				class="bg-secondary hover:bg-primary text-muted-foreground hover:text-foreground block rounded-md border p-1 opacity-0 transition-[opacity,background-color,color] group-hover:opacity-100"
+				class={[
+					'block rounded-md border p-1 transition-[opacity,background-color,color]',
+					'bg-secondary hover:bg-primary focus-visible:bg-primary',
+					'text-muted-foreground hover:text-foreground focus-visible:text-foreground',
+					'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
+				]}
 				href="#{restProps.id}"
 			>
 				<LinkIcon class="size-4 shrink-0" />

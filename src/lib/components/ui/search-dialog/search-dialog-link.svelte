@@ -18,7 +18,7 @@
 	const searchContext = getSearch();
 </script>
 
-<Button {href} variant="outline">
+<Button {href} variant="outline" class="bg-secondary" data-search-dialog-link>
 	<div class="flex flex-col gap-1">
 		{#if Icon}
 			<div class="flex items-center gap-2">

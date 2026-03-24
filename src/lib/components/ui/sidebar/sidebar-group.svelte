@@ -20,7 +20,7 @@
 
 	const mergedProps = $derived({
 		'data-slot': 'sidebar-group',
-		class: cn('relative flex w-full flex-col', className),
+		class: cn('flex w-full flex-col', className),
 		...restProps
 	});
 

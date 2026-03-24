@@ -16,6 +16,7 @@
 	--color-primary: var(--color-zinc-100); /* color 1 */
 	--color-border: var(--color-zinc-200); /* border color */
 	--color-accent: var(--color-indigo-600); /* accent color */
+	--color-destructive: var(--color-red-500);
 
 	--color-secondary: color-mix(
 		in oklch,
@@ -52,6 +53,19 @@
 	*::before,
 	*::after {
 		@apply border-border;
+	}
+
+	:disabled,
+	[aria-disabled='true'] {
+		@apply cursor-default opacity-50;
+	}
+
+	:invalid {
+		@apply border-destructive ring-destructive/50;
+	}
+
+	:focus-visible {
+		@apply border-accent/75 ring-accent/50 ring-2 transition-[border-color,box-shadow] outline-none;
 	}
 
 	kbd {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SEO from '$components/seo';
 	import CopyIcon from '@lucide/svelte/icons/copy';
+	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import ArrowUpRightIcon from '@lucide/svelte/icons/arrow-up-right';
 	import * as DropdownMenu from '$ui/dropdown-menu';
@@ -11,6 +12,9 @@
 	import type { Component } from 'svelte';
 	import mdxComponentManifest from 'virtual:mdx-component-manifest';
 	import GridPattern from '$lib/components/docs/grid/grid-pattern.svelte';
+	import { CopyButton } from '$ui/copy-button';
+	import ButtonGroup from '$ui/button-group';
+	import Button from '$ui/button';
 
 	type PageData = {
 		ast: {
@@ -63,6 +67,18 @@
 	});
 
 	const docNavigation = getDocNavigationContext();
+
+	let mdCopied = $state(false);
+
+	async function getPageMarkdown() {
+		const response = await fetch(`${page.url.pathname}.md`);
+
+		if (!response.ok) {
+			throw new Error('Failed to fetch markdown');
+		}
+
+		return response.text();
+	}
 </script>
 
 <SEO
@@ -87,32 +103,56 @@
 		{#if data.metadata.description}
 			<p class="text-muted-foreground sm:text-lg">{data.metadata.description}</p>
 		{/if}
-		<div
-			class="bg-secondary flex items-center divide-x overflow-hidden rounded-lg border text-xs shadow"
-		>
-			<div
-				class="hover:bg-primary flex items-center gap-2 px-2 py-1.5 transition-[background-color]"
-			>
-				<CopyIcon class="size-4 shrink-0" />
-				Copy Page
-			</div>
+		<ButtonGroup>
+			<CopyButton bind:copied={mdCopied} content={getPageMarkdown} size="sm" class="bg-secondary">
+				{#snippet children({ copied })}
+					{#if copied}
+						<CheckIcon />
+						Page Copied!
+					{:else}
+						<CopyIcon />
+						Copy Page
+					{/if}
+				{/snippet}
+			</CopyButton>
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger
-					class="hover:bg-primary data-[state=open]:bg-primary group p-1.5 transition-[background-color]"
+					class="bg-secondary data-[state=open]:text-foreground data-[state=open]:bg-primary group"
 				>
-					<ChevronDownIcon
-						class="size-4 shrink-0 transition-[translate] group-data-[state=open]:translate-y-px"
-					/>
+					{#snippet child({ props })}
+						<Button {...props} variant="outline" size="icon-sm" aria-label="More Options">
+							<ChevronDownIcon
+								class="transition-[translate] group-data-[state=open]:translate-y-px"
+							/>
+						</Button>
+					{/snippet}
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
 					class="[&>[data-slot=dropdown-menu-item]>svg]:size-7.5 [&>[data-slot=dropdown-menu-item]>svg]:rounded-md [&>[data-slot=dropdown-menu-item]>svg]:border [&>[data-slot=dropdown-menu-item]>svg]:p-1.5"
 				>
 					<DropdownMenu.Item>
-						<CopyIcon class="size-4 shrink-0" />
-						<div class="flex flex-col">
-							Copy Page
-							<span class="text-muted-foreground text-xs">Copy page as Markdown for LLMs</span>
-						</div>
+						{#snippet child({ props })}
+							{@const { onclick, ...restProps } = props}
+							<CopyButton bind:copied={mdCopied} content={getPageMarkdown} unstyled {...restProps}>
+								{#snippet children({ copied })}
+									{#if copied}
+										<CheckIcon />
+									{:else}
+										<CopyIcon />
+									{/if}
+
+									<div class="flex flex-col items-start">
+										{#if copied}
+											Page Copied!
+										{:else}
+											Copy Page
+										{/if}
+										<span class="text-muted-foreground text-xs">Copy page as Markdown for LLMs</span
+										>
+									</div>
+								{/snippet}
+							</CopyButton>
+						{/snippet}
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>
 						{#snippet child({ props })}
@@ -164,7 +204,7 @@
 					</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
-		</div>
+		</ButtonGroup>
 	</header>
 
 	<hr class="border-border my-4" />

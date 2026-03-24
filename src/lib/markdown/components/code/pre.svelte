@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import type { Attachment } from 'svelte/attachments';
-	import { CopyButton } from '$ui/copy-button';
+	import { CopyButtonTooltip } from '$ui/copy-button';
 	import type { WithElementRef } from 'bits-ui';
 
 	type Props = WithElementRef<HTMLAttributes<HTMLPreElement>> & {
@@ -32,7 +31,7 @@
 	<pre
 		bind:this={ref}
 		data-language={language}
-		class="scrollbar-thin bg-secondary max-h-96 overflow-auto py-4 text-sm"
+		class="scrollbar-thin bg-secondary max-h-96 overflow-auto py-4 text-sm focus-visible:ring-0"
 		style="--lineNumbersMaxDigits: {lineNumbersMaxDigits}ch;"
 		{...restProps}>{@render children?.()}</pre>
 	{#if language || hasCode}
@@ -46,7 +45,10 @@
 				</span>
 			{/if}
 			{#if hasCode}
-				<CopyButton class="pointer-events-auto" content={() => ref?.textContent?.trim() ?? ''} />
+				<CopyButtonTooltip
+					class="pointer-events-auto"
+					content={() => ref?.textContent?.trim() ?? ''}
+				/>
 			{/if}
 		</div>
 	{/if}
@@ -67,7 +69,7 @@
 		}
 
 		[data-rehype-pretty-code-figure] {
-			@apply overflow-hidden rounded-md border shadow-xs;
+			@apply has-[pre:focus-visible]:ring-accent/50 has-[pre:focus-visible]:border-accent overflow-hidden rounded-md border shadow-xs transition-[border-color,box-shadow] has-[pre:focus-visible]:ring-2;
 		}
 		[data-rehype-pretty-code-title] {
 			@apply bg-primary border-b p-2 text-sm font-bold;

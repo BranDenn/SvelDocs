@@ -1,11 +1,11 @@
 <script lang="ts" module>
 	import { tv, type VariantProps } from 'tailwind-variants';
 	export const sidebarMenuButtonVariants = tv({
-		base: 'flex items-center gap-2 rounded-sm transition-[color,background-color,border-width,box-shadow] [&>svg]:size-4 [&>svg]:shrink-0',
+		base: 'flex items-center gap-2 rounded-sm transition-[color,background-color,box-shadow] [&>svg]:size-4 [&>svg]:shrink-0',
 		variants: {
 			variant: {
 				default:
-					'text-muted-foreground hover:bg-primary hover:text-foreground data-[active=true]:bg-accent/10 data-[active=true]:text-foreground'
+					'text-muted-foreground hover:bg-primary hover:text-foreground focus-visible:bg-primary focus-visible:text-foreground data-[active=true]:bg-accent/10 data-[active=true]:text-foreground'
 			},
 			size: {
 				default: 'px-3 py-1.5 text-sm'

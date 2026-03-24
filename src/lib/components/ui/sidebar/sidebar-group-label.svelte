@@ -36,7 +36,10 @@
 		if (!isCollapsible) return mergedProps;
 		return {
 			...mergedProps,
-			class: cn(mergedProps.class, 'hover:text-foreground transition-[color]')
+			class: cn(
+				mergedProps.class,
+				'hover:text-foreground transition-[color,box-shadow] focus-visible:text-foreground rounded-sm'
+			)
 		};
 	});
 </script>
@@ -45,7 +48,7 @@
 	<CollapsibleTrigger bind:ref {...collapsibleProps}>
 		{@render children?.()}
 		<ChevronRight
-			class=" ml-auto transition-[rotate] group-data-[state=open]/sidebar-group-label:rotate-90"
+			class="ml-auto transition-[rotate] group-data-[state=open]/sidebar-group-label:rotate-90"
 		/>
 	</CollapsibleTrigger>
 {:else if child}
