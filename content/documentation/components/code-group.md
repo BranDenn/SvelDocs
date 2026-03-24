@@ -34,7 +34,11 @@ Wrap multiple fenced code blocks inside a `<CodeGroup>` tag. The `title` fence a
 </CodeGroup>
 ````
 
-`CodeGroup` is registered as a global doc import, so no markdown import statment is needed — it is available on every docs page.
+import Alert from '$ui/alert';
+
+<Alert type="note">
+	`CodeGroup` is registered as a global doc import, so no markdown import statment is needed — it is available on every docs page.
+</Alert>
 
 ## Syncing Tabs Across Multiple Groups
 

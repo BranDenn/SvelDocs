@@ -236,7 +236,7 @@
 	function getMdxProps(attrs: AstNode['attributes'] = []) {
 		return attrs.reduce<Record<string, unknown>>((acc, attr) => {
 			if (!attr?.name) return acc;
-			acc[attr.name] = attr.value === undefined ? true : resolveMdxAttributeValue(attr.value);
+			acc[attr.name] = attr.value == null ? true : resolveMdxAttributeValue(attr.value);
 			return acc;
 		}, {});
 	}

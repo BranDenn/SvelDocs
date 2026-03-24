@@ -8,10 +8,12 @@
  * 3) normalize MDX paragraph wrappers.
  */
 export { rehypeNormalizeMdxParagraphs } from './normalize-mdx-paragraphs';
+export { rehypeMarkPreHasCode } from './mark-pre-has-code';
 export { rehypePromoteCodeMeta } from './promote-code-meta';
 export { rehypeTransformCodeGroup } from './transform-code-group';
 
 import { rehypeNormalizeMdxParagraphs } from './normalize-mdx-paragraphs';
+import { rehypeMarkPreHasCode } from './mark-pre-has-code';
 import { rehypePromoteCodeMeta } from './promote-code-meta';
 import { rehypeTransformCodeGroup } from './transform-code-group';
 
@@ -20,6 +22,7 @@ import { rehypeTransformCodeGroup } from './transform-code-group';
  */
 export const rehypeMarkdownAstPlugins = [
 	rehypePromoteCodeMeta,
+	rehypeMarkPreHasCode,
 	rehypeTransformCodeGroup,
 	rehypeNormalizeMdxParagraphs
 ];

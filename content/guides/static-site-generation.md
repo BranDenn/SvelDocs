@@ -4,7 +4,7 @@ description: How to run SvelDocs as a prerendered static site.
 
 ## When To Use SSG
 
-Use static site generation when your all of your docs are public and can be built ahead of time. This is the current default provided from this project.
+Use static site generation when all of your docs are public and can be built ahead of time. This is the current default provided from this project.
 
 The benefits are straightforward:
 

@@ -2,38 +2,51 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { Attachment } from 'svelte/attachments';
 	import { CopyButton } from '$ui/copy-button';
+	import type { WithElementRef } from 'bits-ui';
 
-	let { children, ...restProps }: HTMLAttributes<HTMLPreElement> = $props();
+	type Props = WithElementRef<HTMLAttributes<HTMLPreElement>> & {
+		language?: string;
+		hasCode?: boolean;
+		lineNumbersMaxDigits?: number;
+	};
 
-	let codeContent = $state('');
-	let language = $state('');
+	let {
+		ref = $bindable(null),
+		children,
+		language = '',
+		hasCode = false,
+		lineNumbersMaxDigits = 1,
+		...restProps
+	}: Props = $props();
+
 	let scrollbarWidth = $state(0);
 
-	const codeAttach: Attachment = (node) => {
-		if (!(node instanceof HTMLPreElement)) return;
-		codeContent = node.textContent ?? '';
-		language = node.getAttribute('data-language') ?? '';
-		scrollbarWidth = node.offsetWidth - node.clientWidth;
-	};
+	$effect(() => {
+		if (ref) {
+			scrollbarWidth = ref.offsetWidth - ref.clientWidth;
+		}
+	});
 </script>
 
 <div class="group relative">
 	<pre
+		bind:this={ref}
+		data-language={language}
 		class="scrollbar-thin bg-secondary max-h-96 overflow-auto py-4 text-sm"
-		{...restProps}
-		{@attach codeAttach}>{@render children?.()}</pre>
-	{#if language || codeContent}
+		style="--lineNumbersMaxDigits: {lineNumbersMaxDigits}ch;"
+		{...restProps}>{@render children?.()}</pre>
+	{#if language || hasCode}
 		<div
-			class="bg-secondary/50 pointer-events-none absolute top-0 flex items-center gap-2 p-1 transition-[background-color] group-hover:bg-transparent"
+			class="bg-secondary/50 pointer-events-none absolute top-0 flex items-center gap-1 p-1 transition-[background-color] group-hover:bg-transparent"
 			style="right: {scrollbarWidth}px;"
 		>
 			{#if language}
-				<span class="text-xs transition-opacity group-hover:opacity-0">
+				<span class="p-1 text-xs transition-opacity group-hover:opacity-0">
 					.{language}
 				</span>
 			{/if}
-			{#if codeContent}
-				<CopyButton content={codeContent} class="pointer-events-auto" />
+			{#if hasCode}
+				<CopyButton class="pointer-events-auto" content={() => ref?.textContent?.trim() ?? ''} />
 			{/if}
 		</div>
 	{/if}
@@ -77,12 +90,11 @@
 			@apply text-muted-foreground/75;
 		}
 		[data-line-numbers-max-digits] {
-			--w: attr(data-line-numbers-max-digits ch);
 			& > [data-line]:hover::before {
 				@apply text-foreground bg-[color-mix(in_oklch,var(--color-background),#808080_35%)];
 			}
 			& > [data-line]::before {
-				width: calc(var(--w) + 2rem);
+				width: calc(var(--lineNumbersMaxDigits) + 2rem);
 				@apply bg-secondary sticky left-0 mr-4 inline-block border-r px-4 text-right;
 			}
 		}

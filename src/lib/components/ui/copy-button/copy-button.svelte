@@ -8,7 +8,7 @@
 
 	type Props = {
 		class?: ClassValue;
-		content: string;
+		content: string | (() => string);
 		timeout?: number;
 	} & TooltipPrimitive.TriggerProps;
 
@@ -20,7 +20,7 @@
 		if (copied) return;
 
 		try {
-			await navigator.clipboard.writeText(content);
+			await navigator.clipboard.writeText(typeof content === 'function' ? content() : content);
 			copied = true;
 			setTimeout(() => (copied = false), timeout);
 		} catch (err) {
