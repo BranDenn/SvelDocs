@@ -6,7 +6,7 @@ import { getDocsData, getPublicDocEntries } from '$lib/server/content/docs-data'
 export { prerender } from '$lib/server/content/docs-data';
 
 export const entries: EntryGenerator = () => {
-	return getPublicDocEntries();
+	return getPublicDocEntries().map((doc) => ({ slug: doc.slug }));
 };
 
 export const GET: RequestHandler = async ({ params, locals }) => {

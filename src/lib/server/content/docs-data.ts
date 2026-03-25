@@ -106,15 +106,15 @@ export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () =
 }
 
 export function getPublicDocEntries() {
-	const entries: Array<{ slug: string }> = [];
+	const data: BuiltDocRecord[] = [...searchJsonData.getBySlug.values()];
 
-	for (const doc of searchJsonData.getBySlug.values()) {
-		if (doc.private === false) {
-			entries.push({ slug: doc.slug });
-		}
-	}
+	const filtered = data.flatMap((doc) => {
+		const { private: isPrivate, ...docData } = doc;
+		if (isPrivate !== false) return [];
+		return [docData];
+	});
 
-	return entries;
+	return filtered;
 }
 
 export function isAllPublic() {
