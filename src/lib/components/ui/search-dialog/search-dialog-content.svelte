@@ -53,6 +53,12 @@
 		}
 	}
 
+	let focusedIsLink = $state(false);
+
+	function handleFocusIn(event: FocusEvent) {
+		focusedIsLink = (event.target as HTMLElement | null)?.matches(SEARCH_LINK_SELECTOR) ?? false;
+	}
+
 	function handleArrowNavigation(event: KeyboardEvent) {
 		if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
 
@@ -92,6 +98,7 @@
 	hideClose
 	class="top-4 translate-y-0 gap-0 overflow-y-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(34rem,calc(100%-max(1rem,10%)-1rem))]"
 	onkeydown={handleArrowNavigation}
+	onfocusin={handleFocusIn}
 >
 	<div class="bg-secondary relative flex items-center gap-2 border-b p-2">
 		<SearchInput
@@ -131,6 +138,21 @@
 		{/if}
 		{#if !searchContext.query || (searchContext.query && searchContext.results.size)}
 			<div class="from-background pointer-events-none sticky bottom-0 h-4 bg-linear-to-t"></div>
+		{/if}
+	</div>
+	<div
+		class="bg-secondary text-muted-foreground flex items-center justify-between gap-4 border-t p-2 text-xs"
+	>
+		<span class="flex items-center gap-1">
+			<kbd>↑</kbd>
+			<kbd>↓</kbd>
+			<span class="ml-1">Navigate</span>
+		</span>
+		{#if focusedIsLink}
+			<span class="flex items-center gap-2">
+				<kbd>↵</kbd>
+				View
+			</span>
 		{/if}
 	</div>
 </Dialog.Content>

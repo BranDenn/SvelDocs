@@ -4,13 +4,7 @@ description: How to configure code blocks in markdown.
 
 ## Overview
 
-SvelDocs uses `rehype-pretty-code` in the markdown pipeline to transform fenced code blocks into themed, styleable HTML. The plugin uses `shiki` behind the scenes.
-
-Configuration is split across:
-
-- `src/lib/markdown/markdown.config.ts` for plugin options
-- `src/lib/markdown/components/code/pre.svelte` for rendering and styling
-- Markdown fence metadata for per-block features (title, footer, line highlights, line numbers)
+SvelDocs uses [rehype-pretty-code](https://rehype-pretty.pages.dev/) in the markdown pipeline to transform fenced code blocks into themed, styleable HTML. The plugin uses [shiki](https://shiki.style/) behind the scenes.
 
 ## Theme
 
@@ -38,7 +32,7 @@ const markdownConfig = defineConfig({
 
 ## Component
 
-`$lib/markdown/components/code/pre.svelte` is the component that replaces the default html `pre` element. This allow for:
+`$lib/markdown/components/code/pre.svelte` is the component that replaces the default html `pre` element. This allows for:
 
 - Language badge
 - Code Copy button
@@ -66,7 +60,7 @@ Here is the provided default:
 		}
 
 		[data-rehype-pretty-code-figure] {
-			@apply overflow-hidden rounded-md border shadow-xs;
+			@apply has-[pre:focus-visible]:ring-accent/50 has-[pre:focus-visible]:border-accent overflow-hidden rounded-md border shadow-xs transition-[border-color,box-shadow] has-[pre:focus-visible]:ring-2;
 		}
 		[data-rehype-pretty-code-title] {
 			@apply bg-primary border-b p-2 text-sm font-bold;
@@ -89,12 +83,11 @@ Here is the provided default:
 			@apply text-muted-foreground/75;
 		}
 		[data-line-numbers-max-digits] {
-			--w: attr(data-line-numbers-max-digits ch);
 			& > [data-line]:hover::before {
 				@apply text-foreground bg-[color-mix(in_oklch,var(--color-background),#808080_35%)];
 			}
 			& > [data-line]::before {
-				width: calc(var(--w) + 2rem);
+				width: calc(var(--lineNumbersMaxDigits) + 2rem);
 				@apply bg-secondary sticky left-0 mr-4 inline-block border-r px-4 text-right;
 			}
 		}
@@ -211,6 +204,30 @@ const six = 6;
 ````
 
 ```ts showLineNumbers{5}
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```
+
+### Kitchen Sink
+
+Here is an example of all the markdown features combined.
+
+````md
+```ts {2,4-6} title="kitchen-sink-example.ts" showLineNumbers
+const one = 1;
+const two = 2;
+const three = 3;
+const four = 4;
+const five = 5;
+const six = 6;
+```
+````
+
+```ts {2,4-6} showLineNumbers title="kitchen-sink-example.ts" caption="example caption"
 const one = 1;
 const two = 2;
 const three = 3;

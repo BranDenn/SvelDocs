@@ -85,9 +85,10 @@ export const astNodeRenderers = {
 	h5: H5,
 	h6: H6,
 	pre: Pre,
-	code: resolver((context) =>
-		context.parentElement === 'pre' ? null : { component: InlineCode, inheritNodeProps: true }
-	),
+	code: resolver((context) => {
+		if (context.parentElement === 'pre') return null;
+		return { component: InlineCode, inheritNodeProps: true };
+	}),
 	a: A,
 	table: Table,
 	thead: Thead,

@@ -23,6 +23,7 @@ import Alert from '$ui/alert'
 - Automatically generated `.md` and `llms.txt` routes for Artificial Intelligence
 - Syntax highlighted code blocks
 - Search Engine Optimization (SEO) and `sitemap.xml`
+- Accessiblility and Tab Navigation
 - Light and Dark mode
 - Clean and Modern look
 

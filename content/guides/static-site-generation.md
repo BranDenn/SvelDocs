@@ -59,7 +59,7 @@ const config = {
 };
 ```
 
-That is useful when deploying the static site under a subpath such as `your-username.github.io` instead of the domain root.
+This is useful when deploying the static site under a subpath such as `your-username.github.io` instead of the domain root.
 
 ### Github Pages
 

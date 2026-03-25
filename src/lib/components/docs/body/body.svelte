@@ -68,7 +68,7 @@
 			<div class="from-background h-6 bg-linear-to-b"></div>
 		</div>
 		<main
-			class="relative flex min-w-0 grow flex-col gap-8 overflow-hidden px-6 transition-[padding] lg:px-14 lg:py-8"
+			class="relative flex min-w-0 grow flex-col gap-16 overflow-hidden px-6 transition-[padding] lg:px-14 lg:py-8"
 		>
 			{@render children?.()}
 			<Footer />

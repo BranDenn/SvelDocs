@@ -178,4 +178,4 @@ The `CodeGroup` uses a custom rehype plugin to allow the simple markdown syntax 
 	````
 </CodeGroup>
 
-The actual fenced code area is converted via the `rehype-pretty-code` rehype plugin.
+The actual fenced code area is converted via the `rehype-pretty-code` rehype plugin explained in the [Code Block Configuration](/docs/configuration/code-blocks).
