@@ -2,7 +2,7 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn } from '$utils';
 
-	let { class: className, children, ...restProps }: HTMLAttributes<HTMLLIElement> = $props();
+	let { class: className, children, id, ...restProps }: HTMLAttributes<HTMLLIElement> = $props();
 </script>
 
 <li
@@ -15,9 +15,9 @@
 		aria-hidden="true"
 		class="bg-secondary grid size-6 place-content-center rounded-full border text-xs font-semibold"
 	></span>
-	<span class="font-medium">
+	<h6 {id} class="font-medium">
 		{@render children?.()}
-	</span>
+	</h6>
 </li>
 
 <style>

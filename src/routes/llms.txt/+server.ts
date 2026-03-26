@@ -10,7 +10,11 @@ export const GET: RequestHandler = () => {
 	const publicDocs = getPublicDocEntries().map((entry) => {
 		let txt = `- [${entry.title}](${baseUrl}/${entry.slug}.md)`;
 		const metadata = entry.markdown.metadata;
-		if ('description' in metadata) {
+		if (
+			'description' in metadata &&
+			typeof metadata.description === 'string' &&
+			metadata.description.trim() !== ''
+		) {
 			txt += `: ${metadata.description}`;
 		}
 		return txt;

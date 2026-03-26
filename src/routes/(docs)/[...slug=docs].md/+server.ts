@@ -1,5 +1,4 @@
 import { error } from '@sveltejs/kit';
-import matter from 'gray-matter';
 import type { EntryGenerator, RequestHandler } from './$types';
 import { canAccessDoc } from '$lib/server/content/docs-access';
 import { getDocsData, getPublicDocEntries } from '$lib/server/content/docs-data';
@@ -17,21 +16,16 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 		throw error(404, 'Document not found');
 	}
 
-	const headingTitle = docData.title.replaceAll(/\r?\n/g, ' ').trim();
-	const parsed = matter(docData.markdown.raw);
-	const description =
-		typeof parsed.data.description === 'string'
-			? `> ${parsed.data.description.replaceAll(/\r?\n/g, ' ').trim()}`
-			: '';
-	const titleHeading = headingTitle ? `# ${headingTitle}` : '';
-	const titleBlock = [titleHeading, description].filter(Boolean).join('\n\n');
-	const titlePrefix = titleBlock ? `${titleBlock}\n\n` : '';
-	const contentWithTitle = `${titlePrefix}${parsed.content}`;
-	const markdownWithTitle = parsed.matter
-		? matter.stringify(contentWithTitle, parsed.data)
-		: contentWithTitle;
+	let txt = `# ${docData.title}`
 
-	return new Response(markdownWithTitle, {
+	const metadata = docData.markdown.metadata
+	if ('description' in metadata && typeof metadata.description === 'string' && metadata.description.trim() !== '') {
+		txt += `\n\n> ${metadata.description}`
+	}
+
+	const body = `${txt}\n\n${docData.markdown.raw}`;
+
+	return new Response(body, {
 		headers: {
 			'Content-Type': 'text/markdown; charset=utf-8'
 		}

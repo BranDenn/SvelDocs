@@ -7,7 +7,7 @@
 
 <div
 	data-slot="step-body"
-	class={cn('text-muted-foreground ml-3 border-l pl-6', className)}
+	class={cn('text-muted-foreground ml-3 space-y-4 border-l pb-6 pl-6', className)}
 	{...restProps}
 >
 	{@render children?.()}

@@ -1,5 +1,5 @@
 ---
-description: How defineDocNavigation controls tabs, groups, pages, routing, and access.
+description: How to define the look and structure of document navigation such for tabs, groups, pages, routing, access, etc.
 ---
 
 ## File Locations

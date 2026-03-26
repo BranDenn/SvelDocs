@@ -128,7 +128,7 @@ export async function markdownToAst(rawMarkdown: string): Promise<MarkdownAstRes
 	};
 
 	return {
-		raw: rawMarkdown,
+		raw: rawContent,
 		content: extractTextFromAst(ast),
 		metadata: enrichedMetadata,
 		ast
