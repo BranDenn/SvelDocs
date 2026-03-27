@@ -11,7 +11,7 @@
 		class: className,
 		children,
 		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLUListElement>, HTMLUListElement> = $props();
+	}: WithElementRef<HTMLAttributes<HTMLUListElement>> = $props();
 
 	const mergedProps = $derived({
 		class: cn('flex w-full min-w-0 flex-col gap-px', className),

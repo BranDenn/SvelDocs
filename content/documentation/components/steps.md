@@ -9,10 +9,6 @@ import { Steps, StepBody, StepTitle } from '$ui/steps';
 
 `Steps` renders ordered instructions with consistent spacing and automatic numbering. It works well for setup guides and onboarding.
 
-<Alert type="warning">
-	Step numbers are generated with CSS counters and may take a moment to appear during server-side rendering.
-</Alert>
-
 ### Example
 
 <Steps>
@@ -73,6 +69,10 @@ import { Steps, StepBody, StepTitle } from '$ui/steps';
 | File | Purpose |
 |---|---|
 | `steps-root.svelte` | Root ordered list wrapper and `start` handling |
-| `step-title.svelte` | Numbered step heading item |
-| `step-body.svelte` | Indented step content block |
+| `steps-title.svelte` | Numbered step heading item |
+| `steps-body.svelte` | Indented step content block |
 | `index.ts` | Barrel exports |
+
+<Alert type="note">
+	Editing the `steps-title.svelte` component with vite's hot module reload can result in increments in its number. This does does not actually affect the built site.
+</Alert>

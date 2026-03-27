@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { setSteps } from './steps-context.svelte'
 	import { cn } from '$utils';
 
 	let {
@@ -11,12 +12,13 @@
 	}: HTMLAttributes<HTMLOListElement> & {
 		start?: number;
 	} = $props();
+
+	setSteps(() => start);
 </script>
 
 <ol
-	data-slot="steps-root"
+	data-slot="steps"
 	class={cn('flex flex-col gap-4', className)}
-	style={`counter-set: step ${start - 1};`}
 	{...restProps}
 >
 	{@render children?.()}
