@@ -143,7 +143,7 @@ The component source is built on top of the [bits-ui](https://bits-ui.com/docs/c
 
 ## How It Works
 
-The `CodeGroup` uses a custom rehype plugin to allow the simple markdown syntax shown above. It is parsed and converted into the actual `$lib/components/ui/code-group` components.
+The `CodeGroup` uses a custom rehype plugin to allow the simple markdown syntax shown on this page. It is parsed and converted into the actual `$lib/components/ui/code-group` components.
 
 <CodeGroup value="Markdown Syntax">
 	````md title="Markdown Syntax"

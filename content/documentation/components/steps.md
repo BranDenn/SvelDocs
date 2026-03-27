@@ -3,7 +3,7 @@ description: An ordered step list component for setup guides and workflow docume
 ---
 
 import Alert from '$ui/alert';
-import { Steps, StepBody, StepTitle } from '$ui/steps';
+import { Steps, Step } from '$ui/steps';
 
 ## Overview
 
@@ -12,55 +12,112 @@ import { Steps, StepBody, StepTitle } from '$ui/steps';
 ### Example
 
 <Steps>
-	<StepTitle>Install dependencies</StepTitle>
-	<StepBody>Install the project dependencies before starting the app.</StepBody>
+	<Step title="Install Dependencies">
+		Install the project dependencies before starting the app.
+	</Step>
 
-	<StepTitle>Start the dev server</StepTitle>
-	<StepBody>Launch the local site and confirm the documentation is loading.</StepBody>
+	<Step title="Start the Dev Server">
+		Launch the local site and confirm the documentation is loading.
+	</Step>
 
-	<StepTitle>Begin editing content</StepTitle>
-	<StepBody>Add or update markdown files inside the content directory.</StepBody>
+	<Step title="Begin Editing Content">
+		Add or update markdown files inside the content directory.
+	</Step>
 </Steps>
 
 ## Markdown Usage
 
-Import the primitives and alternate `StepTitle` with `StepBody` inside `Steps`:
+Import the `Steps` and `Step` components into the markdown, then pass a `title` prop and the `Step` content as children:
 
 ```md
-import { Steps, StepBody, StepTitle } from '$ui/steps';
+import { Steps, Step } from '$ui/steps';
 
 <Steps>
-	<StepTitle>Install dependencies</StepTitle>
-	<StepBody>Run bun install to install the project dependencies.</StepBody>
+	<Step title="Install Dependencies">
+		Install the project dependencies before starting the app.
+	</Step>
 
-	<StepTitle>Start the dev server</StepTitle>
-	<StepBody>Run bun run dev and open the local site in your browser.</StepBody>
+	<Step title="Start the Dev Server">
+		Launch the local site and confirm the documentation is loading.
+	</Step>
+
+	<Step title="Begin Editing Content">
+		Add or update markdown files inside the content directory.
+	</Step>
 </Steps>
 ```
 
-## Starting at a Different Number
+### Starting at a Different Number
 
 Use the `start` prop to start the first step at a specific number.
 
-<Steps start={4}>
-	<StepTitle>Configure deployment</StepTitle>
-	<StepBody>Apply environment-specific settings after the earlier steps are complete.</StepBody>
-
-	<StepTitle>Run a production build</StepTitle>
-	<StepBody>Verify the site compiles cleanly before deployment.</StepBody>
-</Steps>
-
 ```md
-import { Steps, StepBody, StepTitle } from '$ui/steps';
+import { Steps, Step } from '$ui/steps';
 
 <Steps start={4}>
-	<StepTitle>Configure deployment</StepTitle>
-	<StepBody>Apply environment-specific settings after the earlier steps are complete.</StepBody>
+	<Step title="Install Dependencies">
+		Install the project dependencies before starting the app.
+	</Step>
 
-	<StepTitle>Run a production build</StepTitle>
-	<StepBody>Verify the site compiles cleanly before deployment.</StepBody>
+	<Step title="Start the Dev Server">
+		Launch the local site and confirm the documentation is loading.
+	</Step>
+
+	<Step title="Begin Editing Content">
+		Add or update markdown files inside the content directory.
+	</Step>
 </Steps>
 ```
+
+<Steps start={4}>
+	<Step title="Install Dependencies">
+		Install the project dependencies before starting the app.
+	</Step>
+
+	<Step title="Start the Dev Server">
+		Launch the local site and confirm the documentation is loading.
+	</Step>
+
+	<Step title="Begin Editing Content">
+		Add or update markdown files inside the content directory.
+	</Step>
+</Steps>
+
+### Display in Table Of Contents
+
+You can show each step as a header in the table of contents by adding a unique id to each step. The step titles are `h6` heading elements, so they will always have the highest padding in the table of contents.
+
+```md
+import { Steps, Step } from '$ui/steps';
+
+<Steps>
+	<Step id="install-dependencies" title="Install Dependencies">
+		Install the project dependencies before starting the app.
+	</Step>
+
+	<Step id="start-dev-server" title="Start the Dev Server">
+		Launch the local site and confirm the documentation is loading.
+	</Step>
+
+	<Step id="edit-content" title="Begin Editing Content">
+		Add or update markdown files inside the content directory.
+	</Step>
+</Steps>
+```
+
+<Steps>
+	<Step id="install-dependencies" title="Install Dependencies">
+		Install the project dependencies before starting the app.
+	</Step>
+
+	<Step id="start-dev-server" title="Start the Dev Server">
+		Launch the local site and confirm the documentation is loading.
+	</Step>
+
+	<Step id="edit-content" title="Begin Editing Content">
+		Add or update markdown files inside the content directory.
+	</Step>
+</Steps>
 
 ## Editing the Component
 
@@ -68,7 +125,8 @@ import { Steps, StepBody, StepTitle } from '$ui/steps';
 
 | File | Purpose |
 |---|---|
-| `steps-root.svelte` | Root ordered list wrapper and `start` handling |
+| `steps.svelte` | Root ordered list wrapper and `start` handling |
 | `steps-title.svelte` | Numbered step heading item |
 | `steps-body.svelte` | Indented step content block |
+| `steps-step.svelte` | Wraps the `steps-title` and `steps-body` inside one component for simpler markdown. |
 | `index.ts` | Barrel exports |

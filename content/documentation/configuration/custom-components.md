@@ -55,26 +55,22 @@ import Alert from '$ui/alert';
 
 ## How It Works
 
-import * as Steps from '$ui/steps';
+import { Steps, Step } from '$ui/steps';
 
-<Steps.Root>
-    <Steps.Title>Define Blueprints or Import</Steps.Title>
-    <Steps.Body>
+<Steps>
+    <Step title="Define Blueprints or Import">
         Either add a blueprint mapping in `src/lib/markdown/components/index.ts` for a markdown HTML element (like `<pre>`, `<code>`, `<a>`), or import your component directly inside a markdown file.
-    </Steps.Body>
-
-    <Steps.Title>Build-Time Custom Component Processing</Steps.Title>
-    <Steps.Body>
+    </Step>
+    
+    <Step title="Build-Time Custom Component Processing">
         During the build, imports in markdown files are extracted and added to the component manifest via the `plugins/vite-mdx-component-manifest.ts`. Blueprints are registered globally and become available to all doc pages.
-    </Steps.Body>
+    </Step>
 
-    <Steps.Title>Build-Time AST Generation & Rendering</Steps.Title>
-    <Steps.Body>
+    <Step title="Build-Time AST Generation & Rendering">
         All markdown is parsed into AST during the build via the `plugins/vite-search-json.ts`. The AST is a JSON structure that is passed from the server to the client where it is rendered via the `BlueprintRenderer.svelte` component.
-    </Steps.Body>
+    </Step>
 
-    <Steps.Title>Component Output</Steps.Title>
-    <Steps.Body>
+    <Step title="Component Output">
         The component `BlueprintRenderer.svelte` reads through the AST JSON to map HTML element tags into Blueprints and renders everything accordingly.
-    </Steps.Body>
-</Steps.Root>
+    </Step>
+</Steps>

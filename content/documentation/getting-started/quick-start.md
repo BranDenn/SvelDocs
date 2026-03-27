@@ -3,22 +3,20 @@ description: How to clone the repo and get the boilerplate running.
 ---
 
 import Alert from '$ui/alert';
-import * as Steps from '$ui/steps';
+import { Steps, Step } from '$ui/steps';
 import * as Tabs from '$ui/tabs';
-import * as Tree from '$ui/tree';
+import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 ## Setup
 
-<Steps.Root>
-	<Steps.Title id="clone-repository">Clone Repository</Steps.Title>
-	<Steps.Body>
+<Steps>
+	<Step id="clone-repository" title="Clone Repository">
 		```bash
 		git clone https://github.com/BranDenn/SvelDocs
 		```
-	</Steps.Body>
+	</Step>
 
-	<Steps.Title id="install-packages">Install Packages</Steps.Title>
-	<Steps.Body>
+	<Step id="install-packages" title="Install Packages">
 		<CodeGroup contextId="js-pkg-managers">
 			```bash title="bun"
 			bun install
@@ -32,10 +30,9 @@ import * as Tree from '$ui/tree';
 			pnpm install
 			```
 		</CodeGroup>
-	</Steps.Body>
+	</Step>
 
-	<Steps.Title id="start-dev-server">Start Dev Server</Steps.Title>
-	<Steps.Body>
+	<Step id="start-dev-server" title="Start Dev Server">
 		<CodeGroup contextId="js-pkg-managers">
 			```bash title="bun"
 			bun run dev
@@ -49,10 +46,9 @@ import * as Tree from '$ui/tree';
 			pnpm run dev
 			```
 		</CodeGroup>
-	</Steps.Body>
+	</Step>
 
-	<Steps.Title id="edit-site-config">Edit Site Settings / Config</Steps.Title>
-	<Steps.Body>
+	<Step id="edit-site-config" title="Edit Site Settings / Config">
 		Navigate to the `$lib\configuration\site.config.ts` file to edit general site settings. These settings apply to the various parts of the site (not just docs) including SEO, `llms.txt`, and `sitemap.xml`. Feel free to add your own settings.
 
 		```ts title="$lib\configuration\site.config.ts"
@@ -62,10 +58,9 @@ import * as Tree from '$ui/tree';
 			description: 'Documentation for SvelDocs, a SvelteKit-based documentation generator.'
 		};
 		```
-	</Steps.Body>
+	</Step>
 
-	<Steps.Title id="edit-docs-config">Edit Doc Settings / Config</Steps.Title>
-	<Steps.Body>
+	<Step id="edit-docs-config" title="Edit Doc Settings / Config">
 		Navigate to the `$lib\configuration\docs.config.ts` file to edit general settings specific to docs. Feel free to add your own settings.
 
 		```ts title="$lib\configuration\docs.config.ts"
@@ -73,10 +68,9 @@ import * as Tree from '$ui/tree';
 			github: 'https://github.com/BranDenn/SvelDocs'
 		};
 		```
-	</Steps.Body>
+	</Step>
 
-	<Steps.Title id="edit-doc-navigation-config">Edit Document Navigation Settings / Config</Steps.Title>
-	<Steps.Body>
+	<Step id="edit-doc-navigation-config" title="Edit Document Navigation Settings / Config">
 		Navigate to the `$lib\server\navigation\doc-navigation.config.ts` file to edit the document navigation settings. Refer to the [Doc Navigation](/docs/configuration/doc-navigation) for more detail.
 
 		<Alert type="caution">
@@ -128,10 +122,9 @@ import * as Tree from '$ui/tree';
 			]
 		});
 		```
-	</Steps.Body>
+	</Step>
 
-	<Steps.Title id="add-markdown">Add Your Own Markdown</Steps.Title>
-	<Steps.Body>
+	<Step id="add-markdown" title="Add Your Own Markdown">
 		Navigate to the `content` folder to add your own markdown files. Idealy the folder structure should correspond to your navigation structure.
 
 		<Tabs.Root value="config">
@@ -167,26 +160,26 @@ import * as Tree from '$ui/tree';
 				```
 			</Tabs.Content>
 			<Tabs.Content value="folder">
-				<Tree.Root toolbar open>
-					<Tree.Folder name="content">
-						<Tree.Folder name="documentation">
-							<Tree.Folder name="getting-started">
-								<Tree.File name="introduction.md"/>
-								<Tree.File name="quick-start.md"/>
-							</Tree.Folder>
-							<Tree.Folder name="components">
-								<Tree.File name="accordion.md"/>
-								<Tree.File name="button.md"/>
-								<Tree.File name="dialog.md"/>
-							</Tree.Folder>
-						</Tree.Folder>
-						<Tree.Folder name="guides">
-							<Tree.File name="introduction.md"/>
-							<Tree.File name="quick-start.md"/>
-						</Tree.Folder>
-					</Tree.Folder>
-				</Tree.Root>
+				<Tree open noInteraction>
+					<TreeFolder name="content">
+						<TreeFolder name="documentation">
+							<TreeFolder name="getting-started">
+								<TreeFile name="introduction.md"/>
+								<TreeFile name="quick-start.md"/>
+							</TreeFolder>
+							<TreeFolder name="components">
+								<TreeFile name="accordion.md"/>
+								<TreeFile name="button.md"/>
+								<TreeFile name="dialog.md"/>
+							</TreeFolder>
+						</TreeFolder>
+						<TreeFolder name="guides">
+							<TreeFile name="introduction.md"/>
+							<TreeFile name="quick-start.md"/>
+						</TreeFolder>
+					</TreeFolder>
+				</Tree>
 			</Tabs.Content>
 		</Tabs.Root>
-	</Steps.Body>
-</Steps.Root>
+	</Step>
+</Steps>

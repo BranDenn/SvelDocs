@@ -90,16 +90,12 @@ line break
 
 ```md
 - First
-
-* Second
-
+- Second
 - Third
 ```
 
 - First
-
-* Second
-
+- Second
 - Third
 
 #### Ordered List

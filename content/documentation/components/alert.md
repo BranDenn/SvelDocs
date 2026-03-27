@@ -17,7 +17,7 @@ import Alert from '$ui/alert';
 
 ## Markdown Usage
 
-Import the component into the page, then pass a `type` prop and the alert content as children:
+Import the `Alert` component into the markdown, then pass a `type` prop and the `Alert` content as children:
 
 ```md
 import Alert from '$ui/alert';
@@ -32,8 +32,6 @@ import Alert from '$ui/alert';
 
 By default, the title is derived from the alert `type`. Use `title` when you need a more specific label.
 
-<Alert type="warning" title="Heads up">This alert uses a custom title.</Alert>
-
 ```md
 import Alert from '$ui/alert';
 
@@ -41,6 +39,8 @@ import Alert from '$ui/alert';
 	This alert uses a custom title.
 </Alert>
 ```
+
+<Alert type="warning" title="Heads up">This alert uses a custom title.</Alert>
 
 ## Props
 

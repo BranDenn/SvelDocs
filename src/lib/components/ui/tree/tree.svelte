@@ -8,11 +8,13 @@
 	type Props = {
 		open?: boolean | null;
 		toolbar?: boolean;
+		noInteraction?: boolean;
 	} & WithElementRef<HTMLAttributes<HTMLUListElement>>;
 
 	let {
 		ref = $bindable(null),
-		open = $bindable(false),
+		open = $bindable(null),
+		noInteraction = false,
 		toolbar = false,
 		class: className,
 		children,
@@ -22,18 +24,19 @@
 	setTreeLevel();
 	setTreeOpen({
 		getOpen: () => open,
-		setOpen: (value) => (open = value)
+		setOpen: (value) => (open = value),
+		getNoInteraction: () => noInteraction
 	});
 </script>
 
 <div class="overflow-hidden rounded-md border">
 	{#if toolbar}
-		<div class="max-h-96 overflow-auto">
+		<div class="scrollbar-thin max-h-96 overflow-auto">
 			<div
 				class="bg-secondary sticky top-0 z-1 flex items-center gap-2 px-2 pt-2 text-sm font-medium"
 			>
-				<Button variant="outline" onclick={() => (open = true)}>Expand All</Button>
-				<Button variant="outline" onclick={() => (open = false)}>Collapse All</Button>
+				<Button variant="outline" size="sm" onclick={() => (open = true)}>Expand All</Button>
+				<Button variant="outline" size="sm" onclick={() => (open = false)}>Collapse All</Button>
 			</div>
 			{@render tree()}
 		</div>
@@ -43,10 +46,7 @@
 </div>
 
 {#snippet tree(cls?: string)}
-	<ul
-		class={cn('bg-secondary p-4 [&_svg]:size-4  [&_svg]:shrink-0', cls, className)}
-		{...restProps}
-	>
+	<ul class={cn('bg-secondary p-4 [&_svg]:size-4 [&_svg]:shrink-0', cls, className)} {...restProps}>
 		{@render children?.()}
 	</ul>
 {/snippet}

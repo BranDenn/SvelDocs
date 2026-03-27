@@ -19,15 +19,18 @@ export function setTreeLevel(level: number = 0) {
 export type OpenProps = {
 	getOpen: () => boolean | null;
 	setOpen: (open: boolean | null) => void;
+	getNoInteraction: () => boolean;
 };
 
 export class TreeOpenContext {
 	readonly #getOpen: OpenProps['getOpen'];
 	readonly #setOpen: OpenProps['setOpen'];
+	readonly #getNoInteraction: OpenProps['getNoInteraction'];
 
 	constructor(props: OpenProps) {
 		this.#getOpen = props.getOpen;
 		this.#setOpen = props.setOpen;
+		this.#getNoInteraction = props.getNoInteraction;
 	}
 
 	get open(): ReturnType<OpenProps['getOpen']> {
@@ -36,6 +39,10 @@ export class TreeOpenContext {
 
 	set open(open: ReturnType<OpenProps['getOpen']>) {
 		this.#setOpen(open);
+	}
+
+	get noInteraction(): ReturnType<OpenProps['getNoInteraction']> {
+		return this.#getNoInteraction();
 	}
 
 	clear() {
