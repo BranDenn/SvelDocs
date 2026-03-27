@@ -1,34 +1,52 @@
 import { createContext } from 'svelte';
 
-/**
- * Class used to auto increment step number.
- * A $state.raw array of ids was the only way to preserve the numbers with vite's hot module reload
- */
-export class TreeContext {
-    #levels: string[] = $state.raw([])
+export class TreeLevelContext {
+	readonly level: number = 1;
 
-	registerLevel(id: string) {
-		this.#levels.push(id)
-	}
-
-	removeLevel(id: string) {
-		this.#levels = this.#levels.filter(step => step !== id)
-	}
-
-	getLevel(id: string) {
-		return this.#levels.indexOf(id)
+	constructor(level: number) {
+		this.level = level;
 	}
 }
 
-const [getTree, set] = createContext<TreeContext>();
+const [getTreeLevel, setLevel] = createContext<TreeLevelContext>();
 
-export { getTree };
+export { getTreeLevel };
 
-export function setTree(start: () => number) {
-    return set(new TreeContext(start));
+export function setTreeLevel(level: number = 0) {
+	return setLevel(new TreeLevelContext(level));
 }
 
-export function getIndex() {
-    const ctx = getTree();
-    return ctx.incremented();
+export type OpenProps = {
+	getOpen: () => boolean | null;
+	setOpen: (open: boolean | null) => void;
+};
+
+export class TreeOpenContext {
+	readonly #getOpen: OpenProps['getOpen'];
+	readonly #setOpen: OpenProps['setOpen'];
+
+	constructor(props: OpenProps) {
+		this.#getOpen = props.getOpen;
+		this.#setOpen = props.setOpen;
+	}
+
+	get open(): ReturnType<OpenProps['getOpen']> {
+		return this.#getOpen();
+	}
+
+	set open(open: ReturnType<OpenProps['getOpen']>) {
+		this.#setOpen(open);
+	}
+
+	clear() {
+		this.#setOpen(null);
+	}
+}
+
+const [getTreeOpen, setOpen] = createContext<TreeOpenContext>();
+
+export { getTreeOpen };
+
+export function setTreeOpen(props: OpenProps) {
+	return setOpen(new TreeOpenContext(props));
 }

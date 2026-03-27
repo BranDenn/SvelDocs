@@ -1,26 +1,52 @@
 <script lang="ts">
 	import { cn } from '$utils';
-    import type { WithElementRef } from 'bits-ui';
-    import type { HTMLAttributes } from 'svelte/elements';
-    import { setTree } from './tree-context.svelte';
+	import type { WithElementRef } from 'bits-ui';
+	import type { HTMLAttributes } from 'svelte/elements';
+	import { setTreeLevel, setTreeOpen } from './tree-context.svelte';
+	import Button from '$ui/button';
 
-    type Props = WithElementRef<HTMLAttributes<HTMLUListElement>>
+	type Props = {
+		open?: boolean | null;
+		toolbar?: boolean;
+	} & WithElementRef<HTMLAttributes<HTMLUListElement>>;
 
 	let {
 		ref = $bindable(null),
+		open = $bindable(false),
+		toolbar = false,
 		class: className,
-        children,
+		children,
 		...restProps
-    }: Props = $props();
+	}: Props = $props();
 
-    setTree();
+	setTreeLevel();
+	setTreeOpen({
+		getOpen: () => open,
+		setOpen: (value) => (open = value)
+	});
 </script>
 
-<ul 
-    bind:this={ref}
-    data-slot="tree"
-    class={cn('[&_svg]:shrink-0 [&_svg]:size-4', className)}
-    {...restProps}
->
-    {@render children?.()}
-</ul>
+<div class="overflow-hidden rounded-md border">
+	{#if toolbar}
+		<div class="max-h-96 overflow-auto">
+			<div
+				class="bg-secondary sticky top-0 z-1 flex items-center gap-2 px-2 pt-2 text-sm font-medium"
+			>
+				<Button variant="outline" onclick={() => (open = true)}>Expand All</Button>
+				<Button variant="outline" onclick={() => (open = false)}>Collapse All</Button>
+			</div>
+			{@render tree()}
+		</div>
+	{:else}
+		{@render tree('max-h-96 overflow-auto scrollbar-thin')}
+	{/if}
+</div>
+
+{#snippet tree(cls?: string)}
+	<ul
+		class={cn('bg-secondary p-4 [&_svg]:size-4  [&_svg]:shrink-0', cls, className)}
+		{...restProps}
+	>
+		{@render children?.()}
+	</ul>
+{/snippet}

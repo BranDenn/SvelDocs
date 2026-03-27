@@ -5,6 +5,7 @@ description: How to clone the repo and get the boilerplate running.
 import Alert from '$ui/alert';
 import * as Steps from '$ui/steps';
 import * as Tabs from '$ui/tabs';
+import * as Tree from '$ui/tree';
 
 ## Setup
 
@@ -150,18 +151,7 @@ import * as Tabs from '$ui/tabs';
 									pages: 'auto'
 								},
 								{
-									title: 'Configuration',
-									icon: 'cog',
-									pages: 'auto'
-								},
-								{
 									title: 'Components',
-									icon: 'blocks',
-									pages: 'auto'
-								},
-								{
-									title: 'Miscellaneous',
-									icon: 'dices',
 									pages: 'auto'
 								}
 							]
@@ -177,7 +167,25 @@ import * as Tabs from '$ui/tabs';
 				```
 			</Tabs.Content>
 			<Tabs.Content value="folder">
-
+				<Tree.Root toolbar open>
+					<Tree.Folder name="content">
+						<Tree.Folder name="documentation">
+							<Tree.Folder name="getting-started">
+								<Tree.File name="introduction.md"/>
+								<Tree.File name="quick-start.md"/>
+							</Tree.Folder>
+							<Tree.Folder name="components">
+								<Tree.File name="accordion.md"/>
+								<Tree.File name="button.md"/>
+								<Tree.File name="dialog.md"/>
+							</Tree.Folder>
+						</Tree.Folder>
+						<Tree.Folder name="guides">
+							<Tree.File name="introduction.md"/>
+							<Tree.File name="quick-start.md"/>
+						</Tree.Folder>
+					</Tree.Folder>
+				</Tree.Root>
 			</Tabs.Content>
 		</Tabs.Root>
 	</Steps.Body>

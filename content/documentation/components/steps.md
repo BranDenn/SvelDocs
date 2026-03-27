@@ -72,7 +72,3 @@ import { Steps, StepBody, StepTitle } from '$ui/steps';
 | `steps-title.svelte` | Numbered step heading item |
 | `steps-body.svelte` | Indented step content block |
 | `index.ts` | Barrel exports |
-
-<Alert type="note">
-	Editing the `steps-title.svelte` component with vite's hot module reload can result in increments in its number. This does does not actually affect the built site.
-</Alert>

@@ -1,14 +1,21 @@
 <script lang="ts">
-    import FileIcon from "@lucide/svelte/icons/file";
-    import { getIndex } from './tree-context.svelte';
-  
-    let { name } = $props();
-  </script>
-  
-  <button
-    class="flex w-full items-center py-1.5 hover:bg-accent transition-colors text-left"
-    style="padding-left: {(getIndex() * 1)}rem"
-  >
-    <FileIcon />
-    {name}
-  </button>
+	import type { HTMLAttributes } from 'svelte/elements';
+	import FileIcon from '@lucide/svelte/icons/file';
+	import { getTreeLevel } from './tree-context.svelte';
+
+	type Props = {
+		name: string;
+	} & HTMLAttributes<HTMLLIElement>;
+
+	let { name }: Props = $props();
+
+	const treeLevelCtx = getTreeLevel();
+</script>
+
+<li
+	class="text-muted-foreground hover:text-foreground hover:bg-primary flex w-full items-center gap-2 rounded py-1 transition-colors"
+	style="padding-left: {treeLevelCtx.level * 1.5 + 0.5}rem;"
+>
+	<FileIcon />
+	{name}
+</li>

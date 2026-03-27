@@ -1,22 +1,22 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { getSteps } from './steps-context.svelte'
+	import { getSteps } from './steps-context.svelte';
 	import { cn } from '$utils';
 
 	let { class: className, children, id, ...restProps }: HTMLAttributes<HTMLLIElement> = $props();
 
 	// the below is required for the steps to increment correctly with vite's hot module reload
-	const ctxId = crypto.randomUUID(); 
-	const ctx = getSteps();
-	ctx.registerStep(ctxId)
+	const ctxId = crypto.randomUUID();
+	const stepsCtx = getSteps();
+	stepsCtx.registerStep(ctxId);
 
-	const index = $derived(ctx.getStep(ctxId))
+	const index = $derived(stepsCtx.getStep(ctxId));
 
 	$effect(() => {
 		return () => {
-			ctx.removeStep(ctxId)
-		}
-	})
+			stepsCtx.removeStep(ctxId);
+		};
+	});
 </script>
 
 <li
