@@ -55,7 +55,7 @@ export type DocPage<TRole extends string = string> = {
 
 export type DocGroup<TRole extends string = string> = {
 	/**
-	 * The name of the group. This is used to categorize navigation items.
+	 * The name of the group. This is used to categorize navigation pages.
 	 * - If `showTitle` is `false`, this group text will not be displayed in the navigation sidebar.
 	 * - If `combineHref` is `false`, this group name will not be added to the url path of a page.
 	 */

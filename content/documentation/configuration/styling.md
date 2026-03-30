@@ -1,84 +1,166 @@
 ---
-description: Where styling and theme values live, and what to edit to customize the docs UI.
+description: How to style the website, docs routes, and components.
 ---
 
-## Where to Edit Styling
+## Overview
 
-Global styling is defined in `src/app.css`.
+SvelDocs has a simple structure for editing styles. You can add your own variables or classes, but for common use cases, like changing the theme of the website, you can simply change css variables.
 
-That file is the main place to configure:
+## Global Website Styles / Theme
+
+Global styling is defined in the `src/app.css` file. This is meant to configure the styling for the entire website (in case you have more than just docs). This includes:
 
 - Fonts
-- Light/dark color tokens
+- Light / Dark color variables
 - Shared base styles (`body`, `a`, `button`, etc.)
-- Utility layer overrides
+- Utilities
 
-The docs layout also has route-scoped style variables in `src/routes/(docs)/[...slug=docs]/docs.css`.
+Here is the provided default theme:
 
-That file controls layout spacing tokens used for sticky headers, TOC offsets, and scroll offset behavior.
+```css title="src/app.css"
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-## Theme Switching
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
-Theme mode is handled by `mode-watcher`.
-
-- `src/routes/+layout.svelte` mounts `<ModeWatcher defaultMode="dark" />`
-- `src/lib/components/docs/header/theme-switch.svelte` toggles mode with `toggleMode`
-
-The dark mode class is `.dark`, and Tailwind variant support is configured in `src/app.css`:
-
-```css
 @custom-variant dark (&:where(.dark, .dark *));
-```
 
-## Color Tokens
+/* default theme */
+@theme {
+	--font-inter: 'Inter', var(--default-font-family);
 
-The main token set is in `src/app.css` under `@theme` and `@layer theme`.
+	/* light mode colors */
+	--color-background: var(--color-zinc-50); /* background */
+	--color-foreground: var(--color-zinc-800); /* default font color */
+	--color-muted-foreground: var(--color-zinc-600); /* muted font color */
+	--color-primary: var(--color-zinc-100); /* color 1 */
+	--color-border: var(--color-zinc-200); /* border color */
+	--color-accent: var(--color-indigo-600); /* accent color */
+	--color-destructive: var(--color-red-500);
 
-Light mode tokens are declared in `@theme`, and dark mode overrides are inside `.dark`:
+	--color-secondary: color-mix(
+		in oklch,
+		var(--color-background),
+		var(--color-primary)
+	); /* color 2 */
+}
 
-- `--color-background`
-- `--color-foreground`
-- `--color-muted-foreground`
-- `--color-primary`
-- `--color-border`
-- `--color-accent`
+@layer theme {
+	.dark {
+		/* dark mode colors */
+		--color-background: var(--color-zinc-950); /* background */
+		--color-foreground: var(--color-zinc-200); /* default font color */
+		--color-muted-foreground: var(--color-zinc-400); /* muted font color */
+		--color-primary: var(--color-zinc-900); /* color 1 */
+		--color-border: var(--color-zinc-800); /* border color */
+		--color-accent: var(--color-emerald-400); /* accent color */
+	}
+}
 
-Update these tokens to change the entire docs color system.
+@layer utilities {
+	.container {
+		@apply mx-auto max-w-360;
+	}
+}
 
-## Markdown Code Block Theme
+@layer base {
+	body {
+		@apply bg-background text-foreground font-inter flex min-h-dvh flex-col overflow-x-hidden;
+		scrollbar-color: var(--color-border) var(--color-background);
+	}
 
-Syntax highlighting theme names are configured in `src/lib/markdown/markdown.config.ts` via `rehype-pretty-code`:
+	*,
+	*::before,
+	*::after {
+		@apply border-border;
+	}
 
-```ts
-rehypePrettyCode,
-{
-	theme: {
-		light: 'github-light',
-		dark: 'github-dark'
-	},
-	keepBackground: false
+	:disabled,
+	[aria-disabled='true'] {
+		@apply cursor-default opacity-50;
+	}
+
+	:invalid {
+		@apply border-destructive ring-destructive/50;
+	}
+
+	:focus-visible {
+		@apply border-accent/75 ring-accent/50 ring-2 transition-[border-color,box-shadow] outline-none;
+	}
+
+	kbd {
+		@apply rounded-full border px-1.5 text-xs shadow;
+	}
+
+	a,
+	button {
+		@apply cursor-pointer;
+	}
+
+	mark {
+		@apply text-accent bg-transparent underline;
+	}
+
+	input[type='search']::-webkit-search-cancel-button {
+		@apply cursor-pointer;
+	}
+
+	.scrollbar-thin {
+		scrollbar-width: thin;
+	}
 }
 ```
 
-If you change these values, code block colors will update across all markdown pages.
+### Dark & Light Mode
 
-## Docs Spacing Variables
+You can change the light and dark themes in the `app.css` file as shown above. You can also use the TailwindCSS `dark:` variant in specific components if needed.
 
-In `src/routes/(docs)/[...slug=docs]/docs.css`, docs-specific spacing variables are defined with `@theme`:
+Themes modes are handled by [mode watcher](https://mode-watcher.sveco.dev/docs).
 
-- `--spacing-docs-header-main`
-- `--spacing-docs-header-tabs`
-- `--spacing-docs-header`
-- `--spacing-docs-content-header-toc`
-- `--spacing-docs-content-header`
+- `src/routes/+layout.svelte` mounts `<ModeWatcher defaultMode="dark" />`
+- `src/lib/components/docs/header/theme-switch.svelte` toggles the mode.
 
-These values affect sticky offsets and scroll anchoring for headings.
+## Docs Specific Styles
 
-## Good Next Edits
+Docs specific styling is defined in the `src/routes/(docs)/[...slug=docs]/docs.css` file. This is meant to configure the styling specific to the `/docs` routes. This only configures the size of the heading.
 
-Common customizations include:
+Here is the provided default theme:
 
-- Replacing the font in `src/app.css`
-- Updating light/dark token values in `src/app.css`
-- Tweaking docs spacing vars in `src/routes/(docs)/[...slug=docs]/docs.css`
-- Updating code highlighting themes in `src/lib/markdown/markdown.config.ts`
+```css title="src/routes/(docs)/[...slug=docs]/docs.css"
+@import '$css';
+
+@theme {
+	--spacing-docs-header-main: 3rem;
+	--spacing-docs-header-tabs: 2rem;
+	--spacing-docs-header-main-border: 1px;
+	--spacing-docs-header: calc(
+		var(--spacing-docs-header-main) + var(--spacing-docs-header-main-border)
+	);
+
+	--spacing-docs-content-header-toc: 2.25rem;
+	--spacing-docs-content-header-toc-border: 1px;
+	--spacing-docs-content-header: calc(
+		var(--spacing-docs-content-header-toc) + var(--spacing-docs-content-header-toc-border)
+	);
+}
+
+@layer utilities {
+	[data-docs-tabs='true'] {
+		@apply sm:[--spacing-docs-header:calc(var(--spacing-docs-header-main)+var(--spacing-docs-header-tabs)+var(--spacing-docs-header-main-border))];
+	}
+
+	[data-docs-toc='true'] {
+		@apply xl:[--spacing-docs-content-header:0px];
+	}
+
+	[data-docs-toc='false'] {
+		@apply lg:[--spacing-docs-content-header:0px];
+	}
+}
+```
+
+## Components
+
+You can style any component using TailwindCSS or [scoped styles](https://svelte.dev/docs/svelte/scoped-styles). Some components, like the `pre` component, may use [global styles](https://svelte.dev/docs/svelte/global-styles).
+
+Components can be found under the `$lib/components` folder. Markdown specific components can be found under the `$lib/markdown/components` folder.

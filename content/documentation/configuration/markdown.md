@@ -1,22 +1,12 @@
 ---
-description: How markdown files are parsed, rendered, and customized in SvelDocs.
+description: How to configure and write in markdown files.
 ---
 
-import Alert from '$ui/alert';
+## Writing Markdown
 
-## Supported File Types
+Markdown is basically split into two sections, one for the metadata of the file or `frontmatter`, and the other for the actual content.
 
-By default, docs content supports both `.md` and `.mdx` files.
-
-This is configured in `src/lib/markdown/markdown.config.ts`:
-
-```ts
-extensions: ['.md', '.mdx']
-```
-
-Update that list if you want to include or exclude file extensions.
-
-## Frontmatter
+### Frontmatter
 
 Frontmatter is metadata defined at the top of a markdown file:
 
@@ -29,39 +19,87 @@ icon: file-text
 private: admin
 ---
 
-Page content goes here.
+**Content goes here**.
 ````
 
-Frontmatter is parsed in the markdown pipeline (`plugins/processed-docs/markdown-to-ast.ts`) and attached to each docs record.
+### Content
 
-Commonly used frontmatter keys:
+Content can include markdown, HTML, and svelte components. If you are new to markdown syntax, please refer to the [Markdown Syntax](/docs/miscellaneous/markdown-syntax) page to see what can be done.
 
-- `title`
-- `description`
-- `keywords`
-- `icon`
-- `private`
+## Configure Rendering
 
-<Alert type="warning">
-	Frontmatter data is included in docs metadata and can be used by search and rendering logic.
-	Avoid storing sensitive values in markdown frontmatter.
-</Alert>
+You can configure how markdown is rendered in the `$lib/markdown/markdown.config.ts` file. This allows to configure the following:
 
-## Content
+```ts
+type MarkdownConfig = {
+	extensions: string[];
+	remarkPlugins?: PluggableList;
+	rehypePlugins?: PluggableList;
+};
+```
 
-Content can include markdown, HTML, and MDX component usage.
+### Extensions
 
-SvelDocs converts markdown into an AST, then renders that AST through `src/lib/markdown/BlueprintRenderer.svelte`.
+You can configure and or add your own file extensions to be considered for the markdown rendering process. For Example:
 
-Global markdown element rendering is configured in `src/lib/markdown/components/index.ts`.
+```ts title="$lib/markdown/markdown.config.ts"
+const markdownConfig = defineConfig({
+	extensions: ['.md', '.mdx'],
+	...
+});
+```
 
-View the [Markdown Syntax](/docs/miscellaneous/markdown-syntax) to see what you can do in markdown.
+### Remark Plugins
 
-## Next Configuration Pages
+You can configure and or add your own remark plugins that run on the markdown (MDAST) stage. Here is the provided default:
 
-For detailed configuration references, see:
+```ts title="$lib/markdown/markdown.config.ts"
+const markdownConfig = defineConfig({
+	...
+	remarkPlugins: [
+		remarkGfm,
+		[
+			remarkRehype,
+			{
+				footnoteBackContent: '↩\uFE0E'
+			}
+		]
+	],
+	...
+});
+```
 
-- [Styling](/docs/configuration/styling)
-- [Markdown Define Config](/docs/configuration/markdown-define-config)
-- [Define Doc Navigation](/docs/configuration/define-doc-navigation)
-- [Custom Components](/docs/configuration/custom-components)
+### Rehype Plugins
+
+You can configure and or add your own rehype plugins that run on the HTML-like (HAST) stage. Here is the provided default:
+
+```ts title="$lib/markdown/markdown.config.ts"
+const markdownConfig = defineConfig({
+	...
+	rehypePlugins: [
+		rehypeSlug,
+		[
+			rehypePrettyCode,
+			{
+				theme: {
+					light: 'github-light',
+					dark: 'github-dark'
+				},
+				keepBackground: false
+			}
+		],
+		...rehypeMarkdownAstPlugins
+	]
+});
+```
+
+## How It Is Used
+
+The markdown config is consumed by the `plugins/processed-docs/markdown-to-ast.ts` file to process markdown at build time. Here is the rundown:
+
+1. Parses frontmatter and markdown.
+2. Applies configured remark plugins.
+3. Applies configured rehype plugins.
+4. Produces an AST used by the docs page renderer.
+
+The generated AST is then rendered by `src/lib/markdown/BlueprintRenderer.svelte`.
