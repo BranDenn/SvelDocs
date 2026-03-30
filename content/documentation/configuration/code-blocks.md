@@ -32,7 +32,7 @@ const markdownConfig = defineConfig({
 
 ## Component
 
-`$lib/markdown/components/code/pre.svelte` is the component that replaces the default html `pre` element. This allows for:
+`$lib/markdown/components/code/pre.svelte` is the component that replaces the default html `<pre>` element. This allows for:
 
 - Language badge
 - Code Copy button

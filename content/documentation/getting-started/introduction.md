@@ -11,7 +11,9 @@ The files are structured for both expansion and customization. SvelDocs provides
 
 import Alert from '$ui/alert'
 
-<Alert type="note">This project assumes understanding with web development and frameworks. Knowledge of Svelte is a plus.</Alert>
+<Alert type="note">
+    This project assumes understanding with web development and frameworks. Knowledge of Svelte is a plus.
+</Alert>
 
 ## Features
 

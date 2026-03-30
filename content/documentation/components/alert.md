@@ -32,7 +32,7 @@ import Alert from '$ui/alert';
 
 By default, the title is derived from the alert `type`. Use `title` when you need a more specific label.
 
-```md
+```md {3}
 import Alert from '$ui/alert';
 
 <Alert type="warning" title="Heads up">

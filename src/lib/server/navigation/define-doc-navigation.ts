@@ -37,7 +37,7 @@ export type DocPage<TRole extends string = string> = {
 	href?: Pathname;
 	/**
 	 * The corresponding markdown file location for the page.\
-	 * This defaults to `$lib/docs/markdown/{tabTitle?}/{groupTitle?}/{pageTitle}.md` but can be overridden.
+	 * This defaults to `content/{tabTitle?}/{groupTitle?}/{pageTitle}.md` but can be overridden.
 	 *
 	 * Note that `tabTitle?` and `groupTitle?` are optional and will only be included if a tab or group is defined.
 	 */
@@ -62,7 +62,7 @@ export type DocGroup<TRole extends string = string> = {
 	title: string;
 	/**
 	 * The corresponding markdown folder location for the group.\
-	 * This defaults to `$lib/docs/markdown/{tabTitle?}/{groupTitle}` but can be overridden.
+	 * This defaults to `content/{tabTitle?}/{groupTitle}` but can be overridden.
 	 *
 	 * Note that `tabTitle?` is optional and will only be included if a tab is defined.
 	 */
@@ -78,10 +78,10 @@ export type DocGroup<TRole extends string = string> = {
 	 */
 	collapsible?: boolean;
 	/**
-	 * Determines if the group title will name will used in the link.\
+	 * Determines if the group title will be used in the link.\
 	 * This defaults to `true` but can be overridden.
-	 * - If `true`, the link will be formated as `/docs/{tabTitle?}/{groupTitle}/{pageTitle}`.
-	 * - If `false`, the link will be formated as `/docs//{tabTitle?}/{pageTitle}`.
+	 * - If `true`, the link will be formatted as `/docs/{tabTitle?}/{groupTitle}/{pageTitle}`.
+	 * - If `false`, the link will be formatted as `/docs/{tabTitle?}/{pageTitle}`.
 	 *
 	 * Note that `tabTitle?` is optional and will only be included if a tab is defined.
 	 */
@@ -110,14 +110,14 @@ type DocTabBase<TRole extends string = string> = {
 	title: string;
 	/**
 	 * The corresponding markdown folder location for the tab.\
-	 * This defaults to `$lib/docs/markdown/{tabTitle}` but can be overridden.
+	 * This defaults to `content/{tabTitle}` but can be overridden.
 	 */
 	folderPath?: string;
 	/**
-	 * Determines if the tab title will name will used in the link.\
+	 * Determines if the tab title will be used in the link.\
 	 * This defaults to `true` but can be overridden.
-	 * - If `true`, the link will be formated as `/docs/{tabTitle}/{groupTitle?}/{pageTitle}`.
-	 * - If `false`, the link will be formated as `/docs/{groupTitle?}/{pageTitle}`.
+	 * - If `true`, the link will be formatted as `/docs/{tabTitle}/{groupTitle?}/{pageTitle}`.
+	 * - If `false`, the link will be formatted as `/docs/{groupTitle?}/{pageTitle}`.
 	 *
 	 * Note that `groupTitle?` is optional and will only be included if a group is defined.
 	 */

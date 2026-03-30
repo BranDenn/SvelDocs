@@ -22,7 +22,7 @@ import InlineCode from './code/inline-code.svelte';
 import { CodeGroup, CodeGroupContent, CodeGroupList, CodeGroupTrigger } from '$ui/code-group';
 
 export const blueprints = {
-    // The `<pre>` HTML element is converted into the imported `Pre` component.
+    // The `<pre>` HTML element is converted into the imported `pre` component.
 	pre: Pre,
 
     // A resolve function can be used to transform HTML elements in specific ways.
@@ -63,7 +63,7 @@ import { Steps, Step } from '$ui/steps';
     </Step>
     
     <Step title="Build-Time Custom Component Processing">
-        During the build, imports in markdown files are extracted and added to the component manifest via the `plugins/vite-mdx-component-manifest.ts`. Blueprints are registered globally and become available to all doc pages.
+        During the build, imports written in markdown files are extracted and added to the component manifest via the `plugins/vite-mdx-component-manifest.ts`. Blueprints are registered globally and become available to all doc pages.
     </Step>
 
     <Step title="Build-Time AST Generation & Rendering">

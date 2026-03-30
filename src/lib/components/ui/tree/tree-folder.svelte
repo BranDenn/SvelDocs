@@ -45,7 +45,7 @@
 >
 	<Collapsible.Trigger
 		class={[
-			'group text-muted-foreground hover:text-foreground hover:bg-primary flex w-full items-center gap-2 rounded py-1 pr-2 transition-colors',
+			'peer group text-muted-foreground hover:text-foreground hover:bg-primary flex w-full items-center gap-2 rounded py-1 pr-2 transition-colors',
 			noInteraction ? 'cursor-default' : ''
 		]}
 		style="padding-left: {treeLevelCtx.level * 1.5 + 0.5}rem;"
@@ -58,12 +58,13 @@
 		{/if}
 		{name}
 	</Collapsible.Trigger>
-	<Collapsible.Content class="relative">
+	<Collapsible.Content class="peer-hover:*:data-tree-border:bg-muted-foreground relative">
 		{#snippet child({ props })}
 			<ul {...props}>
 				{@render children?.()}
 				<div
-					class="bg-border absolute top-0 bottom-0 w-px"
+					data-tree-border
+					class="bg-border peer-hover:bg-muted-foreground absolute top-0 bottom-0 w-px transition-[background-color]"
 					style="left: {treeLevelCtx.level * 1.5 + 1}rem;"
 				></div>
 			</ul>

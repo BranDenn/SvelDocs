@@ -13,7 +13,7 @@
 </script>
 
 <li
-	class="text-muted-foreground hover:text-foreground hover:bg-primary flex w-full items-center gap-2 rounded py-1 transition-colors"
+	class="text-muted-foreground hover:text-foreground hover:bg-primary peer flex w-full items-center gap-2 rounded py-1 transition-colors"
 	style="padding-left: {treeLevelCtx.level * 1.5 + 0.5}rem;"
 >
 	<FileIcon />

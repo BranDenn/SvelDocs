@@ -40,5 +40,5 @@
 		<Icon class="size-[1em] stroke-[2.5]"></Icon>
 		{Title}
 	</div>
-	<p class="leading-normal">{@render children?.()}</p>
+	<p class="leading-8">{@render children?.()}</p>
 </div>

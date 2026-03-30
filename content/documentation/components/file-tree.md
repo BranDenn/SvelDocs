@@ -44,7 +44,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 By default, folders start closed. You can default them to open by stating `open` in the `TreeFolder`.
 
-```md
+```md {4}
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 <Tree>
@@ -68,7 +68,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 You can default every file to open by stating `open` in the `Tree` wrapper.
 
-```md
+```md {3}
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 <Tree open>
@@ -94,7 +94,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 By default, folders can be clicked to expand or collapse their file content. This can be disabled by stating `noInteraction` in the `TreeFolder`.
 
-```md
+```md {4,7}
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 <Tree>
@@ -118,7 +118,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 You can default every file to have disabled interaction by stating `noInteraction` in the `Tree` wrapper.
 
-```md
+```md {3}
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 <Tree noInteraction>
@@ -144,7 +144,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 You can add a toolbar with buttons to expand all and collapse all folders by stating `toolbar` in the `Tree` wrapper.
 
-```md
+```md {3}
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 <Tree toolbar>

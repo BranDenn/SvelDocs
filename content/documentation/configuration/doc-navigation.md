@@ -2,91 +2,102 @@
 description: How to define the look and structure of document navigation such for tabs, groups, pages, routing, access, etc.
 ---
 
-## File Locations
+import Alert from '$ui/alert';
 
-Navigation configuration lives in two places:
+## Overview
 
-- `src/lib/server/navigation/define-doc-navigation.ts`
-- `src/lib/server/navigation/doc-navigation.config.ts`
-
-`define-doc-navigation.ts` provides strong types, validation, and `defineDocNavigation(...)`.
-
-`doc-navigation.config.ts` is where you declare your actual docs structure.
-
-## Root Modes
-
-The root config supports exactly one mode:
-
-- `tabs`
-- `groups`
-- `pages`
-
-The project currently uses `tabs` mode.
+Navigation configuration can be configured in the `$lib/server/navigation/doc-navigation.config.ts` file. It uses a `defineDocNavigation` helper function to provide strong type safety for all of the options.
 
 ## Tabs, Groups, and Pages
 
-You can define docs manually, auto-generate from filesystem, or mix both:
+The config supports multiple "modes":
 
-- `tabs: 'auto'` or array
-- `groups: 'auto'` or array
-- `pages: 'auto'` or array
+- `Tabs`: Categorizes `Groups` / `Pages` and displays the tabs in the header for `/docs` routes.
+- `Groups`: Categorizes `Pages` and displays the groups in the sidebar for `/docs` routes.
+- `Pages`: Refers to your actualy markdown pages.
 
-At group and tab levels, you can also provide explicit items and finish with `'loadRest'` to append remaining files.
+<Alert type="note">
+	The `docNavigationConfig` requires a certain hierachy for the "modes" as follows: `Tabs > Groups > Pages`. For example, `Tabs` can have `Groups`, but `Groups` cannot have `Tabs`. The `defineDocNavigation` function helps with type safety.
+</Alert>
 
-Example:
+### Defining Tabs
 
-```ts
-pages: [
-	{ title: 'Introduction', href: '/docs' },
-	'loadRest'
-]
+`Tabs` can have both `Groups` and `Pages`. Below is an example of defined `Tabs`:
+
+```ts title="Tab-Navigation-Example.ts"
+const docNavigationConfig = defineDocNavigation<Roles>({
+	tabNextPrev: true, // allows next and previous buttons on a page to go to next tabs
+	tabs: [
+		{
+			title: 'Documentation',
+			groups: [ // create a group under the 'Documentation' tab.
+				{
+					title: 'Getting Started',
+					pages: 'auto' // automatically load markdown pages inside the 'Getting Started' group.
+				}
+			]
+		},
+		{
+			title: 'Guides',
+			pages: 'auto' // automatically load markdown pages inside the 'Guides' tab. A group is not required.
+		}
+	]
+});
 ```
 
-`'loadRest'` is validated so it can only appear once and must be last.
+#### Tab Options
 
-## Routing Behavior
+Below are the options used directly in the `docNavigationConfig` for `Tabs`:
 
-If `href` is not provided for a page, links are generated from title segments.
+| Option | Type | Description |
+| --- | --- | --- |
+| `tabs` | `DocTab<TRole>[] \| 'auto'` | A list of tabs to include in the docs navigation. If `"auto"`, tabs are generated from the filesystem. |
+| `tabNextPrev?` | `boolean` | Enables previous/next page links that can continue across tab boundaries. Defaults to `false` when omitted. |
 
-Generated paths are influenced by:
+Below are the options for the `tabs` option from the above table:
 
-- `tab.combineHref`
-- `group.combineHref`
+| Option | Type | Descrtiption |
+| --- | --- | --- |
+| `title` | `string` | The name of the tab. This is displayed in the header. |
+| `icon?` | `string` |  The icon to display next to the title of a tab. |
+| `folderPath?` | `string` |  The corresponding markdown folder location for the tab. This defaults to `content/{tabTitle}` but can be overridden. |
+| `combineHref?` | `boolean` | Determines if the tab title will name will used in the link.
+| `private?` | `boolean \| TRole \| TRole[]` | Determines if this tab and its groups/pages require authentication/authorization. |
+| `pages?` | `PageItems<TRole> \| 'auto'` | A list of pages to include in the tab. Cannot be used if groups is defined. |
+| `groups?` | `DocGroup<TRole>[] \| 'auto'` | A list of groups to include in the tab. Cannot be used if pages is defined. |
 
-Defaults:
+### Defining Groups
 
-- Tab titles are included in paths unless `combineHref: false`
-- Group titles are included in paths unless `combineHref: false`
+`Groups` can only have `Pages`, but they can be created inside `Tabs`. Below is an example of defined `Groups`:
 
-You can always override with explicit `href` on a page.
+```ts title="Group-Navigation-Example.ts"
+const docNavigationConfig = defineDocNavigation<Roles>({
+	groups: [
+		{
+			title: 'Getting Started',
+			pages: 'auto' // automatically load markdown pages inside the 'Getting Started' group.
+		},
+		{
+			title: 'Configuration',
+			pages: 'auto' // automatically load markdown pages inside the 'Configuration' group.
+		}
+	]
+});
+```
 
-## Filesystem Mapping
+#### Group Options
 
-You can override markdown file locations with:
+### Defining Pages
 
-- `tab.folderPath`
-- `group.folderPath`
-- `page.fileName`
+`Pages` can only be defined alone, but they can be created inside `Tabs` and `Groups`. Below is an example of defined `Pages`:
 
-Defaults are derived from normalized tab/group/page titles.
+```ts title="Pages-Navigation-Example.ts"
+const docNavigationConfig = defineDocNavigation<Roles>({
+	pages: [
+		{ title: 'Introduction', icon: 'book-open-check', href: '/docs' },
+		{ title: 'Quick Start', icon: 'rocket' }
+	]
+});
+```
 
-## Access Control
-
-Each tab, group, or page can define `private`:
-
-- `false` or omitted: public
-- `true`: authenticated users
-- `'role'`: role-restricted
-- `['roleA', 'roleB']`: any listed role
-
-Access inherits down from tab -> group -> page, with child values overriding parent values.
-
-## Icons and Metadata
-
-`icon` can be set on tabs, groups, and pages. It is used in navigation/search display when provided.
-
-## Current Project Config
-
-Edit `src/lib/server/navigation/doc-navigation.config.ts` to change the structure users see in the docs sidebar/header.
-
-That config is consumed by the docs manifest builder in `plugins/processed-docs/collect-doc-entries.ts`.
+#### Page Options
