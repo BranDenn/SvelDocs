@@ -2,6 +2,7 @@ import matter from 'gray-matter';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
+import remarkStringify from 'remark-stringify';
 import remarkRehype, { type Options as RemarkRehypeOptions } from 'remark-rehype';
 import markdownConfig from '../../src/lib/markdown/markdown.config';
 import {
@@ -127,8 +128,27 @@ export async function markdownToAst(rawMarkdown: string): Promise<MarkdownAstRes
 		mdxComponentImports: mdxImportData.imports
 	};
 
+	// Run a separate remark-only processor (parse + remark plugins + stringify)
+	// to produce a transformed markdown string for consumers. This processor
+	// is isolated and does NOT feed into the rehype pipeline to avoid
+	// changing how the AST is parsed (which can affect tables and other
+	// constructs). The parsed/re-hyped AST below still uses the original
+	// `rawContent`.
+	let remarkTransformed = rawContent;
+	try {
+		const remarkOnlyProcessor = unified().use(remarkParse).use(remarkMdx);
+		usePlugins(remarkOnlyProcessor, remarkPluginsWithoutBridge);
+		remarkOnlyProcessor.use(remarkStringify);
+
+		const processed = await remarkOnlyProcessor.process(rawContent);
+		remarkTransformed = String(processed);
+	} catch {
+		// fall back to original rawContent on any failure
+		remarkTransformed = rawContent;
+	}
+
 	return {
-		raw: rawContent,
+		raw: remarkTransformed,
 		content: extractTextFromAst(ast),
 		metadata: enrichedMetadata,
 		ast

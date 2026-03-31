@@ -235,3 +235,7 @@ const four = 4;
 const five = 5;
 const six = 6;
 ```
+
+## File to Code Block
+
+You can embed a file directly from the repository using the [File Reader component](/docs/components/file-reader).

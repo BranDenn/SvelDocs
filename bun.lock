@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "sveldocs",
@@ -28,6 +29,7 @@
         "rehype-slug": "^6.0.0",
         "remark-gfm": "^4.0.1",
         "remark-mdx": "^3.1.1",
+        "remark-stringify": "^11.0.0",
         "svelte": "^5.55.0",
         "svelte-check": "^4.4.5",
         "tailwind-merge": "^3.5.0",
