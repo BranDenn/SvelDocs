@@ -4,10 +4,11 @@
  * component receive both values as direct props (no data-attribute gymnastics)
  * while still having them available at SSR time to prevent flashes of content.
  */
+
 import type { Element, Root } from 'hast';
 import { visit } from 'unist-util-visit';
 
-export function rehypeMarkPreHasCode() {
+export default function rehypeMarkPreHasCode() {
 	return (root: Root) => {
 		visit(root, 'element', (node: Element) => {
 			if (node.tagName !== 'pre') return;

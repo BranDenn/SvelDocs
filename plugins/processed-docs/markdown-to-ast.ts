@@ -69,10 +69,17 @@ function extractTextFromAst(ast: unknown): string {
 	return buffer.join(' ').replaceAll(/\s+/g, ' ').trim();
 }
 
+export type MarkdownMetadata = {
+	title?: string;
+	description?: string;
+	keywords?: string[] | string;
+	icon?: string;
+};
+
 export type MarkdownAstResult = {
 	raw: string;
 	content: string;
-	metadata: Record<string, unknown>;
+	metadata: MarkdownMetadata;
 	ast: unknown;
 };
 
@@ -84,7 +91,9 @@ export function isMarkdownModulePath(filePath: string): boolean {
 }
 
 export async function markdownToAst(rawMarkdown: string): Promise<MarkdownAstResult> {
-	const { data: metadata, content: rawContent } = matter(rawMarkdown);
+	const { data, content: rawContent } = matter(rawMarkdown);
+	const metadata = data as MarkdownMetadata;
+
 	const remarkPlugins = (markdownConfig.remarkPlugins ?? []) as unknown[];
 
 	const remarkPluginsWithoutBridge = remarkPlugins.filter((plugin) => {

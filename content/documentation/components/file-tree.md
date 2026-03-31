@@ -172,7 +172,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 ## Editing the Component
 
-`Tree` lives in `$lib/components/ui/tree`.
+`Tree` lives in `src/lib/components/ui/tree`.
 
 | File | Purpose |
 |---|---|

@@ -9,7 +9,7 @@ import Alert from '$ui/alert';
 `FileReader` is a pseudo-component used to read a file and convert it into a markdown code block. This solves the issue of changing code blocks manually if a file you are referencing changes.
 
 <Alert type="warning">
-    This is not a real Svelte component — it is processed at build time by a remark plugin and replaced with a code fence.
+    This is not a Svelte component — it is processed at build time by a remark plugin and replaced with a code fence.
 </Alert>
 
 ## Usage
@@ -39,7 +39,7 @@ The plugin converts that into a fenced code block:
 | Prop | Type | Description |
 | --- | --- | --- |
 | `file` | `string` | Absolute path to the file on disk. The path must be accessible during the build. |
-| `title?` | `string` |  Override the displayed title (defaults to the file basename). |
-| `caption?` | `string` |  Optional caption/footer text for the code block. |
-| `highlight?` | `string` | Line ranges to highlight, e.g. `2,4-6`. The plugin will wrap this in `{}` when emitting metadata. |
+| `title?` | `string` |  Override the displayed title (defaults to the file path). |
+| `caption?` | `string` |  Optional caption / footer text for the code block. |
+| `highlight?` | `string` | Line ranges to highlight, e.g. `2,4-6` will highlight lines `2, 4, 5, & 6`.
 | `showLineNumbers?` | `boolean` | When present, enables line numbers for the block. |

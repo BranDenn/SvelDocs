@@ -1,11 +1,12 @@
 <script lang="ts">
+	import type { Component, Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
+	import { cn } from '$utils';
+
 	import Info from '@lucide/svelte/icons/info';
 	import Lightbulb from '@lucide/svelte/icons/lightbulb';
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import OctagonAlert from '@lucide/svelte/icons/octagon-alert';
-	import type { Component, Snippet } from 'svelte';
-	import type { ClassValue } from 'svelte/elements';
-	import { cn } from '$utils';
 
 	const Icons = {
 		note: { icon: Info, class: 'dark:text-blue-400 text-blue-600' },

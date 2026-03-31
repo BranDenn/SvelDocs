@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Component } from 'svelte';
 	import type { IconProps } from '@lucide/svelte';
 	import { cn } from '$utils';
 	import IconManifest from 'virtual:doc-icon-manifest';
@@ -9,13 +8,14 @@
 	} & IconProps;
 
 	let { name, class: className, ...restProps }: Props = $props();
-	let Icon = $derived.by(() => {
+
+	const Icon = $derived.by(() => {
 		if (!(name in IconManifest)) {
 			console.warn(`[doc-icon-manifest] Icon key not found in manifest: ${name}`);
 			return undefined;
 		}
 
-		return IconManifest[name] as Component<IconProps, {}, ''> | undefined;
+		return IconManifest[name];
 	});
 </script>
 

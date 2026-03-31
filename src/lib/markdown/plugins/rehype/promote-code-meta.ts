@@ -5,13 +5,14 @@
  * mirrors that value to `code.properties['data-meta']` so downstream transforms
  * and runtime renderers can read it uniformly.
  */
+
 import type { Element, Root } from 'hast';
 import { visit } from 'unist-util-visit';
 
 /**
  * Factory for the code metadata promotion plugin.
  */
-export function rehypePromoteCodeMeta() {
+export default function rehypePromoteCodeMeta() {
 	return (root: Root) => {
 		visit(root, 'element', (node: Element) => {
 			if (node.tagName !== 'code') return;

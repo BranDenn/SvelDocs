@@ -6,7 +6,7 @@ import Alert from '$ui/alert';
 
 ## Overview
 
-Navigation configuration can be configured in the `$lib/server/navigation/doc-navigation.config.ts` file. It uses a `defineDocNavigation` helper function to provide strong type safety for all of the options.
+Navigation configuration can be configured in the `src/lib/server/navigation/doc-navigation.config.ts` file. It uses a `defineDocNavigation` helper function to provide strong type safety for all of the options.
 
 ## Tabs, Groups, and Pages
 

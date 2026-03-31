@@ -130,7 +130,7 @@ Try selecting one tab below and watch both code blocks update together.
 
 ## Editing the Component
 
-The component source is built on top of the [bits-ui](https://bits-ui.com/docs/components/tabs) `Tabs` primitive and follows the shadcn tabs implementation. The component source lives in `$lib/components/ui/code-group`. 
+The component source is built on top of the [bits-ui](https://bits-ui.com/docs/components/tabs) `Tabs` primitive and follows the shadcn tabs implementation. The component source lives in `src/lib/components/ui/code-group`. 
 
 | File | Purpose |
 |---|---|
@@ -143,7 +143,7 @@ The component source is built on top of the [bits-ui](https://bits-ui.com/docs/c
 
 ## How It Works
 
-The `CodeGroup` uses a custom rehype plugin to allow the simple markdown syntax shown on this page. It is parsed and converted into the actual `$lib/components/ui/code-group` components.
+The `CodeGroup` uses a custom rehype plugin to allow the simple markdown syntax shown on this page. It is parsed and converted into the actual `src/lib/components/ui/code-group` components.
 
 <CodeGroup value="Markdown Syntax">
 	````md title="Markdown Syntax"
@@ -165,12 +165,12 @@ The `CodeGroup` uses a custom rehype plugin to allow the simple markdown syntax 
 			<CodeGroup.Trigger value="Python">Python</CodeGroup.Trigger>
 		</CodeGroup.List>
 		<CodeGroup.Content value="JavaScript">
-			```js title="JavaScript"
+			```js
 			console.log("Hello World!")
 			```
 		</CodeGroup.Content>
 		<CodeGroup.Content value="Python">
-			```py title="Python"
+			```py
 			print("Hello World!")
 			```
 		</CodeGroup.Content>

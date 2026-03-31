@@ -3,13 +3,13 @@ title: What is SvelDocs?
 description: SvelDocs is a free boilerplate project for creating documentation websites with Svelte 5 and Tailwind CSS 4.
 ---
 
+import Alert from '$ui/alert'
+
 ## Your Code, Your Rules
 
 SvelDocs provides you with all of the code for creating modern markdown documentation websites. In fact, this very site is the boilerplate code.
 
-The files are structured for both expansion and customization. SvelDocs provides configuration files for a quick setup, but in the chance that something does not match your taste, you can always customize the code to your liking.
-
-import Alert from '$ui/alert'
+The files are structured for both expansion and customization. There are  configuration files for a quick setup, but in the chance that something does not match your taste, you can always customize the code to your liking.
 
 <Alert type="note">
     This project assumes understanding with web development and frameworks. Knowledge of Svelte is a plus.

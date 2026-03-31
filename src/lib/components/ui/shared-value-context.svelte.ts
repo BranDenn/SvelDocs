@@ -9,7 +9,7 @@ export type CreateSharedValueContextOptions<T = string> = {
 };
 
 export class SharedValueContext<T = string> {
-	#value = $state<T>(undefined as unknown as T);
+	#value = $state<T>(undefined as T);
 	readonly #id: string;
 	readonly #useLocalStorage: boolean;
 	readonly #serialize: (value: T) => string;
@@ -18,7 +18,7 @@ export class SharedValueContext<T = string> {
 	constructor(options: CreateSharedValueContextOptions<T>) {
 		this.#id = options.id;
 		this.#useLocalStorage = options.useLocalStorage ?? false;
-		this.#serialize = options.serialize ?? ((v: T) => String(v));
+		this.#serialize = options.serialize ?? String;
 		this.#deserialize = options.deserialize ?? ((v: string) => v as T);
 		this.#value = this.#resolveInitialValue(options.initialValue);
 	}

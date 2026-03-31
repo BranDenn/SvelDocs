@@ -34,41 +34,10 @@ Docs specific styling is defined in the `src/routes/(docs)/[...slug=docs]/docs.c
 
 Here is the provided default theme:
 
-```css title="src/routes/(docs)/[...slug=docs]/docs.css"
-@import '$css';
-
-@theme {
-	--spacing-docs-header-main: 3rem;
-	--spacing-docs-header-tabs: 2rem;
-	--spacing-docs-header-main-border: 1px;
-	--spacing-docs-header: calc(
-		var(--spacing-docs-header-main) + var(--spacing-docs-header-main-border)
-	);
-
-	--spacing-docs-content-header-toc: 2.25rem;
-	--spacing-docs-content-header-toc-border: 1px;
-	--spacing-docs-content-header: calc(
-		var(--spacing-docs-content-header-toc) + var(--spacing-docs-content-header-toc-border)
-	);
-}
-
-@layer utilities {
-	[data-docs-tabs='true'] {
-		@apply sm:[--spacing-docs-header:calc(var(--spacing-docs-header-main)+var(--spacing-docs-header-tabs)+var(--spacing-docs-header-main-border))];
-	}
-
-	[data-docs-toc='true'] {
-		@apply xl:[--spacing-docs-content-header:0px];
-	}
-
-	[data-docs-toc='false'] {
-		@apply lg:[--spacing-docs-content-header:0px];
-	}
-}
-```
+<FileReader file="src/routes/(docs)/[...slug=docs]/docs.css" />
 
 ## Components
 
 You can style any component using TailwindCSS or [scoped styles](https://svelte.dev/docs/svelte/scoped-styles). Some components, like the `pre` component, may use [global styles](https://svelte.dev/docs/svelte/global-styles).
 
-Components can be found under the `$lib/components` folder. Markdown specific components can be found under the `$lib/markdown/components` folder.
+Components can be found under the `src/lib/components` folder. Markdown specific components can be found under the `src/lib/markdown/components` folder.

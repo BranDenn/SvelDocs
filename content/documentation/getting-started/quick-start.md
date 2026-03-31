@@ -49,35 +49,25 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 	</Step>
 
 	<Step id="edit-site-config" title="Edit Site Settings / Config">
-		Navigate to the `$lib\configuration\site.config.ts` file to edit general site settings. These settings apply to the various parts of the site (not just docs) including SEO, `llms.txt`, and `sitemap.xml`. Feel free to add your own settings.
+		Navigate to the `src/lib/configuration/site.config.ts` file to edit general site settings. These settings apply to the various parts of the site (not just docs) including SEO, `llms.txt`, and `sitemap.xml`. Feel free to add your own settings.
 
-		```ts title="$lib\configuration\site.config.ts"
-		export default {
-			name: 'SvelDocs',
-			origin: 'https://brandenn.github.io/SvelDocs',
-			description: 'Documentation for SvelDocs, a SvelteKit-based documentation generator.'
-		};
-		```
+		<FileReader file="src/lib/configuration/site.config.ts" />
 	</Step>
 
 	<Step id="edit-docs-config" title="Edit Doc Settings / Config">
-		Navigate to the `$lib\configuration\docs.config.ts` file to edit general settings specific to docs. Feel free to add your own settings.
+		Navigate to the `src/lib/configuration/docs.config.ts` file to edit general settings specific to docs. Feel free to add your own settings.
 
-		```ts title="$lib\configuration\docs.config.ts"
-		export default {
-			github: 'https://github.com/BranDenn/SvelDocs'
-		};
-		```
+		<FileReader file="src/lib/configuration/docs.config.ts" />
 	</Step>
 
 	<Step id="edit-doc-navigation-config" title="Edit Document Navigation Settings / Config">
-		Navigate to the `$lib\server\navigation\doc-navigation.config.ts` file to edit the document navigation settings. Refer to the [Doc Navigation](/docs/configuration/doc-navigation) for more detail.
+		Navigate to the `src/lib/server/navigation/doc-navigation.config.ts` file to edit the document navigation settings. Refer to the [Doc Navigation](/docs/configuration/doc-navigation) for more detail.
 
 		<Alert type="caution">
-			The navigation config should always be under the `$lib\server` folder to prevent exposure of potential private documents.
+			The navigation config should always be under the `src/lib/server` folder to prevent exposure of potential private documents.
 		</Alert>
 
-		```ts title="$lib\server\navigation\doc-navigation.config.ts"
+		```ts title="src/lib/server/navigation/doc-navigation.config.ts"
 		const docNavigationConfig = defineDocNavigation({
 			tabNextPrev: true,
 			tabs: [
@@ -125,7 +115,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 	</Step>
 
 	<Step id="add-markdown" title="Add Your Own Markdown">
-		Navigate to the `content` folder to add your own markdown files. Idealy the folder structure should correspond to your navigation structure.
+		Navigate to the `content` folder to add your own markdown files. Idealy, the folder structure should correspond to your navigation structure.
 
 		<Tabs.Root value="config">
 			<Tabs.List>

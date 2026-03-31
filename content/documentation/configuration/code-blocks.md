@@ -32,11 +32,11 @@ const markdownConfig = defineConfig({
 
 ## Component
 
-`$lib/markdown/components/code/pre.svelte` is the component that replaces the default html `<pre>` element. This allows for:
+`src/lib/markdown/components/code/pre.svelte` is the component that replaces the default html `<pre>` element. This allows for:
 
-- Language badge
-- Code Copy button
-- CSS styling
+- Language Badge
+- Code Copy Button
+- CSS Styling
 
 ### Styling
 
@@ -44,7 +44,7 @@ Styling is configured within the component. You can style the component elements
 
 Here is the provided default:
 
-```postcss title="$lib/markdown/components/code/pre.svelte"
+```postcss title="src/lib/markdown/components/code/pre.svelte"
 <style lang="postcss">
 	@reference "$css";
 
@@ -238,4 +238,4 @@ const six = 6;
 
 ## File to Code Block
 
-You can embed a file directly from the repository using the [File Reader component](/docs/components/file-reader).
+You can generate a code block from a file using the [File Reader component](/docs/components/file-reader).

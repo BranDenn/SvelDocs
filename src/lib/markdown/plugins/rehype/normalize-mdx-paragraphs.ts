@@ -5,6 +5,7 @@
  * conversion, which can create invalid or awkward markup for block-like
  * components. This plugin unwraps those safe cases while preserving content.
  */
+
 import type { Element, Root } from 'hast';
 import { visit } from 'unist-util-visit';
 
@@ -67,7 +68,7 @@ function isMdxJsxNode(node: unknown): node is MdxJsxNode {
 /**
  * Factory for the MDX paragraph normalization plugin.
  */
-export function rehypeNormalizeMdxParagraphs() {
+export default function rehypeNormalizeMdxParagraphs() {
 	return (root: Root) => {
 		visit(root, 'element', (node: Element, index, parent) => {
 			if (!shouldUnwrapParagraph(node)) return;

@@ -1,10 +1,21 @@
+import { defineConfig } from './define-config';
+
+// remark plugins
 import remarkGfm from 'remark-gfm';
-import remarkRehype from 'remark-rehype';
 import remarkFileReader from './plugins/remark/remark-file-reader';
+import remarkRehype from 'remark-rehype';
+
+// rehype plugins
 import rehypeSlug from 'rehype-slug';
 import rehypePrettyCode from 'rehype-pretty-code';
-import { defineConfig } from './define-config';
-import { rehypeMarkdownAstPlugins } from './plugins/rehype';
+import rehypePromoteCodeMeta from './plugins/rehype/promote-code-meta';
+import rehypeNormalizeMdxParagraphs from './plugins/rehype/normalize-mdx-paragraphs';
+import rehypeMarkPreHasCode from './plugins/rehype/mark-pre-has-code';
+import rehypeTransformCodeGroup from './plugins/rehype/transform-code-group';
+
+export type MarkdownMetadata = {
+	// add your own metadata options.
+};
 
 const markdownConfig = defineConfig({
 	extensions: ['.md', '.mdx'],
@@ -30,7 +41,10 @@ const markdownConfig = defineConfig({
 				keepBackground: false
 			}
 		],
-		...rehypeMarkdownAstPlugins
+		rehypePromoteCodeMeta,
+		rehypeMarkPreHasCode,
+		rehypeTransformCodeGroup,
+		rehypeNormalizeMdxParagraphs
 	]
 });
 

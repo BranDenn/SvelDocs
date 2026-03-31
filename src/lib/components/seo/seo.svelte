@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import siteConfig from '$lib/configuration/site.config';
 
-	type SeoProps = {
+	type Props = {
 		title: string;
 		description?: string;
 		image?: string;
@@ -18,11 +18,11 @@
 		type = 'website',
 		publishedTime,
 		modifiedTime
-	}: SeoProps = $props();
+	}: Props = $props();
 
-	let url = $derived(siteConfig.origin + page.url.pathname);
-	let fullTitle = $derived(title + ' - ' + siteConfig.name);
-	let jsonLd = $derived({
+	const url = $derived(siteConfig.origin + page.url.pathname);
+	const fullTitle = $derived(title + ' - ' + siteConfig.name);
+	const jsonLd = $derived({
 		'@context': 'https://schema.org',
 		'@type': type,
 		name: fullTitle,
@@ -70,5 +70,7 @@
 		<meta property="article:modified_time" content={modifiedTime} />
 	{/if}
 
-	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd, null, '\t')}</script>`}
+	<svelte:element this={'script'} type="application/ld+json">
+		{JSON.stringify(jsonLd, null, '\t')}
+	</svelte:element>
 </svelte:head>

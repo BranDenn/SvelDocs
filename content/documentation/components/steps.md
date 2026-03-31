@@ -121,7 +121,7 @@ import { Steps, Step } from '$ui/steps';
 
 ## Editing the Component
 
-`Steps` lives in `$lib/components/ui/steps`.
+`Steps` lives in `src/lib/components/ui/steps`.
 
 | File | Purpose |
 |---|---|

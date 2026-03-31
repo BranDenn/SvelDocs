@@ -2,11 +2,25 @@
  * Rehype plugin that rewrites <CodeGroup> blocks into CodeGroup component primitives.
  *
  * Input:
- * <CodeGroup contextId="js-pkg-managers">```bash title="bun" ...```</CodeGroup>
+ * <CodeGroup contextId="js-pkg-managers">
+ *     ```bash title="bun"
+ *     ...
+ *     ```
+ * </CodeGroup>
  *
  * Output:
- * <CodeGroup contextId="js-pkg-managers"><CodeGroupList>...</CodeGroupList><CodeGroupContent ...>...</CodeGroupContent></CodeGroup>
+ * <CodeGroup contextId="js-pkg-managers" value="bun">
+ *     <CodeGroupList>
+ * 	       <CodeGroupTrigger value="bun">bun</CodeGroupTrigger>
+ *     </CodeGroupList>
+ *     <CodeGroupContent value="bun">
+ *         ```bash
+ *         ...
+ *         ```
+ *     </CodeGroupContent>
+ * </CodeGroup>
  */
+
 import type { Element, Root } from 'hast';
 import { visit } from 'unist-util-visit';
 
@@ -148,7 +162,7 @@ function mdxFlow(name: string, attributes: MdxAttribute[] = [], children: unknow
 /**
  * Factory for the CodeGroup -> CodeGroup component transform plugin.
  */
-export function rehypeTransformCodeGroup() {
+export default function rehypeTransformCodeGroup() {
 	return (root: Root) => {
 		visit(root, (node: unknown) => {
 			if (!isNamedMdxFlowElement(node, 'CodeGroup')) return;

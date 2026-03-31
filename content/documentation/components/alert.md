@@ -53,7 +53,7 @@ import Alert from '$ui/alert';
 
 ## Editing the Component
 
-`Alert` lives in `$lib/components/ui/alert`.
+`Alert` lives in `src/lib/components/ui/alert`.
 
 | File | Purpose |
 |---|---|
