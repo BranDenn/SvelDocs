@@ -3,7 +3,7 @@
 SvelDocs is a free boilerplate project for creating documentation websites with Svelte 5 and Tailwind CSS 4.
 
 > [!TIP]
-> This boilerplate is the actual website itself. You can see the live result here: https://brandenn.github.io/SvelDocs/docs
+> This boilerplate is the actual website itself. You can see the live result and documentation here: https://brandenn.github.io/SvelDocs/docs
 
 SvelDocs is built for a quick and easy setup, but still leaves plenty of room for deep customization when you want to shape the experience to your own style and workflow.
 
