@@ -1,17 +1,17 @@
 <script lang="ts">
-	import type { IconProps } from '@lucide/svelte';
+	import type { SVGAttributes } from 'svelte/elements';
 	import { cn } from '$utils';
-	import IconManifest from 'virtual:doc-icon-manifest';
+	import IconManifest from 'virtual:icon-manifest';
 
 	type Props = {
 		name: string;
-	} & IconProps;
+	} & SVGAttributes<SVGSVGElement>;
 
 	let { name, class: className, ...restProps }: Props = $props();
 
 	const Icon = $derived.by(() => {
 		if (!(name in IconManifest)) {
-			console.warn(`[doc-icon-manifest] Icon key not found in manifest: ${name}`);
+			console.warn(`[icon-manifest] Icon key not found in manifest: ${name}`);
 			return undefined;
 		}
 

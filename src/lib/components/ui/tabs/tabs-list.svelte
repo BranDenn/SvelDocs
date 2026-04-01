@@ -14,7 +14,7 @@
 <TabsPrimitive.List
 	bind:ref
 	data-slot="tabs-list"
-	class={cn('relative inline-flex w-fit items-center justify-center overflow-hidden', className)}
+	class={cn('relative inline-flex w-fit items-center justify-center', className)}
 	{...restProps}
 >
 	<div
