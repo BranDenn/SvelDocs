@@ -2,7 +2,10 @@
 
 SvelDocs is a free boilerplate project for creating documentation websites with Svelte 5 and Tailwind CSS 4.
 
-It is built for a quick and easy setup, but still leaves plenty of room for deep customization when you want to shape the experience to your own style and workflow.
+> [!TIP]
+> This boilerplate is the actual website itself. You can see the live result here: https://brandenn.github.io/SvelDocs/docs
+
+SvelDocs is built for a quick and easy setup, but still leaves plenty of room for deep customization when you want to shape the experience to your own style and workflow.
 
 > [!NOTE]
 > This project assumes knowledge of web development and web frameworks. Knowledge of Svelte is a plus.
@@ -36,7 +39,6 @@ cd SvelDocs
 Pick your package manager:
 
 ```bash
-# bun
 bun install
 ```
 
@@ -45,7 +47,6 @@ bun install
 Run the dev server with your preferred package manager:
 
 ```bash
-# bun
 bun run dev
 ```
 
