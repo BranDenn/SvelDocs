@@ -1,4 +1,4 @@
-import config from '../../src/lib/server/navigation/doc-navigation.config';
+import config from '../../src/lib/server/docs/navigation/doc-navigation.config';
 import type { DocsNavigationMaps } from './types';
 import type {
 	DocPrivateAccess,
@@ -6,7 +6,7 @@ import type {
 	DocPage,
 	DocTab,
 	PageItems
-} from '../../src/lib/server/navigation/define-doc-navigation';
+} from '../../src/lib/server/docs/navigation/define-doc-navigation';
 
 type RawDocModulePaths = readonly string[];
 

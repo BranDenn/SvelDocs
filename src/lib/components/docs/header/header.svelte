@@ -2,6 +2,7 @@
 	import MenuIcon from '@lucide/svelte/icons/menu';
 	import { onNavigate } from '$app/navigation';
 	import Logo from './logo.svelte';
+	import GithubLink from './github.svelte';
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
 	import { MobileSidebar } from '$components/docs/sidebar';
@@ -32,6 +33,7 @@
 		<div class="flex items-center gap-2 justify-self-end">
 			<SearchDialogTriggerMobile />
 			<ThemeSwitch />
+			<GithubLink />
 			<Button
 				variant="ghost"
 				size="icon"

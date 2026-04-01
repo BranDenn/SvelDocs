@@ -7,7 +7,7 @@ import { docSearchJson } from './plugins/vite-search-json';
 
 export default defineConfig({
 	plugins: [
-		docIconManifest({ navigationPath: 'src/lib/server/navigation/doc-navigation.config.ts' }),
+		docIconManifest({ navigationPath: 'src/lib/server/docs/navigation/doc-navigation.config.ts' }),
 		mdxComponentManifest(),
 		docSearchJson(),
 		tailwindcss(),

@@ -3,11 +3,11 @@ import path from 'node:path';
 import type { PluginOption } from 'vite';
 import { isMarkdownModulePath, markdownToAst } from './processed-docs/markdown-to-ast';
 import { collectDocEntries } from './processed-docs/collect-doc-entries';
-import docNavigationConfig from '../src/lib/server/navigation/doc-navigation.config';
+import docNavigationConfig from '../src/lib/server/docs/navigation/doc-navigation.config';
 import type {
 	DocPrivateAccess,
 	DocNavigationConfig
-} from '../src/lib/server/navigation/define-doc-navigation';
+} from '../src/lib/server/docs/navigation/define-doc-navigation';
 import type {
 	BuiltDocRecord,
 	DocsManifestData,

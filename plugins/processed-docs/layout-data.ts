@@ -3,8 +3,8 @@ import type {
 	NavigationPage,
 	NavigationTab
 } from '../../src/lib/doc-navigation-context.svelte';
-import docNavigationConfig from '../../src/lib/server/navigation/doc-navigation.config';
-import type { DocNavigationConfig } from '../../src/lib/server/navigation/define-doc-navigation';
+import docNavigationConfig from '../../src/lib/server/docs/navigation/doc-navigation.config';
+import type { DocNavigationConfig } from '../../src/lib/server/docs/navigation/define-doc-navigation';
 import type {
 	BuiltDocRecord,
 	DocLayoutData,

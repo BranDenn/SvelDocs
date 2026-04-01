@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { EntryGenerator, RequestHandler } from './$types';
-import { canAccessDoc } from '$lib/server/content/docs-access';
-import { getDocsData, getPublicDocEntries } from '$lib/server/content/docs-data';
-export { prerender } from '$lib/server/content/docs-data';
+import { canAccessDoc } from '$lib/server/docs/docs-access';
+import { getDocsData, getPublicDocEntries } from '$lib/server/docs/docs-data';
+export { prerender } from '$lib/server/docs/docs-data';
 
 export const entries: EntryGenerator = () => {
 	return getPublicDocEntries().map((doc) => ({ slug: doc.slug }));

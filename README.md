@@ -1,38 +1,80 @@
-# sv
+# 📄 SvelDocs
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+SvelDocs is a free boilerplate project for creating documentation websites with Svelte 5 and Tailwind CSS 4.
 
-## Creating a project
+It is built for a quick and easy setup, but still leaves plenty of room for deep customization when you want to shape the experience to your own style and workflow.
 
-If you're seeing this, you've probably already done this step. Congrats!
+> [!NOTE]
+> This project assumes knowledge of web development and web frameworks. Knowledge of Svelte is a plus.
 
-```bash
-# create a new project in the current directory
-npx sv create
+## ✨ Features
 
-# create a new project in my-app
-npx sv create my-app
-```
+- Supports both Static Site Generation (SSG) and Server Side Rendering (SSR)
+- Simple structure for adding tabs, groups, and pages
+- Table of contents
+- Built-in search
+- Remark / Rehype plugin support
+- Automatically generated `.md` and `llms.txt` routes for AI usage
+- Syntax highlighted code blocks
+- SEO support with generated `sitemap.xml`
+- Accessibility and keyboard tab navigation
+- Light and dark mode
 
-## Developing
+## 🚀 Quick Start
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Get up and running in three steps:
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+### 1) Clone the repository
 
 ```bash
-npm run build
+git clone https://github.com/BranDenn/SvelDocs
+cd SvelDocs
 ```
 
-You can preview the production build with `npm run preview`.
+### 2) Install dependencies
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Pick your package manager:
+
+```bash
+# bun
+bun install
+```
+
+### 3) Start the development server
+
+Run the dev server with your preferred package manager:
+
+```bash
+# bun
+bun run dev
+```
+
+## ⚙️ Project Configuration
+
+After the app is running, the main starting points are:
+
+- `src/lib/configuration/site.config.ts` for global site settings
+- `src/lib/configuration/docs.config.ts` for docs-specific settings
+- `src/lib/server/navigation/doc-navigation.config.ts` for doc navigation tabs, groups, and pages
+
+Add your own markdown content in the `content` folder. As a best practice, keep your folder structure aligned with your navigation structure.
+
+## 📦 Build
+
+Create a production build:
+
+```bash
+bun run build
+```
+
+Preview the production build locally:
+
+```bash
+bun run preview
+```
+
+## 🌐 Deployment
+
+SvelDocs is built on SvelteKit. For deployment, install and configure the adapter that matches your target platform:
+
+- https://svelte.dev/docs/kit/adapters

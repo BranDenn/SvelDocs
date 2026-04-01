@@ -1,1 +1,1 @@
-export { prerender } from '$lib/server/content/docs-data';
+export { prerender } from '$lib/server/docs/docs-data';

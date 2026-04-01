@@ -11,7 +11,7 @@
 	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
 	import type { Component } from 'svelte';
 	import mdxComponentManifest from 'virtual:mdx-component-manifest';
-	import GridPattern from '$lib/components/docs/grid/grid-pattern.svelte';
+	import GridPattern from '$components/docs/patterns/grid-pattern.svelte';
 	import { CopyButton } from '$ui/copy-button';
 	import ButtonGroup from '$ui/button-group';
 	import Button from '$ui/button';

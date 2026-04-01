@@ -1,4 +1,4 @@
-import type { DocPrivateAccess } from '../../src/lib/server/navigation/define-doc-navigation';
+import type { DocPrivateAccess } from '../../src/lib/server/docs/navigation/define-doc-navigation';
 import type {
 	DocNavigationParams,
 	NavigationGroup,

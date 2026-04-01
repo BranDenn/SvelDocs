@@ -42,6 +42,5 @@
 	<hr />
 	<div class="text-muted-foreground flex flex-wrap items-center justify-between gap-2">
 		<p>Copyright © {new Date().getFullYear()} {siteConfig.name}</p>
-		<p>Support Example</p>
 	</div>
 </footer>
