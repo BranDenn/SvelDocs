@@ -1,22 +1,22 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { PluginOption } from 'vite';
-import { isMarkdownModulePath, markdownToAst } from './processed-docs/markdown-to-ast';
-import { collectDocEntries, type DocEntry } from './processed-docs/collect-doc-entries';
+import { isMarkdownModulePath, getMarkdownData } from './processed-docs/markdown-to-ast.js';
+import { DocEntries } from './processed-docs/collect-doc-entries.js';
 import type { DocPrivateAccess } from '../src/lib/server/docs/navigation/define-doc-navigation';
-import type { BuiltDocRecord, DocsManifestData } from './processed-docs/types';
+import type {
+	BuiltDocRecord,
+	DocsManifestData,
+	ManifestDocPage,
+	ManifestNavigationPage
+} from './processed-docs/types';
 
 const VIRTUAL_SEARCH_JSON_ID = 'virtual:doc-search-json';
 const RESOLVED_VIRTUAL_SEARCH_JSON_ID = '\0virtual:doc-search-json';
 
 type DocSearchJsonOptions = {
-	files?: string[];
+	files: string[];
 };
-
-function normalizeRootPaths(files: string[] | undefined): string[] {
-	const configuredFiles = files?.length ? files : ['content'];
-	return Array.from(new Set(configuredFiles.map((filePath) => path.resolve(process.cwd(), filePath))));
-}
 
 function getMarkdownRecord(rootPaths: string[]): Map<string, string> {
 	const map = new Map<string, string>();
@@ -88,75 +88,70 @@ function resolveMetadataAccess(metadata: Record<string, unknown>): DocPrivateAcc
 	return Boolean(metadata.private);
 }
 
-function buildDocRecord(
-	entry: DocEntry,
+async function buildDocRecord(
+	page: ManifestNavigationPage,
 	raw: string
 ): Promise<BuiltDocRecord> {
-	return markdownToAst(raw).then((markdown) => {
-		const metadata = markdown.metadata;
+	const markdown = await getMarkdownData(raw);
+	const metadata = markdown.metadata;
 
-		return {
-			slug: entry.slug,
-			filepath: entry.filepath,
-			title: metadata.title ? `${entry.title} (${metadata.title})` : entry.title,
-			private: resolveMetadataAccess(markdown.metadata) ?? entry.private,
-			icon: entry.icon ?? metadata.icon,
-			markdown
-		};
-	});
+	return {
+		slug: page.slug,
+		href: page.href,
+		filepath: page.filepath,
+		title: metadata.title ? `${page.title} (${metadata.title})` : page.title,
+		private: resolveMetadataAccess(markdown.metadata) ?? page.private,
+		icon: page.icon ?? metadata.icon,
+		markdown
+	};
 }
 
-async function createDocsBySlug(
-	docs: DocEntry[],
+async function createPagesWithDocData(
+	navigationPages: Map<string, ManifestNavigationPage>,
 	rawMarkdownByPath: Map<string, string>
-): Promise<Map<string, BuiltDocRecord>> {
-	const pageData = new Map<string, BuiltDocRecord>();
+): Promise<Map<string, ManifestDocPage>> {
+	const pages = new Map<string, ManifestDocPage>();
 
-	for (const entry of docs) {
-		const raw = rawMarkdownByPath.get(entry.filepath);
-		if (raw === undefined) {
-			continue;
-		}
+	for (const [href, page] of navigationPages.entries()) {
+		const raw = rawMarkdownByPath.get(page.filepath);
+		if (raw === undefined) continue;
+		const docData = await buildDocRecord(page, raw);
 
-		pageData.set(entry.slug, await buildDocRecord(entry, raw));
+		pages.set(href, {
+			...page,
+			icon: page.icon ?? docData.icon,
+			docData
+		});
 	}
 
-	return pageData;
-}
-
-
-function applyNavigationMetadata(manifest: DocsManifestData) {
-	for (const page of Object.values(manifest.navigation.pages)) {
-		const doc = manifest.pageData.get(page.slug);
-		if (doc?.icon && !page.icon) {
-			manifest.navigation.pages[page.href] = {
-				...page,
-				icon: doc.icon
-			};
-		}
-	}
+	return pages;
 }
 
 async function generateSearchData(rootPaths: string[]): Promise<DocsManifestData> {
-	// get all markdown files in rootPaths
+	// get all markdown files in the rootPaths array
+	// this is a map of [filepath, fileContent]
 	const rawMarkdownByPath = getMarkdownRecord(rootPaths);
 
-	
-	const collectedEntries = collectDocEntries(Array.from(rawMarkdownByPath.keys()));
-	const pageData = await createDocsBySlug(collectedEntries.docs, rawMarkdownByPath);
+	// get doc entries from config and match with markdown files
+	const docEntries = new DocEntries(Array.from(rawMarkdownByPath.keys()));
+
+	const pages = await createPagesWithDocData(docEntries.pages, rawMarkdownByPath);
+
 	const manifest: DocsManifestData = {
-		navigation: collectedEntries.navigation,
-		pageData
+		tabs: docEntries.tabs,
+		groups: docEntries.groups,
+		pages
 	};
 
-	applyNavigationMetadata(manifest);
+	console.log(manifest)
 
 	return manifest;
 }
 
 export function docSearchJson(options: DocSearchJsonOptions): PluginOption {
 	let searchData: DocsManifestData | null = null;
-	const rootPaths = normalizeRootPaths(options.files);
+
+	const absoluteFilePaths = options.files.map((filePath) => path.resolve(process.cwd(), filePath));
 
 	return {
 		name: 'vite-plugin-doc-search-json',
@@ -170,19 +165,21 @@ export function docSearchJson(options: DocSearchJsonOptions): PluginOption {
 				return null;
 			}
 
-			searchData ??= await generateSearchData(rootPaths);
+			searchData ??= await generateSearchData(absoluteFilePaths);
 
-			const { navigation, pageData } = searchData;
-			return `export default { navigation: ${JSON.stringify(navigation)}, pageData: new Map(${JSON.stringify(Array.from(pageData.entries()))}) };`;
+			const tabs = JSON.stringify(Array.from(searchData.tabs.entries()));
+			const groups = JSON.stringify(Array.from(searchData.groups.entries()));
+			const pages = JSON.stringify(Array.from(searchData.pages.entries()));
+			return `export default { tabs: new Map(${tabs}), groups: new Map(${groups}), pages: new Map(${pages}) };`;
 		},
 		handleHotUpdate(ctx) {
 			const absoluteFilePath = path.resolve(ctx.file);
-			const isWithinConfiguredPath = rootPaths.some((rootPath) => {
-				if (absoluteFilePath === rootPath) {
+			const isWithinConfiguredPath = absoluteFilePaths.some((filePath) => {
+				if (absoluteFilePath === filePath) {
 					return true;
 				}
 
-				return absoluteFilePath.startsWith(rootPath + path.sep);
+				return absoluteFilePath.startsWith(filePath + path.sep);
 			});
 
 			const isContentFile = isWithinConfiguredPath && isMarkdownModulePath(absoluteFilePath);

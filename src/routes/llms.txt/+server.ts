@@ -8,7 +8,7 @@ export const GET: RequestHandler = () => {
 	const baseUrl = siteConfig.origin;
 
 	const publicDocs = getPublicDocEntries().map((entry) => {
-		let txt = `- [${entry.title}](${baseUrl}/${entry.slug}.md)`;
+		let txt = `- [${entry.title}](${baseUrl}${entry.href}.md)`;
 		const metadata = entry.markdown.metadata;
 		if (
 			'description' in metadata &&

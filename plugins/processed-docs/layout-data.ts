@@ -10,7 +10,7 @@ import type {
 	DocLayoutData,
 	DocSearchItem,
 	DocsManifestData,
-	ManifestNavigationPage
+	ManifestDocPage
 } from './types';
 
 type DocSearchGroup = DocLayoutData['searchGroups'][number];
@@ -85,17 +85,15 @@ function toNavigationPage(page: NavigationPage): NavigationPage {
 	return pageData;
 }
 
-function toIndexedTabs(tabs: DocsManifestData['navigation']['tabs']): IndexedNavigationTab[] {
-	return Object.entries(tabs)
-		.map(([id, tab]) => ({ id: Number(id), ...tab }))
+function toIndexedTabs(tabs: DocsManifestData['tabs']): IndexedNavigationTab[] {
+	return Array.from(tabs.entries())
+		.map(([id, tab]) => ({ id, ...tab }))
 		.sort((a, b) => a.id - b.id);
 }
 
-function toIndexedGroups(
-	groups: DocsManifestData['navigation']['groups']
-): IndexedNavigationGroup[] {
-	return Object.entries(groups)
-		.map(([id, group]) => ({ id: Number(id), ...group }))
+function toIndexedGroups(groups: DocsManifestData['groups']): IndexedNavigationGroup[] {
+	return Array.from(groups.entries())
+		.map(([id, group]) => ({ id, ...group }))
 		.sort((a, b) => a.id - b.id);
 }
 
@@ -126,14 +124,8 @@ function filterNavigationTabs(
 		}));
 }
 
-function toSearchItem(
-	pageData: Map<string, BuiltDocRecord>,
-	slug: string
-): DocSearchItem | undefined {
-	const doc = pageData.get(slug);
-	if (!doc) {
-		return undefined;
-	}
+function toSearchItem(page: ManifestDocPage): DocSearchItem {
+	const doc = page.docData;
 
 	const metadata = doc.markdown.metadata ?? {};
 	const metadataDescription =
@@ -156,7 +148,7 @@ function toSearchItem(
 	}
 
 	return {
-		href: `/${doc.slug}`,
+		href: page.href,
 		title: doc.title,
 		description,
 		...(keywords.length ? { keywords } : {}),
@@ -164,22 +156,16 @@ function toSearchItem(
 	};
 }
 
-function toSearchItems(
-	pageData: Map<string, BuiltDocRecord>,
-	pages: ManifestNavigationPage[]
-): DocSearchItem[] {
-	return pages
-		.map((page) => toSearchItem(pageData, page.slug))
-		.filter((item): item is DocSearchItem => Boolean(item));
+function toSearchItems(pages: ManifestDocPage[]): DocSearchItem[] {
+	return pages.map((page) => toSearchItem(page));
 }
 
 function createGroupedSearchGroup(
-	pageData: Map<string, BuiltDocRecord>,
 	title: string,
-	pages: ManifestNavigationPage[],
+	pages: ManifestDocPage[],
 	icon?: string
 ): DocSearchGroup | null {
-	const items = toSearchItems(pageData, pages);
+	const items = toSearchItems(pages);
 	if (!items.length) {
 		return null;
 	}
@@ -192,8 +178,7 @@ function createGroupedSearchGroup(
 }
 
 function createTabSearchGroups(
-	pageData: Map<string, BuiltDocRecord>,
-	pages: ManifestNavigationPage[],
+	pages: ManifestDocPage[],
 	tabs: IndexedNavigationTab[],
 	groups: IndexedNavigationGroup[]
 ): DocSearchGroup[] {
@@ -201,16 +186,15 @@ function createTabSearchGroups(
 
 	for (const tab of tabs) {
 		const tabPages = pages.filter((page) => page.tabId === tab.id);
-		searchGroups.push(...createSingleTabSearchGroups(pageData, tab, tabPages, groups));
+		searchGroups.push(...createSingleTabSearchGroups(tab, tabPages, groups));
 	}
 
 	return searchGroups;
 }
 
 function createSingleTabSearchGroups(
-	pageData: Map<string, BuiltDocRecord>,
 	tab: IndexedNavigationTab,
-	tabPages: ManifestNavigationPage[],
+	tabPages: ManifestDocPage[],
 	groups: IndexedNavigationGroup[]
 ): DocSearchGroup[] {
 	if (tab.mode === 'group') {
@@ -218,7 +202,6 @@ function createSingleTabSearchGroups(
 			.filter((item) => item.tabId === tab.id)
 			.map((group) =>
 				createGroupedSearchGroup(
-					pageData,
 					group.title,
 					tabPages.filter((page) => page.groupId === group.id),
 					group.icon
@@ -228,7 +211,6 @@ function createSingleTabSearchGroups(
 	}
 
 	const searchGroup = createGroupedSearchGroup(
-		pageData,
 		tab.title,
 		tabPages.filter((page) => page.groupId === undefined),
 		tab.icon
@@ -238,14 +220,12 @@ function createSingleTabSearchGroups(
 }
 
 function createStandaloneGroupSearchGroups(
-	pageData: Map<string, BuiltDocRecord>,
-	pages: ManifestNavigationPage[],
+	pages: ManifestDocPage[],
 	groups: IndexedNavigationGroup[]
 ): DocSearchGroup[] {
 	return groups
 		.map((group) =>
 			createGroupedSearchGroup(
-				pageData,
 				group.title,
 				pages.filter((page) => page.groupId === group.id),
 				group.icon
@@ -255,20 +235,19 @@ function createStandaloneGroupSearchGroups(
 }
 
 function createSearchGroups(
-	pageData: Map<string, BuiltDocRecord>,
-	pages: ManifestNavigationPage[],
+	pages: ManifestDocPage[],
 	tabs: IndexedNavigationTab[],
 	groups: IndexedNavigationGroup[]
 ): DocSearchGroup[] {
 	if (tabs.length) {
-		return createTabSearchGroups(pageData, pages, tabs, groups);
+		return createTabSearchGroups(pages, tabs, groups);
 	}
 
 	if (groups.length) {
-		return createStandaloneGroupSearchGroups(pageData, pages, groups);
+		return createStandaloneGroupSearchGroups(pages, groups);
 	}
 
-	const items = toSearchItems(pageData, pages);
+	const items = toSearchItems(pages);
 	if (!items.length) {
 		return [];
 	}
@@ -280,14 +259,14 @@ export function buildDocLayoutData(
 	manifest: DocsManifestData,
 	filter: (doc: BuiltDocRecord) => boolean = () => true
 ): DocLayoutData {
-	const docs = Array.from(manifest.pageData.values());
-	const visibleSlugs = new Set(docs.filter(filter).map((doc) => doc.slug));
-	const indexedTabs = toIndexedTabs(manifest.navigation.tabs);
-	const indexedGroups = toIndexedGroups(manifest.navigation.groups);
-	const allManifestPages = Object.values(manifest.navigation.pages);
-	const visibleManifestPages = allManifestPages.filter((page) => visibleSlugs.has(page.slug));
+	const indexedTabs = toIndexedTabs(manifest.tabs);
+	const indexedGroups = toIndexedGroups(manifest.groups);
+	const allManifestPages = Array.from(manifest.pages.values());
+	const visibleManifestPages = allManifestPages.filter((page) => filter(page.docData));
 	const visiblePages: IndexedNavigationPage[] = visibleManifestPages
-		.map(({ slug: _slug, ...page }) => toNavigationPage(page))
+		.map(({ docData: _docData, filepath: _filepath, private: _private, ...page }) =>
+			toNavigationPage(page)
+		)
 		.map((page, id) => ({ id, ...page, prev: undefined, next: undefined }));
 	const config = docNavigationConfig as DocNavigationConfig;
 	const tabNextPrevEnabled = 'tabs' in config && config.tabNextPrev === true;
@@ -312,11 +291,6 @@ export function buildDocLayoutData(
 			groups: navigationGroups,
 			pages: visiblePages
 		},
-		searchGroups: createSearchGroups(
-			manifest.pageData,
-			visibleManifestPages,
-			navigationTabs,
-			navigationGroups
-		)
+		searchGroups: createSearchGroups(visibleManifestPages, navigationTabs, navigationGroups)
 	};
 }

@@ -5,7 +5,7 @@ import type {
 	NavigationPage,
 	NavigationTab
 } from '../../src/lib/doc-navigation-context.svelte';
-import type { MarkdownAstResult } from './markdown-to-ast';
+import type { MarkdownAstResult } from './markdown-to-ast.js';
 
 export type DocSearchItem = {
 	href: string;
@@ -17,26 +17,28 @@ export type DocSearchItem = {
 
 export type ManifestNavigationPage = NavigationPage & {
 	slug: string;
+	filepath: string;
+	private: DocPrivateAccess | false;
 };
 
-export type DocsNavigationMaps = {
-	tabs: Record<number, NavigationTab>;
-	groups: Record<number, NavigationGroup>;
-	pages: Record<string, ManifestNavigationPage>;
+export type ManifestDocPage = ManifestNavigationPage & {
+	docData: BuiltDocRecord;
+};
+
+export type DocsManifestData = {
+	tabs: Map<number, Omit<NavigationTab, 'id'>>;
+	groups: Map<number, Omit<NavigationGroup, 'id'>>;
+	pages: Map<string, ManifestDocPage>;
 };
 
 export type BuiltDocRecord = {
 	slug: string;
+	href: string;
 	filepath: string;
 	title: string;
 	private: DocPrivateAccess;
 	icon?: string;
 	markdown: MarkdownAstResult;
-};
-
-export type DocsManifestData = {
-	navigation: DocsNavigationMaps;
-	pageData: Map<string, BuiltDocRecord>;
 };
 
 export type DocLayoutData = {

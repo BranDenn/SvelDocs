@@ -21,19 +21,17 @@
 			children?: Array<Record<string, unknown>>;
 		};
 		metadata: Record<string, unknown>;
+		imports?: Record<string, string>;
 		title: string;
 		tocEntries?: Array<{ id: string; text: string; level: number }>;
 	};
 
+	
+
 	let { data }: { data: PageData } = $props();
 
-	const componentAliases = $derived(
-		(data.metadata.mdxComponentAliases as Record<string, string[]> | undefined) ?? {}
-	);
 
-	const componentImports = $derived(
-		(data.metadata.mdxComponentImports as Record<string, string> | undefined) ?? {}
-	);
+	const componentImports = $derived(data.imports ?? {});
 
 	type MdxModule = Record<string, unknown> & { default?: unknown };
 	type MdxManifest = Record<string, MdxModule | undefined>;
@@ -46,13 +44,9 @@
 			const module = manifest[source];
 			if (!module) continue;
 
-			const candidates = [name, ...(componentAliases[name] ?? [])];
-			for (const candidate of candidates) {
-				const componentExport = module[candidate];
-				if (typeof componentExport === 'function') {
-					resolved[name] = componentExport as Component<any>;
-					break;
-				}
+			const componentExport = module[name];
+			if (typeof componentExport === 'function') {
+				resolved[name] = componentExport as Component<any>;
 			}
 
 			if (!resolved[name] && typeof module.default === 'function') {
@@ -214,7 +208,7 @@
 		class="**:[[id]]:scroll-mt-[max(calc(var(--spacing-docs-header)+var(--spacing-docs-content-header)+1.5rem),25dvh)] [&>*:not([class*='mt-'])]:mt-4"
 	>
 		{#each data.ast.children ?? [] as node, i (`node-${i}`)}
-			<BlueprintRenderer {node} {componentAliases} resolvedComponents={resolvedMdxComponents} />
+			<BlueprintRenderer {node} resolvedComponents={resolvedMdxComponents} />
 		{/each}
 	</div>
 </article>

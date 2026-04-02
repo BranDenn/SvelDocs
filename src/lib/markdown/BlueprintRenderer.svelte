@@ -284,6 +284,7 @@
 
 		return null;
 	}
+
 </script>
 
 {#if node.type === 'text'}

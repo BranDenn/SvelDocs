@@ -1,13 +1,23 @@
 import { error } from '@sveltejs/kit';
 import searchJsonData from 'virtual:doc-search-json';
-import {
-	buildDocLayoutData,
-	normalizeRouteSlug
-} from '../../../../plugins/processed-docs/layout-data';
-import type { BuiltDocRecord } from '../../../../plugins/processed-docs/types';
+import { buildDocLayoutData } from '../../../../plugins/processed-docs/layout-data';
+import type { BuiltDocRecord, ManifestDocPage } from '../../../../plugins/processed-docs/types';
 import type { TOCSeedEntry } from '$ui/table-of-contents';
 
-const temp = searchJsonData;
+function normalizePathname(pathname: string | null | undefined): string {
+	const raw = (pathname ?? '').trim();
+	if (!raw) {
+		return '/docs';
+	}
+
+	const normalized = raw.startsWith('/') ? raw : `/${raw}`;
+	return normalized.length > 1 ? normalized.replaceAll(/\/+$/g, '') : normalized;
+}
+
+function getAllDocRecords(): BuiltDocRecord[] {
+	const pages = Array.from(searchJsonData.pages.values() as Iterable<ManifestDocPage>);
+	return pages.map((page) => page.docData);
+}
 
 type AstNode = {
 	type?: string;
@@ -108,7 +118,7 @@ export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () =
 }
 
 export function getPublicDocEntries() {
-	const data: BuiltDocRecord[] = [...searchJsonData.pageData.values()];
+	const data = getAllDocRecords();
 
 	const filtered = data.flatMap((doc) => {
 		const { private: isPrivate, ...docData } = doc;
@@ -119,16 +129,21 @@ export function getPublicDocEntries() {
 	return filtered;
 }
 
+export const entries = () => {
+	return getPublicDocEntries().map((doc) => ({ slug: doc.slug }));
+};
+
 export function isAllPublic() {
-	const allDocs = [...searchJsonData.pageData.values()];
+	const allDocs = getAllDocRecords();
 	return allDocs.every((doc) => doc.private === false);
 }
 
 export const prerender: true | 'auto' = isAllPublic() ? true : 'auto';
 
-export function getDocsData(slugParam: string): BuiltDocRecord {
-	const slug = normalizeRouteSlug(slugParam);
-	const data = searchJsonData.pageData.get(slug);
+export function getDocsData(pathname: string): BuiltDocRecord {
+	const normalizedPathname = normalizePathname(pathname);
+	const page = searchJsonData.pages.get(normalizedPathname);
+	const data = page?.docData;
 
 	if (!data) {
 		throw error(404, 'Document not found');
@@ -147,6 +162,7 @@ export function getDocPageData(doc: BuiltDocRecord) {
 	return {
 		ast,
 		metadata: doc.markdown.metadata ?? {},
+		imports: doc.markdown.imports ?? {},
 		title: doc.title,
 		tocEntries: extractTocEntries(ast)
 	} as const;

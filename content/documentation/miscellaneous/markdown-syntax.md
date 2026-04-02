@@ -19,21 +19,27 @@ description: Examples of markdown and their result.
 ```
 
 import H1 from '$lib/markdown/components/headings/h1.svelte';
+
 <H1 ignoreToc>h1 Heading</H1>
 
 import H2 from '$lib/markdown/components/headings/h2.svelte';
+
 <H2 ignoreToc>h2 Heading</H2>
 
 import H3 from '$lib/markdown/components/headings/h3.svelte';
+
 <H3 ignoreToc>h3 Heading</H3>
 
 import H4 from '$lib/markdown/components/headings/h4.svelte';
+
 <H4 ignoreToc>h4 Heading</H4>
 
 import H5 from '$lib/markdown/components/headings/h5.svelte';
+
 <H5 ignoreToc>h5 Heading</H5>
 
 import H6 from '$lib/markdown/components/headings/h6.svelte';
+
 <H6 ignoreToc>h6 Heading</H6>
 
 ---

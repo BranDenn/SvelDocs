@@ -8,7 +8,7 @@ export const GET: RequestHandler = () => {
 	const baseUrl = siteConfig.origin;
 	const now = new Date().toISOString();
 	const docUrls = getPublicDocEntries().map(
-		(entry) => `  <url><loc>${baseUrl}/${entry.slug}</loc><lastmod>${now}</lastmod></url>`
+		(entry) => `  <url><loc>${baseUrl}${entry.href}</loc><lastmod>${now}</lastmod></url>`
 	);
 
 	const body = [

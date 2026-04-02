@@ -1,20 +1,17 @@
 import { error } from '@sveltejs/kit';
-import type { EntryGenerator, PageServerLoad } from './$types';
+import type { PageServerLoad } from './$types';
 import { canAccessDoc } from '$lib/server/docs/docs-access';
-import { getDocsData, getPublicDocEntries, getDocPageData } from '$lib/server/docs/docs-data';
-export { prerender } from '$lib/server/docs/docs-data';
+import { getDocsData, getDocPageData } from '$lib/server/docs/docs-data';
+export { prerender, entries } from '$lib/server/docs/docs-data';
 
-export const entries: EntryGenerator = () => {
-	return getPublicDocEntries().map((doc) => ({ slug: doc.slug }));
-};
-
-export const load: PageServerLoad = async ({ params, locals }) => {
-	const docData = getDocsData(params.slug);
+export const load: PageServerLoad = async ({ locals, url }) => {
+	const docData = getDocsData(url.pathname);
 
 	// replace `false` with `locals` for checking authentication
 	if (!canAccessDoc(false, docData.private)) {
 		error(404, 'Document not found');
 	}
 
-	return getDocPageData(docData);
+	const pageData = getDocPageData(docData);
+	return pageData;
 };
