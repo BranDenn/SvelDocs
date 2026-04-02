@@ -7,6 +7,8 @@ import {
 import type { BuiltDocRecord } from '../../../../plugins/processed-docs/types';
 import type { TOCSeedEntry } from '$ui/table-of-contents';
 
+const temp = searchJsonData;
+
 type AstNode = {
 	type?: string;
 	tagName?: string;
@@ -106,7 +108,7 @@ export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () =
 }
 
 export function getPublicDocEntries() {
-	const data: BuiltDocRecord[] = [...searchJsonData.getBySlug.values()];
+	const data: BuiltDocRecord[] = [...searchJsonData.pageData.values()];
 
 	const filtered = data.flatMap((doc) => {
 		const { private: isPrivate, ...docData } = doc;
@@ -118,7 +120,7 @@ export function getPublicDocEntries() {
 }
 
 export function isAllPublic() {
-	const allDocs = [...searchJsonData.getBySlug.values()];
+	const allDocs = [...searchJsonData.pageData.values()];
 	return allDocs.every((doc) => doc.private === false);
 }
 
@@ -126,7 +128,7 @@ export const prerender: true | 'auto' = isAllPublic() ? true : 'auto';
 
 export function getDocsData(slugParam: string): BuiltDocRecord {
 	const slug = normalizeRouteSlug(slugParam);
-	const data = searchJsonData.getBySlug.get(slug);
+	const data = searchJsonData.pageData.get(slug);
 
 	if (!data) {
 		throw error(404, 'Document not found');

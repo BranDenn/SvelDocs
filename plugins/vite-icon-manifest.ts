@@ -1,4 +1,3 @@
-import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { PluginOption } from 'vite';
@@ -31,30 +30,6 @@ function extractIcons(source: string): string[] {
 	return [...icons].sort((a, b) => a.localeCompare(b));
 }
 
-function getAvailableIconsForPackage(iconPackage: string): Set<string> {
-	try {
-		const req = createRequire(import.meta.url);
-		const packageEntrypointPath = req.resolve(iconPackage);
-		const iconsDir = path.dirname(packageEntrypointPath);
-
-		if (!fs.existsSync(iconsDir)) {
-			console.warn(`[icon-manifest] Could not find icon directory for package: ${iconPackage}`);
-			return new Set();
-		}
-
-		const iconFiles = fs.readdirSync(iconsDir);
-		const icons = iconFiles
-			.filter((file) => /\.(js|mjs|cjs)$/.test(file))
-			.map((file) => file.replace(/\.(js|mjs|cjs)$/, ''))
-			.filter((name) => name !== 'index');
-
-		return new Set(icons);
-	} catch (error) {
-		console.warn(`[icon-manifest] Failed to resolve icon package: ${iconPackage}`, error);
-		return new Set();
-	}
-}
-
 function generateModuleSource(filePaths: string[], iconPackage: string): string {
 	const sourceFiles = filePaths.filter((filePath) => fs.existsSync(filePath));
 
@@ -70,21 +45,11 @@ function generateModuleSource(filePaths: string[], iconPackage: string): string 
 		}
 	}
 
-	const availableIcons = getAvailableIconsForPackage(iconPackage);
-	const hasIconInventory = availableIcons.size > 0;
 	const lines: string[] = [];
 	lines.push('const manifest = {};');
 	let importIndex = 0;
 
 	for (const iconName of [...icons].sort((a, b) => a.localeCompare(b))) {
-		if (hasIconInventory && !availableIcons.has(iconName)) {
-			lines.push(
-				`console.warn('[icon-manifest] Unknown icon: ${escapeString(iconName)}. Checked package: ${escapeString(iconPackage)}');`,
-				`manifest['${escapeString(iconName)}'] = undefined;`
-			);
-			continue;
-		}
-
 		const importName = `icon_${importIndex++}`;
 		lines.push(
 			`import ${importName} from '${escapeString(iconPackage)}/${escapeString(iconName)}';`,

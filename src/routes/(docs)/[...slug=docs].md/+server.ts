@@ -23,7 +23,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 		txt += `\n\n> ${metadata.description}`
 	}
 
-	const body = `${txt}\n\n${docData.markdown.raw}`;
+	const body = `${txt}\n\n${docData.markdown.rawContent}`;
 
 	return new Response(body, {
 		headers: {

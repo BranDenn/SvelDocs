@@ -2,43 +2,58 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { PluginOption } from 'vite';
 import { isMarkdownModulePath, markdownToAst } from './processed-docs/markdown-to-ast';
-import { collectDocEntries } from './processed-docs/collect-doc-entries';
-import docNavigationConfig from '../src/lib/server/docs/navigation/doc-navigation.config';
-import type {
-	DocPrivateAccess,
-	DocNavigationConfig
-} from '../src/lib/server/docs/navigation/define-doc-navigation';
-import type {
-	BuiltDocRecord,
-	DocsManifestData,
-	ManifestNavigationPage
-} from './processed-docs/types';
+import { collectDocEntries, type DocEntry } from './processed-docs/collect-doc-entries';
+import type { DocPrivateAccess } from '../src/lib/server/docs/navigation/define-doc-navigation';
+import type { BuiltDocRecord, DocsManifestData } from './processed-docs/types';
 
 const VIRTUAL_SEARCH_JSON_ID = 'virtual:doc-search-json';
 const RESOLVED_VIRTUAL_SEARCH_JSON_ID = '\0virtual:doc-search-json';
 
-function getMarkdownRecord(): Map<string, string> {
+type DocSearchJsonOptions = {
+	files?: string[];
+};
+
+function normalizeRootPaths(files: string[] | undefined): string[] {
+	const configuredFiles = files?.length ? files : ['content'];
+	return Array.from(new Set(configuredFiles.map((filePath) => path.resolve(process.cwd(), filePath))));
+}
+
+function getMarkdownRecord(rootPaths: string[]): Map<string, string> {
 	const map = new Map<string, string>();
-	const contentDir = path.resolve(process.cwd(), 'content');
 
-	function walk(dir: string) {
-		if (!fs.existsSync(dir)) return;
+	function addMarkdownFile(filePath: string) {
+		if (!isMarkdownModulePath(filePath)) {
+			return;
+		}
 
-		const entries = fs.readdirSync(dir, { withFileTypes: true });
+		const relativePath = '/' + path.relative(process.cwd(), filePath).replaceAll('\\', '/');
+		map.set(relativePath, fs.readFileSync(filePath, 'utf-8'));
+	}
+
+	function walk(filePath: string) {
+		if (!fs.existsSync(filePath)) return;
+
+		const stat = fs.statSync(filePath);
+		if (stat.isFile()) {
+			addMarkdownFile(filePath);
+			return;
+		}
+
+		const entries = fs.readdirSync(filePath, { withFileTypes: true });
 		for (const entry of entries) {
-			const fullPath = path.join(dir, entry.name);
+			const fullPath = path.join(filePath, entry.name);
 			if (entry.isDirectory()) {
 				walk(fullPath);
-			} else if (isMarkdownModulePath(entry.name)) {
-				const relativePath =
-					'/content/' +
-					path.relative(path.join(process.cwd(), 'content'), fullPath).replaceAll('\\', '/');
-				map.set(relativePath, fs.readFileSync(fullPath, 'utf-8'));
+			} else {
+				addMarkdownFile(fullPath);
 			}
 		}
 	}
 
-	walk(contentDir);
+	for (const rootPath of rootPaths) {
+		walk(rootPath);
+	}
+
 	return map;
 }
 
@@ -53,24 +68,6 @@ function normalizeRoleList(value: unknown): string[] {
 		.filter(Boolean);
 
 	return Array.from(new Set(normalizedRoles));
-}
-
-function normalizeSearchKeywords(value: unknown): string[] {
-	if (Array.isArray(value)) {
-		return value
-			.filter((item): item is string => typeof item === 'string')
-			.map((item) => item.trim())
-			.filter(Boolean);
-	}
-
-	if (typeof value === 'string') {
-		return value
-			.split(',')
-			.map((item) => item.trim())
-			.filter(Boolean);
-	}
-
-	return [];
 }
 
 function resolveMetadataAccess(metadata: Record<string, unknown>): DocPrivateAccess | undefined {
@@ -91,107 +88,29 @@ function resolveMetadataAccess(metadata: Record<string, unknown>): DocPrivateAcc
 	return Boolean(metadata.private);
 }
 
-function applyPrevNextAcrossAllPages<T extends { href: string; prev?: string; next?: string }>(
-	pages: T[]
-) {
-	for (let i = 0; i < pages.length; i++) {
-		pages[i].prev = i > 0 ? pages[i - 1]?.href : undefined;
-		pages[i].next = i < pages.length - 1 ? pages[i + 1]?.href : undefined;
-	}
-}
-
-function applyPrevNextWithinTabs<
-	T extends { href: string; tabId?: number; prev?: string; next?: string }
->(pages: T[], pagesByTab: Map<number | string, number[]>) {
-	for (const indexes of pagesByTab.values()) {
-		for (let i = 0; i < indexes.length; i++) {
-			const current = indexes[i];
-			const prev = indexes[i - 1];
-			const next = indexes[i + 1];
-			pages[current].prev = prev === undefined ? undefined : pages[prev]?.href;
-			pages[current].next = next === undefined ? undefined : pages[next]?.href;
-		}
-	}
-}
-
-function applyDocPrevNext<T extends { href: string; tabId?: number; prev?: string; next?: string }>(
-	pages: T[]
-) {
-	const config = docNavigationConfig as DocNavigationConfig;
-	const tabNextPrevEnabled = 'tabs' in config && config.tabNextPrev === true;
-
-	if (tabNextPrevEnabled) {
-		applyPrevNextAcrossAllPages(pages);
-		return;
-	}
-
-	const pagesByTab = new Map<number | string, number[]>();
-
-	for (let index = 0; index < pages.length; index++) {
-		const tabId = pages[index].tabId ?? '__default';
-		const indexes = pagesByTab.get(tabId);
-		if (indexes) {
-			indexes.push(index);
-		} else {
-			pagesByTab.set(tabId, [index]);
-		}
-	}
-
-	applyPrevNextWithinTabs(pages, pagesByTab);
-}
-
-function getOrderedNavigationPages(manifest: DocsManifestData): ManifestNavigationPage[] {
-	return Object.values(manifest.navigation.pages);
-}
-
 function buildDocRecord(
-	entry: {
-		slug: string;
-		filepath: string;
-		title: string;
-		icon?: string;
-		private: DocPrivateAccess | false;
-	},
+	entry: DocEntry,
 	raw: string
 ): Promise<BuiltDocRecord> {
 	return markdownToAst(raw).then((markdown) => {
-		const metadata = markdown.metadata ?? {};
-		const metadataDescription =
-			typeof metadata.description === 'string' ? metadata.description.trim() : '';
-		const content = typeof markdown.content === 'string' ? markdown.content.trim() : '';
-		const description = [metadataDescription, content].filter(Boolean).join(' ');
-		const keywords = normalizeSearchKeywords(metadata.keywords);
-		const metadataIcon = typeof metadata.icon === 'string' ? metadata.icon : undefined;
-		const icon = entry.icon ?? metadataIcon;
-		const metadataAccess = resolveMetadataAccess(markdown.metadata);
-		const privateAccess = metadataAccess ?? entry.private;
-		const metadataTitle = typeof metadata.title === 'string' ? metadata.title.trim() : '';
-		const hasDistinctMetadataTitle =
-			metadataTitle.length > 0 && metadataTitle.toLowerCase() !== entry.title.toLowerCase();
-		const title = hasDistinctMetadataTitle ? `${entry.title} (${metadataTitle})` : entry.title;
+		const metadata = markdown.metadata;
 
 		return {
 			slug: entry.slug,
 			filepath: entry.filepath,
-			title,
-			private: privateAccess,
-			markdown,
-			search: {
-				href: `/${entry.slug}`,
-				title,
-				description,
-				...(keywords.length ? { keywords } : {}),
-				...(icon ? { icon } : {})
-			}
+			title: metadata.title ? `${entry.title} (${metadata.title})` : entry.title,
+			private: resolveMetadataAccess(markdown.metadata) ?? entry.private,
+			icon: entry.icon ?? metadata.icon,
+			markdown
 		};
 	});
 }
 
 async function createDocsBySlug(
-	docs: ReturnType<typeof collectDocEntries>['docs'],
+	docs: DocEntry[],
 	rawMarkdownByPath: Map<string, string>
 ): Promise<Map<string, BuiltDocRecord>> {
-	const docsBySlug = new Map<string, BuiltDocRecord>();
+	const pageData = new Map<string, BuiltDocRecord>();
 
 	for (const entry of docs) {
 		const raw = rawMarkdownByPath.get(entry.filepath);
@@ -199,33 +118,35 @@ async function createDocsBySlug(
 			continue;
 		}
 
-		docsBySlug.set(entry.slug, await buildDocRecord(entry, raw));
+		pageData.set(entry.slug, await buildDocRecord(entry, raw));
 	}
 
-	return docsBySlug;
+	return pageData;
 }
+
 
 function applyNavigationMetadata(manifest: DocsManifestData) {
-	const pages = getOrderedNavigationPages(manifest);
-	applyDocPrevNext(pages);
-
-	for (const page of pages) {
-		const doc = manifest.getBySlug.get(page.slug);
-		if (doc?.search.icon && !page.icon) {
-			page.icon = doc.search.icon;
+	for (const page of Object.values(manifest.navigation.pages)) {
+		const doc = manifest.pageData.get(page.slug);
+		if (doc?.icon && !page.icon) {
+			manifest.navigation.pages[page.href] = {
+				...page,
+				icon: doc.icon
+			};
 		}
-
-		manifest.navigation.pages[page.href] = page;
 	}
 }
 
-async function generateSearchData(): Promise<DocsManifestData> {
-	const rawMarkdownByPath = getMarkdownRecord();
+async function generateSearchData(rootPaths: string[]): Promise<DocsManifestData> {
+	// get all markdown files in rootPaths
+	const rawMarkdownByPath = getMarkdownRecord(rootPaths);
+
+	
 	const collectedEntries = collectDocEntries(Array.from(rawMarkdownByPath.keys()));
-	const getBySlug = await createDocsBySlug(collectedEntries.docs, rawMarkdownByPath);
+	const pageData = await createDocsBySlug(collectedEntries.docs, rawMarkdownByPath);
 	const manifest: DocsManifestData = {
 		navigation: collectedEntries.navigation,
-		getBySlug
+		pageData
 	};
 
 	applyNavigationMetadata(manifest);
@@ -233,8 +154,9 @@ async function generateSearchData(): Promise<DocsManifestData> {
 	return manifest;
 }
 
-export function docSearchJson(): PluginOption {
+export function docSearchJson(options: DocSearchJsonOptions): PluginOption {
 	let searchData: DocsManifestData | null = null;
+	const rootPaths = normalizeRootPaths(options.files);
 
 	return {
 		name: 'vite-plugin-doc-search-json',
@@ -248,18 +170,22 @@ export function docSearchJson(): PluginOption {
 				return null;
 			}
 
-			searchData ??= await generateSearchData();
+			searchData ??= await generateSearchData(rootPaths);
 
-			const { navigation, getBySlug } = searchData;
-			return `export default { navigation: ${JSON.stringify(navigation)}, getBySlug: new Map(${JSON.stringify(Array.from(getBySlug.entries()))}) };`;
+			const { navigation, pageData } = searchData;
+			return `export default { navigation: ${JSON.stringify(navigation)}, pageData: new Map(${JSON.stringify(Array.from(pageData.entries()))}) };`;
 		},
 		handleHotUpdate(ctx) {
 			const absoluteFilePath = path.resolve(ctx.file);
-			const contentPath = path.resolve(process.cwd(), 'content');
+			const isWithinConfiguredPath = rootPaths.some((rootPath) => {
+				if (absoluteFilePath === rootPath) {
+					return true;
+				}
 
-			const isContentFile =
-				absoluteFilePath.startsWith(contentPath + path.sep) &&
-				/\.(md|mdx)$/i.test(absoluteFilePath);
+				return absoluteFilePath.startsWith(rootPath + path.sep);
+			});
+
+			const isContentFile = isWithinConfiguredPath && isMarkdownModulePath(absoluteFilePath);
 
 			if (!isContentFile) {
 				return;

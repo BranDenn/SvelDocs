@@ -29,14 +29,14 @@ export type BuiltDocRecord = {
 	slug: string;
 	filepath: string;
 	title: string;
-	private: DocPrivateAccess | false;
+	private: DocPrivateAccess;
+	icon?: string;
 	markdown: MarkdownAstResult;
-	search: DocSearchItem;
 };
 
 export type DocsManifestData = {
 	navigation: DocsNavigationMaps;
-	getBySlug: Map<string, BuiltDocRecord>;
+	pageData: Map<string, BuiltDocRecord>;
 };
 
 export type DocLayoutData = {

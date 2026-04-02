@@ -12,7 +12,7 @@ export default defineConfig({
 			iconPackage: '@lucide/svelte/icons'
 		}),
 		mdxComponentManifest(),
-		docSearchJson(),
+		docSearchJson({ files: ['content'] }),
 		tailwindcss(),
 		sveltekit()
 	]

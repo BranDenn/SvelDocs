@@ -1,4 +1,5 @@
 import matter from 'gray-matter';
+import type { Root } from 'hast';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
@@ -12,7 +13,6 @@ import {
 	stripMdxEsmNodes
 } from '../../src/lib/markdown/mdx-import-utils';
 
-type RehypeNode = { type: string; children?: RehypeNode[]; [key: string]: unknown };
 type MdastNode = { type?: string; value?: string; children?: MdastNode[]; [key: string]: unknown };
 
 const MDX_PASS_THROUGH = ['mdxJsxFlowElement', 'mdxJsxTextElement'];
@@ -74,13 +74,16 @@ export type MarkdownMetadata = {
 	description?: string;
 	keywords?: string[] | string;
 	icon?: string;
+	mdxComponentAliases?: Record<string, string[]>;
+	mdxComponentImports?: Record<string, string>;
+	[key: string]: unknown;
 };
 
 export type MarkdownAstResult = {
-	raw: string;
-	content: string;
+	rawContent: string;
+	searchContent: string;
 	metadata: MarkdownMetadata;
-	ast: unknown;
+	ast: Root;
 };
 
 const markdownExtensions = markdownConfig.extensions.map((ext) => ext.toLowerCase());
@@ -129,7 +132,7 @@ export async function markdownToAst(rawMarkdown: string): Promise<MarkdownAstRes
 	}
 
 	const tree = await processor.run(markdownTree);
-	const ast = tree as RehypeNode;
+	const ast = tree as Root;
 
 	const enrichedMetadata = {
 		...metadata,
@@ -157,8 +160,8 @@ export async function markdownToAst(rawMarkdown: string): Promise<MarkdownAstRes
 	}
 
 	return {
-		raw: remarkTransformed,
-		content: extractTextFromAst(ast),
+		rawContent: remarkTransformed,
+		searchContent: extractTextFromAst(ast),
 		metadata: enrichedMetadata,
 		ast
 	};
