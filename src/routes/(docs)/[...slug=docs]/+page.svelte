@@ -7,8 +7,8 @@
 	import * as DropdownMenu from '$ui/dropdown-menu';
 	import { page } from '$app/state';
 	import { Link } from '$ui/link';
-	import BlueprintRenderer from '$lib/markdown/BlueprintRenderer.svelte';
-	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
+	import BlueprintRenderer from '$lib/markdown/renderer';
+	import { getDocNavigationContext } from '$lib/docs/client/doc-navigation-context.svelte';
 	import type { Component } from 'svelte';
 	import mdxComponentManifest from 'virtual:mdx-component-manifest';
 	import GridPattern from '$components/docs/patterns/grid-pattern.svelte';
@@ -26,10 +26,7 @@
 		tocEntries?: Array<{ id: string; text: string; level: number }>;
 	};
 
-	
-
 	let { data }: { data: PageData } = $props();
-
 
 	const componentImports = $derived(data.imports ?? {});
 

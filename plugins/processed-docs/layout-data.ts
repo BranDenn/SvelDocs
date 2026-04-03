@@ -2,9 +2,9 @@ import type {
 	NavigationGroup,
 	NavigationPage,
 	NavigationTab
-} from '../../src/lib/doc-navigation-context.svelte';
-import docNavigationConfig from '../../src/lib/server/docs/navigation/doc-navigation.config';
-import type { DocNavigationConfig } from '../../src/lib/server/docs/navigation/define-doc-navigation';
+} from '../../src/lib/docs/client/doc-navigation-context.svelte';
+import docNavigationConfig from '../../src/lib/docs/server/navigation/doc-navigation.config';
+import type { DocNavigationConfig } from '../../src/lib/docs/server/navigation/define-doc-navigation';
 import type {
 	BuiltDocRecord,
 	DocLayoutData,

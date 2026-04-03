@@ -6,7 +6,7 @@
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
 	import { MobileSidebar } from '$components/docs/sidebar';
-	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
+	import { getDocNavigationContext } from '$lib/docs/client/doc-navigation-context.svelte';
 	import ThemeSwitch from './theme-switch.svelte';
 	import Button from '$ui/button';
 	import * as Sheet from '$ui/sheet';

@@ -1,4 +1,4 @@
-import type { DocPrivateAccess } from '$lib/server/docs/navigation/define-doc-navigation';
+import type { DocPrivateAccess } from '$lib/docs/server/navigation/define-doc-navigation';
 
 export function canAccessDoc(role: string | boolean, access?: DocPrivateAccess): boolean {
 	if (access === undefined || access === false) {

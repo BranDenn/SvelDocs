@@ -3,7 +3,7 @@
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import siteConfig from '$lib/configuration/site.config';
 	import Button from '$ui/button';
-	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
+	import { getDocNavigationContext } from '$lib/docs/client/doc-navigation-context.svelte';
 
 	const docNavigation = getDocNavigationContext();
 </script>

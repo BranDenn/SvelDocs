@@ -3,6 +3,7 @@ import searchJsonData from 'virtual:doc-search-json';
 import { buildDocLayoutData } from '../../../../plugins/processed-docs/layout-data';
 import type { BuiltDocRecord, ManifestDocPage } from '../../../../plugins/processed-docs/types';
 import type { TOCSeedEntry } from '$ui/table-of-contents';
+import type { EntryGenerator } from '../../../routes/(docs)/[...slug=docs]/$types';
 
 function normalizePathname(pathname: string | null | undefined): string {
 	const raw = (pathname ?? '').trim();
@@ -129,7 +130,7 @@ export function getPublicDocEntries() {
 	return filtered;
 }
 
-export const entries = () => {
+export const entries: EntryGenerator = () => {
 	return getPublicDocEntries().map((doc) => ({ slug: doc.slug }));
 };
 

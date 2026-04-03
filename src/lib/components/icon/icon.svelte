@@ -21,6 +21,6 @@
 
 {#if Icon}
 	<Icon class={cn('size-4 shrink-0', className)} {...restProps} />
-{:else}
-	<span class={cn('size-4 shrink-0', className)}>{name}</span>
+{:else if /^\p{RGI_Emoji}$/v.test(name)}
+	{name}
 {/if}

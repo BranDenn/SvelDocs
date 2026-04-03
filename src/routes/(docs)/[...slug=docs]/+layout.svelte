@@ -5,7 +5,7 @@
 	import {
 		setDocNavigationContext,
 		type DocNavigationParams
-	} from '$lib/doc-navigation-context.svelte';
+	} from '$lib/docs/client/doc-navigation-context.svelte';
 	import { createSharedValueContext } from '$ui/shared-value-context.svelte';
 	import { onMount, type Snippet } from 'svelte';
 	import type { Pathname } from '$app/types';

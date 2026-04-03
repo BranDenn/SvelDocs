@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { getPublicDocEntries } from '$lib/server/docs/docs-data';
+import { getPublicDocEntries } from '$lib/docs/server/docs-data';
 import siteConfig from '$lib/configuration/site.config';
 
 export const prerender = true;
@@ -10,11 +10,7 @@ export const GET: RequestHandler = () => {
 	const publicDocs = getPublicDocEntries().map((entry) => {
 		let txt = `- [${entry.title}](${baseUrl}${entry.href}.md)`;
 		const metadata = entry.markdown.metadata;
-		if (
-			'description' in metadata &&
-			typeof metadata.description === 'string' &&
-			metadata.description.trim() !== ''
-		) {
+		if (metadata.description) {
 			txt += `: ${metadata.description}`;
 		}
 		return txt;

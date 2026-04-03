@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { getPublicDocEntries } from '$lib/server/docs/docs-data';
+import { getPublicDocEntries } from '$lib/docs/server/docs-data';
 import siteConfig from '$lib/configuration/site.config';
 
 export const prerender = true;

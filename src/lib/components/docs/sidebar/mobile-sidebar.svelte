@@ -5,7 +5,7 @@
 		type GroupedPages,
 		type NavigationPage,
 		type NavigationTab
-	} from '$lib/doc-navigation-context.svelte';
+	} from '$lib/docs/client/doc-navigation-context.svelte';
 	import * as Sheet from '$ui/sheet';
 	import * as Select from '$ui/select';
 	import * as Sidebar from '$ui/sidebar';

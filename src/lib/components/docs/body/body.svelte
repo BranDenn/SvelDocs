@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NavigationSidebar, TOCSidebar } from '$components/docs/sidebar';
-	import { getDocNavigationContext } from '$lib/doc-navigation-context.svelte';
+	import { getDocNavigationContext } from '$lib/docs/client/doc-navigation-context.svelte';
 	import * as TOC from '$ui/table-of-contents';
 	import * as Collapsible from '$ui/collapsible';
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';

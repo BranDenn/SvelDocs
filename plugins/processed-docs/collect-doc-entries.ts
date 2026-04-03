@@ -1,21 +1,37 @@
-import config from '../../src/lib/server/docs/navigation/doc-navigation.config';
-import type { DocPrivateAccess, DocGroup, DocPage, DocTab, PageItems } from '../../src/lib/server/docs/navigation/define-doc-navigation';
-import type { NavigationGroup, NavigationTab } from '../../src/lib/doc-navigation-context.svelte';
+import config from '../../src/lib/docs/server/navigation/doc-navigation.config';
+import path from 'node:path';
+import type {
+	DocPrivateAccess,
+	DocGroup,
+	DocPage,
+	DocTab,
+	PageItems
+} from '../../src/lib/docs/server/navigation/define-doc-navigation';
+import type {
+	NavigationGroup,
+	NavigationTab
+} from '../../src/lib/docs/client/doc-navigation-context.svelte';
 import type { ManifestNavigationPage } from './types';
 
-type RawDocModulePaths = readonly string[];
 type NavigationTabMapItem = Omit<NavigationTab, 'id'>;
 type NavigationGroupMapItem = Omit<NavigationGroup, 'id'>;
 
 export class DocEntries {
+	private readonly rawMarkdownByPath: Record<string, string>;
+	private readonly markdownFolderPath: string;
+
+	// hold tabs, groups, and pages in separate maps for easy lookup and to maintain insertion order
 	public readonly tabs = new Map<number, NavigationTabMapItem>();
 	public readonly groups = new Map<number, NavigationGroupMapItem>();
 	public readonly pages = new Map<string, ManifestNavigationPage>();
 
+	// counters to generate unique IDs for tabs and groups
 	private nextTabId = 0;
 	private nextGroupId = 0;
 
-	public constructor(private readonly rawDocModulePaths: RawDocModulePaths) {
+	public constructor(rawMarkdownByPath: Record<string, string>, markdownFolderPath: string) {
+		this.rawMarkdownByPath = rawMarkdownByPath;
+		this.markdownFolderPath = markdownFolderPath;
 		this.collectTabs();
 		this.collectGroups();
 		this.collectPages();
@@ -32,6 +48,18 @@ export class DocEntries {
 
 	private trimSlashes(value: string | null | undefined): string {
 		return (value ?? '').replaceAll(/^\/+|\/+$/g, '');
+	}
+
+	private normalizePathInput(value: string | null | undefined): string {
+		const raw = (value ?? '').trim();
+		if (!raw) return '';
+
+		const normalized = path.normalize(raw);
+		if (path.isAbsolute(normalized)) {
+			return normalized.replaceAll('\\', '/');
+		}
+
+		return this.trimSlashes(normalized.replaceAll('\\', '/'));
 	}
 
 	private normalizeRouteSlug(slugParam: string | null | undefined): string {
@@ -68,14 +96,37 @@ export class DocEntries {
 		const segments: string[] = [];
 
 		if (tab) {
-			segments.push(this.trimSlashes(tab.folderPath ?? this.normalizeSegment(tab.title)));
+			segments.push(this.normalizePathInput(tab.folderPath ?? this.normalizeSegment(tab.title)));
 		}
 
 		if (group) {
-			segments.push(this.trimSlashes(group.folderPath ?? this.normalizeSegment(group.title)));
+			segments.push(
+				this.normalizePathInput(group.folderPath ?? this.normalizeSegment(group.title))
+			);
 		}
 
 		return segments.filter(Boolean);
+	}
+
+	private resolveFilePath(fileName: string, folderSegments: string[]): string {
+		const normalizedFileName = this.normalizePathInput(fileName);
+		if (path.isAbsolute(normalizedFileName)) {
+			return normalizedFileName;
+		}
+
+		const hasPathSegments = normalizedFileName.includes('/');
+
+		if (!hasPathSegments) {
+			return path.resolve(this.markdownFolderPath, ...folderSegments, normalizedFileName);
+		}
+
+		const markdownRoot = path.basename(this.markdownFolderPath);
+		const prefixedRoot = `${markdownRoot}/`;
+		const relativeFromRoot = normalizedFileName.startsWith(prefixedRoot)
+			? normalizedFileName.slice(prefixedRoot.length)
+			: normalizedFileName;
+
+		return path.resolve(this.markdownFolderPath, relativeFromRoot);
 	}
 
 	private formatFileNameAsTitle(fileName: string): string {
@@ -85,7 +136,11 @@ export class DocEntries {
 			.replaceAll(/\s+(.)/g, (_, char) => ` ${char.toUpperCase()}`);
 	}
 
-	private resolvePageAccess(page: DocPage, group?: DocGroup, tab?: DocTab): DocPrivateAccess | false {
+	private resolvePageAccess(
+		page: DocPage,
+		group?: DocGroup,
+		tab?: DocTab
+	): DocPrivateAccess | false {
 		if (page.private !== undefined) {
 			return page.private;
 		}
@@ -103,10 +158,12 @@ export class DocEntries {
 
 	private createTab(tab: DocTab): number {
 		const tabId = this.nextTabId++;
+		const mode: NavigationTabMapItem['mode'] = 'groups' in tab ? 'group' : 'page';
+
 		this.tabs.set(tabId, {
 			title: tab.title,
 			href: '',
-			mode: 'page',
+			mode,
 			...(tab.icon ? { icon: tab.icon } : {})
 		});
 
@@ -125,12 +182,6 @@ export class DocEntries {
 			groupData.tabId = tabId;
 		}
 		this.groups.set(groupId, groupData);
-		if (tabId !== undefined) {
-			const tab = this.tabs.get(tabId);
-			if (tab) {
-				tab.mode = 'group';
-			}
-		}
 
 		return groupId;
 	}
@@ -140,10 +191,19 @@ export class DocEntries {
 		options: { tab?: DocTab; group?: DocGroup; tabId?: number; groupId?: number } = {}
 	) {
 		const { tab, group, tabId, groupId } = options;
+
+		// get the slug
 		const routeSlug = this.resolveRouteSlug(page, tab, group);
 		const folderSegments = this.resolveFolderSegments(tab, group);
-		const fileName = page.fileName?.trim() ? page.fileName : `${this.normalizeSegment(page.title)}.md`;
-		const filepath = `/content/${[...folderSegments, fileName].join('/')}`;
+
+		// if filename was defined, then use it, otherwise generate from title
+		const fileName = page.fileName?.trim()
+			? page.fileName
+			: `${this.normalizeSegment(page.title)}.md`;
+
+		// get the whole file path by combining markdown folder, optional tab/group folders, and filename
+		const filepath = this.resolveFilePath(fileName, folderSegments);
+
 		const privateAccess = this.resolvePageAccess(page, group, tab);
 		const href = `/${routeSlug}`;
 
@@ -173,7 +233,9 @@ export class DocEntries {
 
 	private expandLoadRest(explicitPages: DocPage[], tab?: DocTab, group?: DocGroup): DocPage[] {
 		const explicitFileNames = new Set(
-			explicitPages.map((page) => this.normalizeFileName(page).split('/').pop()?.toLowerCase() ?? '')
+			explicitPages.map(
+				(page) => this.normalizeFileName(page).split('/').pop()?.toLowerCase() ?? ''
+			)
 		);
 
 		const matchingFiles = new Map<string, string>();
@@ -183,7 +245,7 @@ export class DocEntries {
 			return [];
 		}
 
-		for (const filePath of this.rawDocModulePaths) {
+		for (const filePath of Object.keys(this.rawMarkdownByPath)) {
 			const pathCheck = pathSegments.every((segment) => filePath.includes(segment));
 			if (!pathCheck) continue;
 
@@ -277,7 +339,7 @@ export class DocEntries {
 	}
 
 	private collectTabs() {
-        // if there are no explicit tabs, return early
+		// if there are no explicit tabs, return early
 		if (!('tabs' in config)) return;
 
 		const tabs = !config.tabs || config.tabs === 'auto' ? [] : config.tabs;
@@ -287,7 +349,7 @@ export class DocEntries {
 	}
 
 	private collectGroups() {
-        // if there are no explicit groups, return early
+		// if there are no explicit groups, return early
 		if (!('groups' in config) || !config.groups || config.groups === 'auto') return;
 
 		for (const group of config.groups) {
@@ -296,11 +358,11 @@ export class DocEntries {
 	}
 
 	private collectPages() {
-        // if there are no explicit pages, return early
+		// if there are no explicit pages, return early
 		if (!('pages' in config) || !config.pages || config.pages === 'auto') return;
 
 		for (const page of config.pages) {
-			this.addEntry(page, {});
+			this.addEntry(page);
 		}
 	}
 }

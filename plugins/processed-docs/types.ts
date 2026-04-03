@@ -1,10 +1,10 @@
-import type { DocPrivateAccess } from '../../src/lib/server/docs/navigation/define-doc-navigation';
+import type { DocPrivateAccess } from '../../src/lib/docs/server/navigation/define-doc-navigation';
 import type {
 	DocNavigationParams,
 	NavigationGroup,
 	NavigationPage,
 	NavigationTab
-} from '../../src/lib/doc-navigation-context.svelte';
+} from '../../src/lib/docs/client/doc-navigation-context.svelte';
 import type { MarkdownAstResult } from './markdown-to-ast.js';
 
 export type DocSearchItem = {

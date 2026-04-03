@@ -4,16 +4,18 @@ import { defineConfig } from 'vite';
 import { iconManifest } from './plugins/vite-icon-manifest';
 import { mdxComponentManifest } from './plugins/vite-mdx-component-manifest';
 import { docSearchJson } from './plugins/vite-search-json';
+import { protectServerAssets } from './plugins/vite-server-only';
 
 export default defineConfig({
 	plugins: [
 		iconManifest({
-			files: ['src/lib/server/docs/navigation/doc-navigation.config.ts'],
+			files: ['src/lib/docs/server/navigation/doc-navigation.config.ts'],
 			iconPackage: '@lucide/svelte/icons'
 		}),
 		mdxComponentManifest(),
-		docSearchJson({ files: ['content'] }),
+		docSearchJson({ markdownFolderPath: 'content' }),
 		tailwindcss(),
-		sveltekit()
+		sveltekit(),
+		protectServerAssets({ folders: ['src/lib/docs/server'], files: [] })
 	]
 });

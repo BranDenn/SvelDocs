@@ -10,10 +10,16 @@ type IconManifestOptions = {
 	iconPackage: string;
 };
 
+const EMOJI_PATTERN = /[\p{Extended_Pictographic}\p{Regional_Indicator}\u{FE0F}\u{20E3}]/u;
+
 function escapeString(value: string): string {
 	const escapedBackslash = String.raw`\\`;
 	const escapedSingleQuote = String.raw`\'`;
 	return value.replaceAll('\\', escapedBackslash).replaceAll("'", escapedSingleQuote);
+}
+
+function containsEmoji(value: string): boolean {
+	return EMOJI_PATTERN.test(value);
 }
 
 function extractIcons(source: string): string[] {
@@ -22,7 +28,7 @@ function extractIcons(source: string): string[] {
 
 	for (const match of matches) {
 		const iconName = match[1]?.trim();
-		if (iconName) {
+		if (iconName && !containsEmoji(iconName)) {
 			icons.add(iconName);
 		}
 	}
@@ -61,6 +67,10 @@ function generateModuleSource(filePaths: string[], iconPackage: string): string 
 	return lines.join('\n');
 }
 
+function getMissingFilePaths(filePaths: string[]): string[] {
+	return filePaths.filter((filePath) => !fs.existsSync(filePath));
+}
+
 export function iconManifest(options: IconManifestOptions): PluginOption {
 	const absoluteFilePaths = options.files.map((filePath) => path.resolve(process.cwd(), filePath));
 	const iconPackage = options.iconPackage.trim();
@@ -78,6 +88,13 @@ export function iconManifest(options: IconManifestOptions): PluginOption {
 		load(id) {
 			if (id !== RESOLVED_VIRTUAL_ICON_MANIFEST_ID) {
 				return null;
+			}
+
+			const missingFilePaths = getMissingFilePaths(absoluteFilePaths);
+			if (missingFilePaths.length > 0) {
+				this.error(
+					`The following icon lookup file${missingFilePaths.length === 1 ? ' is' : 's are'} missing: ${missingFilePaths.join(', ')}`
+				);
 			}
 
 			return generateModuleSource(absoluteFilePaths, iconPackage);

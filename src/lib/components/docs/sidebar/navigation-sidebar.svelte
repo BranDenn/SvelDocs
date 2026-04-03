@@ -5,7 +5,7 @@
 		getDocNavigationContext,
 		type GroupedPages,
 		type NavigationPage
-	} from '$lib/doc-navigation-context.svelte';
+	} from '$lib/docs/client/doc-navigation-context.svelte';
 	import Icon from '$components/icon';
 
 	const docNavigation = getDocNavigationContext();
