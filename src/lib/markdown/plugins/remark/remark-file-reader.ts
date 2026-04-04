@@ -5,9 +5,15 @@ import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 import type { VFile } from 'vfile';
 import type { Transformer } from 'unified';
+import { toPosixPath } from '../../../../../plugins/processed-docs/utils';
 
 type AttrValue = string | boolean;
 type AttrMap = Record<string, AttrValue>;
+const REGEX_LITERAL_REGEX = /^\/(.*)\/([a-z]*)$/i;
+
+function escapeCodeMetaValue(value: string): string {
+	return value.replaceAll('"', String.raw`\"`);
+}
 
 /**
  * Remark plugin that replaces a <FileReader file="..." /> MDX/HTML tag
@@ -116,7 +122,7 @@ function resolveFile(fileRef: string): string | null {
 		if (path.isAbsolute(fileRef)) {
 			return fs.existsSync(fileRef) ? fileRef : null;
 		}
-		const repoResolved = path.resolve(process.cwd(), fileRef);
+		const repoResolved = toPosixPath(path.resolve(process.cwd(), fileRef));
 		return fs.existsSync(repoResolved) ? repoResolved : null;
 	} catch (err) {
 		// avoid throwing in the transformer — report and continue
@@ -132,6 +138,82 @@ function trimTrailingBlankLines(content: string): string {
 	return s;
 }
 
+function parseRegexSourceAndFlags(
+	rawRegex: string,
+	rawFlags: AttrValue | undefined,
+	file?: VFile
+): { source: string; flags: string } | null {
+	let source = rawRegex.trim();
+	let flags = String(rawFlags ?? '').trim();
+
+	const literalMatch = REGEX_LITERAL_REGEX.exec(source);
+	if (literalMatch) {
+		source = literalMatch[1] ?? '';
+		if (!flags) flags = literalMatch[2] ?? '';
+	}
+
+	flags = Array.from(new Set(flags.split(''))).join('');
+
+	if (!source) {
+		if (file) file.message("FileReader: 'regex' pattern is empty");
+		return null;
+	}
+
+	if (!/^[dgimsuvy]*$/i.test(flags)) {
+		if (file) file.message(`FileReader: invalid regexFlags '${flags}'`);
+		return null;
+	}
+
+	return { source, flags };
+}
+
+function extractByRegex(content: string, attrs: AttrMap, file?: VFile): string | null {
+	const rawRegex = String(attrs.regex ?? '').trim();
+	if (!rawRegex) {
+		if (file) file.message("FileReader: 'regex' is empty");
+		return null;
+	}
+
+	const parsed = parseRegexSourceAndFlags(rawRegex, attrs.regexFlags, file);
+	if (!parsed) return null;
+
+	try {
+		const regex = new RegExp(parsed.source, parsed.flags);
+		const match = regex.exec(content);
+		if (!match) {
+			if (file)
+				file.message(
+					`FileReader: regex did not match any content: /${parsed.source}/${parsed.flags}`
+				);
+			return null;
+		}
+
+		if (match.length > 1 && typeof match[1] === 'string') {
+			return match[1];
+		}
+
+		return match[0];
+	} catch (err) {
+		if (file)
+			file.message(
+				`FileReader: invalid regex /${parsed.source}/${parsed.flags}: ${String((err as Error).message ?? err)}`
+			);
+		return null;
+	}
+}
+
+function extractContent(content: string, attrs: AttrMap, file?: VFile): string | null {
+	let extracted = content;
+
+	if (attrs.regex !== undefined) {
+		const byRegex = extractByRegex(extracted, attrs, file);
+		if (byRegex === null) return null;
+		extracted = byRegex;
+	}
+
+	return extracted;
+}
+
 function buildMeta(attrs: AttrMap, fileRef: string): string | undefined {
 	const parts: string[] = [];
 
@@ -144,10 +226,10 @@ function buildMeta(attrs: AttrMap, fileRef: string): string | undefined {
 
 	const rawTitle = attrs.title ?? fileRef;
 	const titleStr = String(rawTitle ?? '').trim() || String(fileRef);
-	if (titleStr) parts.push(`title="${titleStr.replaceAll('"', '\\"')}"`);
+	if (titleStr) parts.push(`title="${escapeCodeMetaValue(titleStr)}"`);
 
 	const caption = attrs.caption ?? '';
-	if (caption) parts.push(`caption="${String(caption).replaceAll('"', '\\"')}"`);
+	if (caption) parts.push(`caption="${escapeCodeMetaValue(String(caption))}"`);
 
 	return parts.length ? parts.join(' ') : undefined;
 }
@@ -197,8 +279,10 @@ function processAttrsAndReplace(
 
 	const content = readAndTrimFile(resolved, file, fileRef);
 	if (content === null) return;
+	const extracted = extractContent(content, attrs, file);
+	if (extracted === null) return;
 
-	const codeNode = createCodeNode(fileRef, content, attrs);
+	const codeNode = createCodeNode(fileRef, trimTrailingBlankLines(extracted), attrs);
 	replaceWithCode(parent, index, codeNode);
 	return index + 1;
 }

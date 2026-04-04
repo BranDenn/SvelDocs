@@ -4,6 +4,7 @@ import type { PluginOption } from 'vite';
 import { getMarkdownData } from './processed-docs/markdown-to-ast.js';
 import { DocEntries } from './processed-docs/collect-doc-entries.js';
 import markdownConfig from '../src/lib/markdown/configuration/markdown.config.js';
+import { toPosixPath } from './processed-docs/utils.js';
 import type { DocPrivateAccess } from '../src/lib/docs/server/navigation/define-doc-navigation.js';
 import type {
 	BuiltDocRecord,
@@ -36,7 +37,7 @@ function getMarkdownRecord(rootPath: string): Record<string, string> {
 		}
 
 		const fileContent = fs.readFileSync(filePath, 'utf-8');
-		map.set(filePath, fileContent);
+		map.set(toPosixPath(filePath), fileContent);
 	}
 
 	function walk(filePath: string) {
@@ -117,7 +118,7 @@ async function createPagesWithDocData(
 	const pages = new Map<string, ManifestDocPage>();
 
 	for (const [href, page] of navigationPages.entries()) {
-		const raw = rawMarkdownByPath[page.filepath];
+		const raw = rawMarkdownByPath[toPosixPath(page.filepath)];
 
 		if (raw === undefined) continue;
 		const docData = await buildDocRecord(page, raw);
@@ -133,12 +134,14 @@ async function createPagesWithDocData(
 }
 
 async function generateSearchData(markdownFolderPath: string): Promise<DocsManifestData> {
+	const normalizedMarkdownFolderPath = toPosixPath(markdownFolderPath);
+
 	// get all markdown files in the configured markdown folder
 	// this is a map of { filepath: fileContent }
 	const rawMarkdownByPath = getMarkdownRecord(markdownFolderPath);
 
 	// get doc entries from config and match with markdown files
-	const docEntries = new DocEntries(rawMarkdownByPath, markdownFolderPath);
+	const docEntries = new DocEntries(rawMarkdownByPath, normalizedMarkdownFolderPath);
 
 	const pages = await createPagesWithDocData(docEntries.pages, rawMarkdownByPath);
 
@@ -154,7 +157,9 @@ async function generateSearchData(markdownFolderPath: string): Promise<DocsManif
 export function docSearchJson(options: DocSearchJsonOptions): PluginOption {
 	let searchData: DocsManifestData | null = null;
 
-	const absoluteMarkdownFolderPath = path.resolve(process.cwd(), options.markdownFolderPath);
+	const absoluteMarkdownFolderPath = toPosixPath(
+		path.resolve(process.cwd(), options.markdownFolderPath)
+	);
 
 	return {
 		name: 'vite-plugin-doc-search-json',
@@ -176,11 +181,10 @@ export function docSearchJson(options: DocSearchJsonOptions): PluginOption {
 			return `export default { tabs: new Map(${tabs}), groups: new Map(${groups}), pages: new Map(${pages}) };`;
 		},
 		handleHotUpdate(ctx) {
-			console.log(ctx.file);
-			const absoluteFilePath = path.resolve(ctx.file);
+			const absoluteFilePath = toPosixPath(path.resolve(ctx.file));
 			const isWithinConfiguredPath =
 				absoluteFilePath === absoluteMarkdownFolderPath ||
-				absoluteFilePath.startsWith(absoluteMarkdownFolderPath + path.sep);
+				absoluteFilePath.startsWith(absoluteMarkdownFolderPath + '/');
 
 			const isContentFile = isWithinConfiguredPath && isMarkdownModulePath(absoluteFilePath);
 

@@ -36,6 +36,7 @@ export type DocNavigationParams = {
 };
 
 export type GroupedPages = {
+	id: number;
 	title: string;
 	icon?: string;
 	showTitle?: boolean;
@@ -171,6 +172,7 @@ export class DocNavigationContext {
 			if (!group) continue;
 
 			groupedPages.push({
+				id: groupId,
 				title: group.title,
 				icon: group.icon,
 				showTitle: group.showTitle,

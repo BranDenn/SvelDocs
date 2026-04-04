@@ -10,12 +10,14 @@
 		children,
 		child,
 		class: className,
+		hasActive = false,
 		...restProps
 	}: {
 		ref?: HTMLElement | null;
 		children?: Snippet;
 		child?: Snippet<[{ props: Record<string, unknown> }]>;
 		class?: string;
+		hasActive?: boolean;
 		[key: string]: unknown;
 	} = $props();
 
@@ -46,6 +48,9 @@
 
 {#if isCollapsible}
 	<CollapsibleTrigger bind:ref {...collapsibleProps}>
+		{#if hasActive}
+			<div class="bg-accent size-1 rounded-full"></div>
+		{/if}
 		{@render children?.()}
 		<ChevronRight
 			class="ml-auto transition-[rotate] group-data-[state=open]/sidebar-group-label:rotate-90"

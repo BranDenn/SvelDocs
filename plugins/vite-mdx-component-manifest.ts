@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { PluginOption } from 'vite';
+import { toPosixPath } from './processed-docs/utils.js';
 
 const VIRTUAL_MDX_COMPONENT_MANIFEST_ID = 'virtual:mdx-component-manifest';
 const RESOLVED_VIRTUAL_MDX_COMPONENT_MANIFEST_ID = '\0virtual:mdx-component-manifest';
@@ -85,7 +86,7 @@ function generateModuleSource(contentRootPath: string): string {
 
 export function mdxComponentManifest(options?: { contentPath?: string }): PluginOption {
 	const contentPath = options?.contentPath ?? 'content';
-	const absoluteContentPath = path.resolve(process.cwd(), contentPath);
+	const absoluteContentPath = toPosixPath(path.resolve(process.cwd(), contentPath));
 
 	return {
 		name: 'vite-plugin-mdx-component-manifest',
@@ -104,9 +105,9 @@ export function mdxComponentManifest(options?: { contentPath?: string }): Plugin
 			return generateModuleSource(absoluteContentPath);
 		},
 		handleHotUpdate(ctx) {
-			const absoluteFilePath = path.resolve(ctx.file);
+			const absoluteFilePath = toPosixPath(path.resolve(ctx.file));
 			const isContentFile =
-				absoluteFilePath.startsWith(absoluteContentPath + path.sep) &&
+				absoluteFilePath.startsWith(absoluteContentPath + '/') &&
 				/\.(md|mdx)$/i.test(absoluteFilePath);
 
 			if (!isContentFile) {

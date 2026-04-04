@@ -26,7 +26,7 @@
 				{#each data as navGroup, index (index)}
 					{#if navGroup.showTitle}
 						<Sidebar.Group collapsible={navGroup.collapsible}>
-							<Sidebar.GroupLabel>
+							<Sidebar.GroupLabel hasActive={navGroup.id === docNavigation.currentGroup?.id}>
 								{#if navGroup.icon}
 									<Icon name={navGroup.icon} />
 								{/if}

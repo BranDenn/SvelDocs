@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { PluginOption } from 'vite';
+import { toPosixPath } from './processed-docs/utils.js';
 
 const VIRTUAL_ICON_MANIFEST_ID = 'virtual:icon-manifest';
 const RESOLVED_VIRTUAL_ICON_MANIFEST_ID = '\0virtual:icon-manifest';
@@ -72,7 +73,9 @@ function getMissingFilePaths(filePaths: string[]): string[] {
 }
 
 export function iconManifest(options: IconManifestOptions): PluginOption {
-	const absoluteFilePaths = options.files.map((filePath) => path.resolve(process.cwd(), filePath));
+	const absoluteFilePaths = options.files.map((filePath) =>
+		toPosixPath(path.resolve(process.cwd(), filePath))
+	);
 	const iconPackage = options.iconPackage.trim();
 	const watchedFiles = new Set(absoluteFilePaths);
 
@@ -100,7 +103,7 @@ export function iconManifest(options: IconManifestOptions): PluginOption {
 			return generateModuleSource(absoluteFilePaths, iconPackage);
 		},
 		handleHotUpdate(ctx) {
-			if (!watchedFiles.has(path.resolve(ctx.file))) {
+			if (!watchedFiles.has(toPosixPath(path.resolve(ctx.file)))) {
 				return;
 			}
 

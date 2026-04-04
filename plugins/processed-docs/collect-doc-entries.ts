@@ -12,6 +12,7 @@ import type {
 	NavigationTab
 } from '../../src/lib/docs/client/doc-navigation-context.svelte';
 import type { ManifestNavigationPage } from './types';
+import { toPosixPath } from './utils';
 
 type NavigationTabMapItem = Omit<NavigationTab, 'id'>;
 type NavigationGroupMapItem = Omit<NavigationGroup, 'id'>;
@@ -117,7 +118,9 @@ export class DocEntries {
 		const hasPathSegments = normalizedFileName.includes('/');
 
 		if (!hasPathSegments) {
-			return path.resolve(this.markdownFolderPath, ...folderSegments, normalizedFileName);
+			return toPosixPath(
+				path.resolve(this.markdownFolderPath, ...folderSegments, normalizedFileName)
+			);
 		}
 
 		const markdownRoot = path.basename(this.markdownFolderPath);
@@ -126,7 +129,7 @@ export class DocEntries {
 			? normalizedFileName.slice(prefixedRoot.length)
 			: normalizedFileName;
 
-		return path.resolve(this.markdownFolderPath, relativeFromRoot);
+		return toPosixPath(path.resolve(this.markdownFolderPath, relativeFromRoot));
 	}
 
 	private formatFileNameAsTitle(fileName: string): string {
@@ -194,6 +197,7 @@ export class DocEntries {
 
 		// get the slug
 		const routeSlug = this.resolveRouteSlug(page, tab, group);
+
 		const folderSegments = this.resolveFolderSegments(tab, group);
 
 		// if filename was defined, then use it, otherwise generate from title

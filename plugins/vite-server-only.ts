@@ -1,6 +1,7 @@
 // scripts/vite-plugin-server-guard.ts
 import type { Plugin } from 'vite';
 import path from 'node:path';
+import { toPosixPath } from './processed-docs/utils.js';
 
 interface GuardOptions {
 	folders?: string[];
@@ -12,14 +13,16 @@ function stripQueryAndHash(id: string): string {
 }
 
 function toAbsolutePath(fileId: string, projectRoot: string): string {
-	return path.isAbsolute(fileId) ? path.normalize(fileId) : path.resolve(projectRoot, fileId);
+	return path.isAbsolute(fileId)
+		? toPosixPath(path.normalize(fileId))
+		: toPosixPath(path.resolve(projectRoot, fileId));
 }
 
 function isServerImporter(importer: string): boolean {
-	const normalized = path.normalize(importer);
+	const normalized = toPosixPath(path.normalize(importer));
 
 	// Allow any module nested in a conventional "server" folder.
-	if (normalized.includes(`${path.sep}server${path.sep}`)) {
+	if (normalized.includes('/server/')) {
 		return true;
 	}
 
@@ -33,9 +36,9 @@ function isServerImporter(importer: string): boolean {
 function isBuildToolImporter(importer: string, projectRoot: string): boolean {
 	const absoluteImporter = toAbsolutePath(importer, projectRoot);
 
-	const pluginsRoot = path.join(projectRoot, 'plugins');
+	const pluginsRoot = toPosixPath(path.join(projectRoot, 'plugins'));
 
-	if (absoluteImporter === pluginsRoot || absoluteImporter.startsWith(pluginsRoot + path.sep)) {
+	if (absoluteImporter === pluginsRoot || absoluteImporter.startsWith(pluginsRoot + '/')) {
 		return true;
 	}
 
@@ -46,12 +49,16 @@ function isBuildToolImporter(importer: string, projectRoot: string): boolean {
  * Vite plugin to strictly enforce server-only folders and specific files in SvelteKit.
  */
 export function protectServerAssets(options: GuardOptions): Plugin {
-	const projectRoot = process.cwd();
-	const srcRoot = path.join(projectRoot, 'src');
+	const projectRoot = toPosixPath(process.cwd());
+	const srcRoot = toPosixPath(path.join(projectRoot, 'src'));
 
 	// Normalize all provided paths to absolute for reliable comparison
-	const protectedFolders = (options.folders || []).map((f) => path.resolve(projectRoot, f));
-	const protectedFiles = (options.files || []).map((f) => path.resolve(projectRoot, f));
+	const protectedFolders = (options.folders || []).map((f) =>
+		toPosixPath(path.resolve(projectRoot, f))
+	);
+	const protectedFiles = (options.files || []).map((f) =>
+		toPosixPath(path.resolve(projectRoot, f))
+	);
 
 	return {
 		name: 'vite-plugin-sveltekit-server-guard',
@@ -80,11 +87,11 @@ export function protectServerAssets(options: GuardOptions): Plugin {
 				return null;
 			}
 
-			const resolvedSource = path.normalize(resolvedSourceId);
+			const resolvedSource = toPosixPath(path.normalize(resolvedSourceId));
 
 			// Check 1: Is it in a protected folder?
 			const isInProtectedFolder = protectedFolders.some(
-				(folder) => resolvedSource.startsWith(folder + path.sep) || resolvedSource === folder
+				(folder) => resolvedSource.startsWith(folder + '/') || resolvedSource === folder
 			);
 
 			// Check 2: Is it a specifically protected file?
@@ -98,7 +105,7 @@ export function protectServerAssets(options: GuardOptions): Plugin {
 				// Only enforce runtime leak checks for app source modules.
 				// Non-source importers (e.g. index.html) can appear during Vite resolution.
 				const isSourceImporter =
-					absoluteImporter === srcRoot || absoluteImporter.startsWith(srcRoot + path.sep);
+					absoluteImporter === srcRoot || absoluteImporter.startsWith(srcRoot + '/');
 				if (!isSourceImporter) {
 					return null;
 				}
