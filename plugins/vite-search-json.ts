@@ -134,14 +134,14 @@ async function createPagesWithDocData(
 }
 
 async function generateSearchData(markdownFolderPath: string): Promise<DocsManifestData> {
-	const normalizedMarkdownFolderPath = toPosixPath(markdownFolderPath);
+	markdownFolderPath = toPosixPath(markdownFolderPath);
 
 	// get all markdown files in the configured markdown folder
 	// this is a map of { filepath: fileContent }
 	const rawMarkdownByPath = getMarkdownRecord(markdownFolderPath);
 
 	// get doc entries from config and match with markdown files
-	const docEntries = new DocEntries(rawMarkdownByPath, normalizedMarkdownFolderPath);
+	const docEntries = new DocEntries(rawMarkdownByPath, markdownFolderPath);
 
 	const pages = await createPagesWithDocData(docEntries.pages, rawMarkdownByPath);
 

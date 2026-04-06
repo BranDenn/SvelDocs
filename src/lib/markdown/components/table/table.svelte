@@ -5,7 +5,7 @@
 	let { children, class: className, ...restProps }: HTMLTableAttributes = $props();
 </script>
 
-<div class="scrollbar-thin-thin overflow-auto rounded-md border shadow-xs">
+<div class="scrollbar-thin overflow-auto rounded-md border shadow-xs">
 	<table
 		class={cn('w-full border-separate border-spacing-0 text-left text-sm', className)}
 		{...restProps}

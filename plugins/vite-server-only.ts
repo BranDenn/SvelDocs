@@ -63,7 +63,7 @@ export function protectServerAssets(options: GuardOptions): Plugin {
 	return {
 		name: 'vite-plugin-sveltekit-server-guard',
 		enforce: 'pre',
-		async resolveId(source, importer) {
+		async resolveId(source, importer, options) {
 			if (!importer) {
 				return null;
 			}
@@ -75,7 +75,10 @@ export function protectServerAssets(options: GuardOptions): Plugin {
 				return null;
 			}
 
-			const resolved = await this.resolve(source, importer, { skipSelf: true });
+			const resolved = await this.resolve(source, importer, {
+				...options,
+				skipSelf: true
+			});
 			const resolvedSourceId = stripQueryAndHash(resolved?.id ?? '');
 
 			// Only guard real file imports. Virtual and bare IDs are not filesystem assets.

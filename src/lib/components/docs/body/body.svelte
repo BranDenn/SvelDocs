@@ -25,7 +25,7 @@
 	<NavigationSidebar />
 
 	<div class="flex min-w-0 grow flex-col wrap-break-word">
-		<div class="top-docs-header pointer-events-none sticky z-1">
+		<div class="top-docs-header pointer-events-none sticky z-10">
 			{#if toc.tocEntries.length > 0}
 				<Collapsible.Root
 					class="bg-background h-docs-content-header pointer-events-auto border-b xl:hidden"
@@ -46,12 +46,14 @@
 						/>
 					</Collapsible.Trigger>
 					<Collapsible.Content
-						class="bg-background max-h-[min(16rem,calc(100dvh-var(--spacing-docs-header)-var(--spacing-docs-content-header-toc)))] overflow-y-auto border-b p-4"
+						class="scrollbar-thin bg-background isolate max-h-[min(16rem,calc(100dvh-var(--spacing-docs-header)-var(--spacing-docs-content-header-toc)))] overflow-y-auto border-t border-b"
 					>
-						<TOC.Nav>
+						<div class="from-background sticky top-0 h-4 shrink-0 bg-linear-to-b"></div>
+						<TOC.Nav class="px-4">
 							<TOC.Label />
 							<TOC.List />
 						</TOC.Nav>
+						<div class="from-background sticky bottom-0 h-4 shrink-0 bg-linear-to-t"></div>
 					</Collapsible.Content>
 				</Collapsible.Root>
 			{:else}

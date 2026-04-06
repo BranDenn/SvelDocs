@@ -1,5 +1,5 @@
 import matter from 'gray-matter';
-import type { Root as HastRoot } from 'hast';
+import type { Root as HastRoot, Element as HastElement, Text as HastText } from 'hast';
 import type { Root as MdastRoot } from 'mdast';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
@@ -8,6 +8,7 @@ import remarkStringify from 'remark-stringify';
 import remarkRehype, { type Options as RemarkRehypeOptions } from 'remark-rehype';
 import markdownConfig from '../../src/lib/markdown/configuration/markdown.config';
 import { extractImportDataFromRaw, stripImportLines } from './mdx-import-utils.js';
+import { visit } from 'unist-util-visit';
 
 const MDX_PASS_THROUGH = ['mdxJsxFlowElement', 'mdxJsxTextElement'] as const;
 
@@ -25,31 +26,61 @@ function getRemarkRehypeOptions(plugins: unknown[] | undefined): RemarkRehypeOpt
 	return {};
 }
 
-function extractTextFromAstNode(node: unknown, buffer: string[]): void {
-	if (!node || typeof node !== 'object') {
-		return;
-	}
+function extractTextFromAstNode(node: HastRoot | HastElement): string {
+	if (!node) return '';
 
-	const nodeObj = node as Record<string, unknown>;
+	const buffer: string[] = [];
 
-	if (typeof nodeObj.value === 'string') {
-		const value = nodeObj.value.trim();
+	visit(node, 'text', (textNode: HastText) => {
+		const value = typeof textNode.value === 'string' ? textNode.value.trim() : '';
+
 		if (value) {
 			buffer.push(value);
 		}
-	}
+	});
 
-	if (Array.isArray(nodeObj.children)) {
-		for (const child of nodeObj.children) {
-			extractTextFromAstNode(child, buffer);
-		}
-	}
+	return buffer.join(' ').replaceAll(/\s+/g, ' ').trim();
 }
 
-function extractTextFromAst(ast: unknown): string {
-	const buffer: string[] = [];
-	extractTextFromAstNode(ast, buffer);
-	return buffer.join(' ').replaceAll(/\s+/g, ' ').trim();
+function extractTextFromAst(ast: HastRoot): string {
+	return extractTextFromAstNode(ast);
+}
+
+function extractTocHeadingsFromAst(tree: HastRoot): TableOfContentsHeading[] {
+	const headingNodes: Map<string, TableOfContentsHeading> = new Map();
+
+	visit(tree, (node) => {
+		const isHeading = node.type === 'element' && /^h[1-6]$/.test(node.tagName);
+		if (isHeading) {
+			const id = typeof node.properties?.id === 'string' ? node.properties.id : '';
+			const tocIgnore = node.properties?.['data-toc-ignore'];
+			const text = extractTextFromAstNode(node);
+
+			if (!id || tocIgnore === 'true' || !text) {
+				return;
+			}
+
+			if (headingNodes.has(id)) {
+				return;
+			}
+
+			headingNodes.set(id, {
+				id,
+				text,
+				tagLevel: Number(node.tagName.slice(1))
+			});
+
+			return;
+		}
+
+		const isMdxJsx = node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement';
+		if (isMdxJsx) {
+			// may want to support extracting headings from MDX components in the future, but for now we will ignore them since it's not clear how to handle them in a consistent way.
+			return;
+		}
+	});
+
+	return Array.from(headingNodes.values());
 }
 
 export type MarkdownMetadata = {
@@ -60,11 +91,17 @@ export type MarkdownMetadata = {
 	private: boolean;
 };
 
+type TableOfContentsHeading = {
+	id: string;
+	text: string;
+	tagLevel: number;
+};
+
 export type MarkdownAstResult = {
 	/**
 	 * The transformed raw content after applying remark plugins, but before remark-rehype conversion.
 	 * This is used for `[...docs].md` routes to ensure consistent content for Artificial Intelligence.
-	 * For example, the <FileReader /> component would be transformed into an actual code block since the file is not actually accessible.
+	 * For example, the `<FileReader />` component would be transformed into an actual code block since the file is not actually accessible.
 	 */
 	rawContent: string;
 	/**
@@ -72,6 +109,11 @@ export type MarkdownAstResult = {
 	 * This is used for search indexing and should not contain any markdown syntax or HTML tags.
 	 */
 	searchContent: string;
+	/**
+	 * The list of headings extracted from the markdown content, which can be used to generate a table of contents on the client side.
+	 * Each heading includes its text, id, and tag level (e.g., h1, h2).
+	 */
+	tableOfContents: TableOfContentsHeading[];
 	/**
 	 * The metadata extracted from the markdown frontmatter.
 	 */
@@ -134,6 +176,7 @@ export async function getMarkdownData(rawMarkdown: string): Promise<MarkdownAstR
 	return {
 		rawContent: transformedRawContent,
 		searchContent: extractTextFromAst(hast),
+		tableOfContents: extractTocHeadingsFromAst(hast),
 		metadata,
 		imports: mdxImportData.imports,
 		ast: hast

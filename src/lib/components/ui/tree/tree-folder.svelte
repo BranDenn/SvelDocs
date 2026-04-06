@@ -19,15 +19,16 @@
 
 	const treeOpenCtx = getTreeOpen();
 
+	if (treeOpenCtx.open !== null) open = treeOpenCtx.open;
 	if (treeOpenCtx.noInteraction) noInteraction = true;
 
-	$effect(() => {
+	$effect.pre(() => {
 		if (treeOpenCtx.open !== null) {
 			open = treeOpenCtx.open;
 		}
 	});
 
-	$effect(() => {
+	$effect.pre(() => {
 		if (open !== treeOpenCtx.open && treeOpenCtx.open !== null) {
 			treeOpenCtx.clear();
 		}
@@ -46,7 +47,7 @@
 	<Collapsible.Trigger
 		class={[
 			'peer group text-muted-foreground hover:text-foreground hover:bg-primary flex w-full items-center gap-2 rounded py-1 pr-2 transition-colors',
-			noInteraction ? 'cursor-default' : ''
+			noInteraction ? 'cursor-not-allowed' : ''
 		]}
 		style="padding-left: {treeLevelCtx.level * 1.5 + 0.5}rem;"
 	>

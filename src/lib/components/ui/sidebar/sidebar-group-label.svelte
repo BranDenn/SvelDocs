@@ -4,6 +4,7 @@
 	import type { Snippet } from 'svelte';
 	import { CollapsibleTrigger } from '$ui/collapsible';
 	import { getSidebarGroupCollapsibleContext } from './sidebar-group-collapsible-context';
+	import { fly } from 'svelte/transition';
 
 	let {
 		ref = $bindable(null),
@@ -48,9 +49,12 @@
 
 {#if isCollapsible}
 	<CollapsibleTrigger bind:ref {...collapsibleProps}>
-		{#if hasActive}
-			<div class="bg-accent size-1 rounded-full"></div>
-		{/if}
+		<div
+			class={cn(
+				'bg-accent size-1 rounded-full transition-[margin,translate,opacity]',
+				hasActive ? '' : '-mr-3 -translate-x-2 opacity-0'
+			)}
+		></div>
 		{@render children?.()}
 		<ChevronRight
 			class="ml-auto transition-[rotate] group-data-[state=open]/sidebar-group-label:rotate-90"

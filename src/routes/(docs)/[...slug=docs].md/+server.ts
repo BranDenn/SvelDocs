@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	let txt = `# ${docData.title}`;
 
 	const metadata = docData.markdown.metadata;
-	if ('description' in metadata && typeof metadata.description === 'string' && metadata.description.trim() !== '') {
+	if (metadata.description) {
 		txt += `\n\n> ${metadata.description}`;
 	}
 

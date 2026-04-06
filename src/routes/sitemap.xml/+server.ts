@@ -8,16 +8,22 @@ export const GET: RequestHandler = () => {
 	const baseUrl = siteConfig.origin;
 	const now = new Date().toISOString();
 	const docUrls = getPublicDocEntries().map(
-		(entry) => `  <url><loc>${baseUrl}${entry.href}</loc><lastmod>${now}</lastmod></url>`
+		(entry) =>
+			`	<url>
+		<loc>${baseUrl}${entry.href}</loc>
+		<lastmod>${now}</lastmod>
+	</url>`
 	);
 
-	const body = [
-		'<?xml version="1.0" encoding="UTF-8"?>',
-		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-		`  <url><loc>${baseUrl}</loc><lastmod>${now}</lastmod></url>`,
-		...docUrls,
-		'</urlset>'
-	].join('\n');
+	const body = `
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>${baseUrl}</loc>
+		<lastmod>${now}</lastmod>
+	</url>
+${docUrls.join('\n')}
+</urlset>`;
 
 	return new Response(body, {
 		headers: {
