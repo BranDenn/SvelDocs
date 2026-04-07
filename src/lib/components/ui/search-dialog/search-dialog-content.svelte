@@ -4,6 +4,10 @@
 	import { getSearch } from './search-context.svelte';
 	import Highlighter from '$ui/highlighter';
 	import { SearchInput } from '$ui/input';
+	import CornerDownLeftIcon from '@lucide/svelte/icons/corner-down-left';
+	import MoveUpIcon from '@lucide/svelte/icons/move-up';
+	import MoveDownIcon from '@lucide/svelte/icons/move-down';
+	import { fly, scale } from 'svelte/transition';
 
 	const searchContext = getSearch();
 
@@ -96,7 +100,7 @@
 
 <Dialog.Content
 	hideClose
-	class="top-4 translate-y-0 gap-0 overflow-y-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(34rem,calc(100%-max(1rem,10%)-1rem))]"
+	class="top-4 translate-y-0 gap-0 overflow-hidden p-0 sm:top-[max(1rem,10%)] sm:max-h-[min(34rem,calc(100%-max(1rem,10%)-1rem))]"
 	onkeydown={handleArrowNavigation}
 	onfocusin={handleFocusIn}
 >
@@ -144,13 +148,19 @@
 		class="bg-secondary text-muted-foreground flex items-center justify-between gap-4 border-t p-2 text-xs"
 	>
 		<span class="flex items-center gap-1">
-			<kbd>↑</kbd>
-			<kbd>↓</kbd>
+			<kbd class="size-5 p-1">
+				<MoveUpIcon class="size-full" />
+			</kbd>
+			<kbd class="size-5 p-1">
+				<MoveDownIcon class="size-full" />
+			</kbd>
 			<span class="ml-1">Navigate</span>
 		</span>
 		{#if focusedIsLink}
-			<span class="flex items-center gap-2">
-				<kbd>↵</kbd>
+			<span class="flex items-center gap-2" transition:fly={{ x: "100%", duration: 150 }}>
+				<kbd class="size-5 p-1">
+					<CornerDownLeftIcon class="size-full" />
+				</kbd>
 				View
 			</span>
 		{/if}

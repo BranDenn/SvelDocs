@@ -24,7 +24,7 @@
 	});
 </script>
 
-<header class="bg-background border-docs-header-main-border sticky top-0 z-30 border-b">
+<header id="$header" class="bg-background border-b-[length:var(--spacing-docs-header-main-border)] sticky top-0 z-30">
 	<nav
 		class="h-docs-header-main bg-background isolate container flex items-center justify-between gap-4 px-4 md:grid md:grid-cols-3"
 	>

@@ -4,7 +4,6 @@
 	import * as Dialog from '$ui/dialog';
 	import { Dialog as DialogPrimitive } from 'bits-ui';
 	import { onNavigate } from '$app/navigation';
-	import { onMount } from 'svelte';
 
 	type Props = DialogPrimitive.RootProps & {
 		onInit?: (ctx: Search) => void;
@@ -22,7 +21,7 @@
 		open = false;
 	});
 
-	onMount(() => {
+	$effect(() => {
 		onInit(search);
 	});
 </script>

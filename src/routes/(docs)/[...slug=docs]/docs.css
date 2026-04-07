@@ -28,9 +28,3 @@
 		@apply lg:[--spacing-docs-content-header:0px];
 	}
 }
-
-@layer base {
-	$content > * + * {
-		@apply mt-4;
-	}
-}

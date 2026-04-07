@@ -67,7 +67,9 @@
 		measurement.style.overflow = 'hidden';
 
 		scope.appendChild(measurement);
+		console.log(measurement.getBoundingClientRect())
 		const resolvedValue = Number.parseFloat(getComputedStyle(measurement).inlineSize);
+		console.log("resolved CSS length for", value, "=", resolvedValue)
 		measurement.remove();
 
 		return Number.isFinite(resolvedValue) ? resolvedValue : 0;
@@ -112,6 +114,8 @@
 
 		const root = document.documentElement;
 		const rootStyles = getComputedStyle(root);
+
+		console.log(rootStyles.getPropertyValue('--breakpoint-sm'))
 
 		return {
 			sm:
@@ -166,6 +170,9 @@
 	});
 
 	onMount(() => {
+		const header = document.getElementById('$header')
+		console.log("HEADER:", header?.getBoundingClientRect())
+
 		syncOffsets();
 
 		const contentContainer = getContentContainer();
@@ -175,6 +182,7 @@
 		let currentBreakpoint = resolveDocsBreakpoint(window.innerWidth, breakpoints);
 
 		const resizeObserver = new ResizeObserver(() => {
+			console.log("resizeObserver triggered");
 			const nextBreakpoint = resolveDocsBreakpoint(window.innerWidth, breakpoints);
 
 			if (nextBreakpoint === currentBreakpoint) return;
@@ -226,6 +234,7 @@
 		initialEntries={initialTocEntries}
 		topOffset={tocTopOffset}
 		observerOptions={tocObserverOptions}
+		debugObserver
 	>
 		<Body>
 			{@render children?.()}
