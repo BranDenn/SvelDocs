@@ -13,8 +13,8 @@
 
 <Sidebar.Root
 	class={cn(
-		'[--b-width:1px] border-r-[length:var(--b-width)]',
-		'duration-300 transition-[margin-left,opacity,visibility] lg:transition-[margin-left,opacity]',
+		'border-r-[length:var(--b-width)] [--b-width:1px]',
+		'transition-[margin-left,opacity,visibility] duration-300 lg:transition-[margin-left,opacity]',
 		'-ml-[calc(16rem+var(--b-width))] lg:ml-0',
 		'overflow-y-hidden lg:overflow-y-auto',
 		'invisible lg:visible',

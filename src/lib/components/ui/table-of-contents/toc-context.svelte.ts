@@ -1,7 +1,8 @@
 import { createContext } from 'svelte';
 import { page } from '$app/state';
-import { goto } from '$app/navigation';
+import { goto, afterNavigate } from '$app/navigation';
 import { SvelteMap } from 'svelte/reactivity';
+import type { Attachment } from 'svelte/attachments';
 
 type TOCItem = {
 	index: number;
@@ -20,20 +21,29 @@ export type TOCSeedEntry = {
 	level: number;
 };
 
+export type TOCProps = {
+	selectors?: ('h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6')[];
+	initialEntries?: TOCSeedEntry[];
+	highlightParentLevels?: 0 | 1 | 2 | 3 | 4 | 5;
+	observerOptions?: IntersectionObserverInit;
+	detectIfReachedBottom?: boolean;
+	reachedBottomObserverOptions?: IntersectionObserverInit;
+};
+
 export type TOCContextProps = {
-	getContainer: () => HTMLElement | null | undefined;
-	getHighlightParents: () => boolean;
-	getTopOffset: () => number;
-	getInitialEntries: () => TOCSeedEntry[];
-	getObserverOptions: () => IntersectionObserverInit | undefined;
-	getDetectIfReachedBottom: () => boolean;
-	getReachedBottomObserverOptions: () => IntersectionObserverInit | undefined;
+	getSelectors: () => NonNullable<TOCProps['selectors']>;
+	getInitialEntries: () => NonNullable<TOCProps['initialEntries']>;
+	getHighlightParentLevels: () => NonNullable<TOCProps['highlightParentLevels']>;
+	getObserverOptions: () => TOCProps['observerOptions'];
+	getDetectIfReachedBottom: () => NonNullable<TOCProps['detectIfReachedBottom']>;
+	getReachedBottomObserverOptions: () => TOCProps['reachedBottomObserverOptions'];
 };
 
 export class TOCContext {
-	readonly #getContainer: TOCContextProps['getContainer'];
-	readonly #getHighlightParents: TOCContextProps['getHighlightParents'];
-	readonly #getTopOffset: TOCContextProps['getTopOffset'];
+	#containerElement: HTMLElement | null = $state(null);
+
+	readonly #getSelectors: TOCContextProps['getSelectors'];
+	readonly #getHighlightParentLevels: TOCContextProps['getHighlightParentLevels'];
 	readonly #getInitialEntries: TOCContextProps['getInitialEntries'];
 	readonly #getObserverOptions: TOCContextProps['getObserverOptions'];
 	readonly #getDetectIfReachedBottom: TOCContextProps['getDetectIfReachedBottom'];
@@ -83,18 +93,46 @@ export class TOCContext {
 	public readonly hasEntries = $derived(this.#toc.size > 0);
 
 	constructor(props: TOCContextProps) {
-		this.#getContainer = props.getContainer;
-		this.#getHighlightParents = props.getHighlightParents;
-		this.#getTopOffset = props.getTopOffset;
+		this.#getSelectors = props.getSelectors;
+		this.#getHighlightParentLevels = props.getHighlightParentLevels;
 		this.#getInitialEntries = props.getInitialEntries;
 		this.#getObserverOptions = props.getObserverOptions;
 		this.#getDetectIfReachedBottom = props.getDetectIfReachedBottom;
 		this.#getReachedBottomObserverOptions = props.getReachedBottomObserverOptions;
 		this.applyInitialEntries();
+
+		afterNavigate(({ type }) => {
+			if (type === 'link') {
+				this.update();
+			}
+		});
 	}
 
 	get highlightParents() {
-		return this.#getHighlightParents();
+		return this.#getHighlightParentLevels();
+	}
+
+	get reachedBottom() {
+		return this.#reachedBottom;
+	}
+
+	private getHeadingTopOffset(heading: HTMLHeadingElement) {
+		const headingTop = heading.getBoundingClientRect().top;
+		const containerTop = this.#containerElement?.getBoundingClientRect().top ?? 0;
+		return headingTop - containerTop - window.pageYOffset;
+	}
+
+	private buildParentSet(stack: Array<{ id: string; level: number }>) {
+		const parentIds = new Set<string>();
+		const highlightLevels = this.#getHighlightParentLevels();
+		if (highlightLevels <= 0) return parentIds;
+
+		for (let index = stack.length - 1; index >= 0; index -= 1) {
+			if (parentIds.size >= highlightLevels) break;
+			parentIds.add(stack[index].id);
+		}
+
+		return parentIds;
 	}
 
 	readonly priorityIntersectionCallback = (entries: IntersectionObserverEntry[]) => {
@@ -156,7 +194,7 @@ export class TOCContext {
 			let initialKey: string | null = null;
 			for (const [key, { heading }] of this.#toc) {
 				if (!heading) continue;
-				const top = heading.getBoundingClientRect().top - this.#getTopOffset();
+				const top = this.getHeadingTopOffset(heading);
 				if (top <= 0) initialKey = key;
 			}
 
@@ -165,14 +203,14 @@ export class TOCContext {
 	};
 
 	public update() {
-		const container = this.#getContainer();
+		const container = this.#containerElement;
 		if (!container) {
 			this.reset();
 			return;
 		}
 
 		const headings = [
-			...container.querySelectorAll('h1, h2, h3, h4, h5, h6')
+			...container.querySelectorAll(this.#getSelectors().join(', '))
 		] as HTMLHeadingElement[];
 
 		this.#priorityViewObserver?.disconnect();
@@ -224,7 +262,7 @@ export class TOCContext {
 				text: heading.textContent?.trim() ?? '',
 				level: stack.length + 1,
 				heading,
-				parents: new Set(stack.map(({ id: parentId }) => parentId)),
+				parents: this.buildParentSet(stack),
 				prevId: previousId
 			};
 
@@ -233,7 +271,7 @@ export class TOCContext {
 			stack.push({ id, level });
 			this.#priorityViewObserver?.observe(heading);
 
-			const top = heading.getBoundingClientRect().top - this.#getTopOffset();
+			const top = this.getHeadingTopOffset(heading);
 			if (top <= 0) initialKey = id;
 
 			previousId = id;
@@ -248,18 +286,6 @@ export class TOCContext {
 		this.#reachedBottom = false;
 		this.#mostRecentKey = initialKey;
 		this.#lastKey = finalKey;
-	}
-
-	public handleAfterNavigate(type: string) {
-		if (type === 'enter') {
-			const element = document.getElementById(page.url.hash.replace('#', ''));
-			element?.scrollIntoView();
-			return;
-		}
-
-		if (type === 'link') {
-			this.update();
-		}
 	}
 
 	public destroy() {
@@ -300,7 +326,7 @@ export class TOCContext {
 				text: entry.text.trim() || id,
 				level: stack.length + 1,
 				heading: null,
-				parents: new Set(stack.map(({ id: parentId }) => parentId)),
+				parents: this.buildParentSet(stack),
 				prevId: previousId
 			};
 
@@ -321,6 +347,13 @@ export class TOCContext {
 		this.#mostRecentKey = this.routeHashKey;
 		this.#lastKey = finalKey;
 	}
+
+	public readonly attachContainerElement: Attachment<HTMLElement> = (element) => {
+		this.#containerElement = element;
+		return () => {
+			this.#containerElement = null;
+		};
+	};
 }
 
 const [getTOCContext, set] = createContext<TOCContext>();

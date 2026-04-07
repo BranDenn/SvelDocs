@@ -15,6 +15,7 @@
 	import { CopyButton } from '$ui/copy-button';
 	import ButtonGroup from '$ui/button-group';
 	import Button from '$ui/button';
+	import { getTOCContext } from '$ui/table-of-contents';
 
 	type PageData = {
 		ast: {
@@ -58,6 +59,7 @@
 	});
 
 	const docNavigation = getDocNavigationContext();
+	const toc = getTOCContext();
 
 	let mdCopied = $state(false);
 
@@ -201,7 +203,7 @@
 	<hr class="border-border my-4" />
 
 	<div
-		id="$content"
+		{@attach toc.attachContainerElement}
 		class="**:[[id]]:scroll-mt-[max(calc(var(--spacing-docs-header)+var(--spacing-docs-content-header)+1.5rem),25dvh)] [&>*:not([class*='mt-']):not([class*='my-']):not([class*='m-'])]:mt-4"
 	>
 		{#each data.ast.children ?? [] as node, i (`node-${i}`)}

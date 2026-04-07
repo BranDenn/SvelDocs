@@ -30,9 +30,6 @@
 			style={`padding-left: ${item.level}rem`}
 		>
 			{item.text}
-			{#if item.isIntersectingPriority}
-				👁️
-			{/if}
 		</Link>
 	{/each}
 </ul>

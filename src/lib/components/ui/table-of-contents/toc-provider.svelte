@@ -1,76 +1,74 @@
 <script lang="ts">
-	import { afterNavigate } from '$app/navigation';
 	import type { Snippet } from 'svelte';
-	import { setTOCContext, type TOCSeedEntry } from './toc-context.svelte';
+	import { setTOCContext, type TOCProps } from './toc-context.svelte';
+	import { dev } from '$app/environment';
 
 	type Props = {
-		container?: HTMLElement | null;
-		initialEntries?: TOCSeedEntry[];
-		highlightParents?: boolean;
-		topOffset?: number;
-		observerOptions?: IntersectionObserverInit;
-		debugObserver?: boolean;
-		detectIfReachedBottom?: boolean;
-		reachedBottomObserverOptions?: IntersectionObserverInit;
+		debug?: boolean;
 		children?: Snippet;
-		onInit?: (toc: ReturnType<typeof setTOCContext>) => void;
-	};
+	} & TOCProps;
 
 	let {
-		container,
+		selectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 		initialEntries = [],
-		highlightParents = true,
-		topOffset = 0,
+		highlightParentLevels = 5,
 		observerOptions,
-		debugObserver = false,
 		detectIfReachedBottom = true,
 		reachedBottomObserverOptions = { threshold: 1 },
-		children,
-		onInit = () => {}
+		debug = false,
+		children
 	}: Props = $props();
 
-	const observerRootMargin = $derived(
-		typeof observerOptions?.rootMargin === 'string' ? observerOptions.rootMargin : '0px 0px 0px 0px'
-	);
+	/**
+	 * Converts IntersectionObserver rootMargin to CSS inset
+	 * by reversing the signs of the values.
+	 */
+	function rootMarginToInset(rootMargin: IntersectionObserverInit['rootMargin']): string {
+		if (!rootMargin) {
+			return '0px 0px 0px 0px';
+		}
 
-	const observerBottomMargin = $derived.by(() => {
-		const parts = observerRootMargin.trim().split(/\s+/);
-
-		if (parts.length === 1) return parts[0];
-		if (parts.length === 2) return parts[0];
-		if (parts.length === 3) return parts[2];
-		return parts[2] ?? '0px';
-	});
+		return rootMargin
+			.split(' ')
+			.map((value) => {
+				if (value === '0' || value === '0px' || value === '0%') return '0';
+				// Flip the sign: if it starts with '-', remove it; otherwise, add it.
+				return value.startsWith('-') ? value.slice(1) : `-${value}`;
+			})
+			.join(' ');
+	}
 
 	const toc = setTOCContext({
-		getContainer: () => container,
-		getHighlightParents: () => highlightParents,
-		getTopOffset: () => topOffset,
+		getSelectors: () => selectors,
+		getHighlightParentLevels: () => highlightParentLevels,
 		getInitialEntries: () => initialEntries,
 		getObserverOptions: () => observerOptions,
 		getDetectIfReachedBottom: () => detectIfReachedBottom,
 		getReachedBottomObserverOptions: () => reachedBottomObserverOptions
 	});
 
-	afterNavigate(({ type }) => {
-		toc.handleAfterNavigate(type);
-	});
-
 	$effect(() => {
 		toc.update();
 		return () => toc.destroy();
 	});
-
-	$effect.pre(() => {
-		onInit(toc);
-	});
 </script>
 
-{#if debugObserver}
+{#if dev && debug}
 	<div
-		class="pointer-events-none fixed z-20 border border-red-500"
-		style={`left: 0; right: 0; top: ${topOffset}px; bottom: calc(${observerBottomMargin} * -1)`}
+		class="pointer-events-none fixed z-20 border border-red-500/50"
+		style={`inset: ${rootMarginToInset(observerOptions?.rootMargin)};`}
 	></div>
+
+	{#if detectIfReachedBottom}
+		<div
+			class="pointer-events-none fixed z-20 border border-blue-500/50"
+			style={`inset: ${rootMarginToInset(reachedBottomObserverOptions?.rootMargin)};`}
+		>
+			<div class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-blue-500/50 p-2 text-xs">
+				Reached Bottom: {toc.reachedBottom}
+			</div>
+		</div>
+	{/if}
 {/if}
 
 {@render children?.()}

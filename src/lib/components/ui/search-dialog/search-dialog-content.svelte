@@ -157,7 +157,7 @@
 			<span class="ml-1">Navigate</span>
 		</span>
 		{#if focusedIsLink}
-			<span class="flex items-center gap-2" transition:fly={{ x: "100%", duration: 150 }}>
+			<span class="flex items-center gap-2" transition:fly={{ x: '100%', duration: 150 }}>
 				<kbd class="size-5 p-1">
 					<CornerDownLeftIcon class="size-full" />
 				</kbd>

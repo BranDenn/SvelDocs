@@ -1,17 +1,15 @@
 <script lang="ts">
 	import './docs.css';
 	import { Header, Body } from '$components/docs';
-	import { dev } from '$app/environment';
 	import {
 		setDocNavigationContext,
 		type DocNavigationParams
 	} from '$lib/docs/client/doc-navigation-context.svelte';
 	import { createSharedValueContext } from '$ui/shared-value-context.svelte';
-	import { onMount, type Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
 	import type { Pathname } from '$app/types';
 	import * as TOC from '$ui/table-of-contents';
 	import { SearchDialogProvider } from '$ui/search-dialog';
-	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { setDocLayoutContext } from '$lib/components/docs/layout-context.svelte';
 
@@ -43,16 +41,9 @@
 		useLocalStorage: true
 	});
 
-	function getContentContainer() {
-		if (typeof document === 'undefined') return null;
-		const content = document.getElementById('$content');
-		return content;
-	}
-
 	type DocsPageData = {
 		tocEntries?: TOC.TOCSeedEntry[];
 	};
-
 
 	setDocNavigationContext(() => data.navigation ?? { tabs: [], groups: [], pages: [] });
 
@@ -93,11 +84,13 @@
 	<Header />
 
 	<TOC.Provider
-		container={getContentContainer()}
 		initialEntries={initialTocEntries}
-		topOffset={docLayoutContext.offsetTop}
-		observerOptions={tocObserverOptions}
-		debugObserver
+		observerOptions={{ rootMargin: `-${docLayoutContext.offsetTop}px 0px -50% 0px` }}
+		reachedBottomObserverOptions={{
+			threshold: 1,
+			rootMargin: `-${docLayoutContext.offsetTop}px 0px -24px 0px`
+		}}
+		debug
 	>
 		<Body>
 			{@render children?.()}
