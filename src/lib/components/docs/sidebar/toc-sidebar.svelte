@@ -11,7 +11,7 @@
 
 <Sidebar.Root
 	class={cn(
-		'-mr-64 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 xl:mr-0 xl:overflow-y-auto xl:opacity-100',
+		'-mr-64 overflow-y-hidden opacity-0 duration-300 transition-[margin-right,opacity,visibility] xl:transition-[margin-right,opacity] xl:mr-0 xl:overflow-y-auto xl:opacity-100',
 		'top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
 	)}
 >

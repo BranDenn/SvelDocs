@@ -6,6 +6,7 @@
 	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 	import { Footer } from '$components/docs';
 	import type { Snippet } from 'svelte';
+	import { getDocLayoutContext } from '$lib/components/docs/layout-context.svelte';
 
 	const docNavigation = getDocNavigationContext();
 	const toc = TOC.getTOCContext();
@@ -15,6 +16,8 @@
 	};
 
 	let { children }: Props = $props();
+
+	const docLayoutContext = getDocLayoutContext();
 </script>
 
 <div
@@ -70,7 +73,9 @@
 			<div class="from-background h-6 bg-linear-to-b"></div>
 		</div>
 		<main
+			id="$main"
 			class="relative flex min-w-0 grow flex-col gap-16 overflow-hidden px-6 transition-[padding] lg:px-14 lg:py-8"
+			{@attach docLayoutContext.attachMainElement}
 		>
 			{@render children?.()}
 			<Footer />

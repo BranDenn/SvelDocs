@@ -13,9 +13,13 @@
 
 <Sidebar.Root
 	class={cn(
-		'-ml-64.25 overflow-y-hidden opacity-0 transition-[margin,opacity] duration-300 lg:ml-0 lg:overflow-y-auto lg:opacity-100',
-		'bg-background border-r',
-		'top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
+		'[--b-width:1px] border-r-[length:var(--b-width)]',
+		'duration-300 transition-[margin-left,opacity,visibility] lg:transition-[margin-left,opacity]',
+		'-ml-[calc(16rem+var(--b-width))] lg:ml-0',
+		'overflow-y-hidden lg:overflow-y-auto',
+		'invisible lg:visible',
+		'opacity-0 lg:opacity-100',
+		'bg-background top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'
 	)}
 >
 	<Sidebar.Container>

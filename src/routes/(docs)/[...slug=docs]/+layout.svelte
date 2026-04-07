@@ -13,6 +13,7 @@
 	import { SearchDialogProvider } from '$ui/search-dialog';
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
+	import { setDocLayoutContext } from '$lib/components/docs/layout-context.svelte';
 
 	let {
 		data,
@@ -44,118 +45,20 @@
 
 	function getContentContainer() {
 		if (typeof document === 'undefined') return null;
-		return document.getElementById('$content') as HTMLElement | null;
+		const content = document.getElementById('$content');
+		return content;
 	}
 
-	function resolveCssLength(value: string, scope: HTMLElement) {
-		const trimmedValue = value.trim();
-		if (!trimmedValue) return 0;
-
-		if (/^-?\d*\.?\d+px$/.test(trimmedValue)) {
-			const parsed = Number.parseFloat(trimmedValue);
-			return Number.isFinite(parsed) ? parsed : 0;
-		}
-
-		const measurement = scope.ownerDocument.createElement('div');
-		measurement.style.position = 'absolute';
-		measurement.style.visibility = 'hidden';
-		measurement.style.pointerEvents = 'none';
-		measurement.style.inlineSize = trimmedValue;
-		measurement.style.blockSize = '0';
-		measurement.style.padding = '0';
-		measurement.style.border = '0';
-		measurement.style.overflow = 'hidden';
-
-		scope.appendChild(measurement);
-		console.log(measurement.getBoundingClientRect())
-		const resolvedValue = Number.parseFloat(getComputedStyle(measurement).inlineSize);
-		console.log("resolved CSS length for", value, "=", resolvedValue)
-		measurement.remove();
-
-		return Number.isFinite(resolvedValue) ? resolvedValue : 0;
-	}
-
-	function readDocsContentHeaderOffset() {
-		if (typeof window === 'undefined') return 0;
-
-		const contentContainer = getContentContainer();
-		if (!contentContainer) return 0;
-
-		const styles = getComputedStyle(contentContainer);
-		const docsHeader = resolveCssLength(
-			styles.getPropertyValue('--spacing-docs-header'),
-			contentContainer
-		);
-
-		const contentHeader = resolveCssLength(
-			styles.getPropertyValue('--spacing-docs-content-header'),
-			contentContainer
-		);
-
-		return docsHeader + contentHeader;
-	}
-
-	type DocsBreakpoint = 'base' | 'sm' | 'md' | 'lg' | 'xl';
 	type DocsPageData = {
 		tocEntries?: TOC.TOCSeedEntry[];
 	};
 
-	const tailwindBreakpointFallbacks = {
-		sm: 640,
-		md: 768,
-		lg: 1024,
-		xl: 1280
-	} as const;
-
-	function readTailwindBreakpoints() {
-		if (typeof document === 'undefined') {
-			return tailwindBreakpointFallbacks;
-		}
-
-		const root = document.documentElement;
-		const rootStyles = getComputedStyle(root);
-
-		console.log(rootStyles.getPropertyValue('--breakpoint-sm'))
-
-		return {
-			sm:
-				resolveCssLength(rootStyles.getPropertyValue('--breakpoint-sm'), root) ||
-				tailwindBreakpointFallbacks.sm,
-			md:
-				resolveCssLength(rootStyles.getPropertyValue('--breakpoint-md'), root) ||
-				tailwindBreakpointFallbacks.md,
-			lg:
-				resolveCssLength(rootStyles.getPropertyValue('--breakpoint-lg'), root) ||
-				tailwindBreakpointFallbacks.lg,
-			xl:
-				resolveCssLength(rootStyles.getPropertyValue('--breakpoint-xl'), root) ||
-				tailwindBreakpointFallbacks.xl
-		};
-	}
-
-	function resolveDocsBreakpoint(
-		width: number,
-		breakpoints: ReturnType<typeof readTailwindBreakpoints>
-	): DocsBreakpoint {
-		if (width >= breakpoints.xl) return 'xl';
-		if (width >= breakpoints.lg) return 'lg';
-		if (width >= breakpoints.md) return 'md';
-		if (width >= breakpoints.sm) return 'sm';
-
-		return 'base';
-	}
 
 	setDocNavigationContext(() => data.navigation ?? { tabs: [], groups: [], pages: [] });
 
-	const tocObserverBottomMargin = '-50%';
+	const docLayoutContext = setDocLayoutContext();
 
-	let tocTopOffset = $state(0);
-
-	function syncOffsets() {
-		tocTopOffset = readDocsContentHeaderOffset();
-	}
-
-	const tocObserverRootMargin = $derived(`-${tocTopOffset}px 0px ${tocObserverBottomMargin} 0px`);
+	const tocObserverRootMargin = $derived(`-${docLayoutContext.offsetTop}px 0px -50% 0px`);
 
 	const tocObserverOptions = $derived<IntersectionObserverInit>({
 		rootMargin: tocObserverRootMargin
@@ -164,46 +67,6 @@
 	const initialTocEntries = $derived.by(
 		() => (page.data as DocsPageData | undefined)?.tocEntries ?? []
 	);
-
-	afterNavigate(() => {
-		syncOffsets();
-	});
-
-	onMount(() => {
-		const header = document.getElementById('$header')
-		console.log("HEADER:", header?.getBoundingClientRect())
-
-		syncOffsets();
-
-		const contentContainer = getContentContainer();
-		const docsContainer = contentContainer?.closest('[data-docs-toc]') ?? document.body;
-		const root = document.documentElement;
-		const breakpoints = readTailwindBreakpoints();
-		let currentBreakpoint = resolveDocsBreakpoint(window.innerWidth, breakpoints);
-
-		const resizeObserver = new ResizeObserver(() => {
-			console.log("resizeObserver triggered");
-			const nextBreakpoint = resolveDocsBreakpoint(window.innerWidth, breakpoints);
-
-			if (nextBreakpoint === currentBreakpoint) return;
-
-			currentBreakpoint = nextBreakpoint;
-			syncOffsets();
-		});
-
-		resizeObserver.observe(root);
-
-		const docsMutationObserver = new MutationObserver(() => syncOffsets());
-		docsMutationObserver.observe(docsContainer, {
-			attributes: true,
-			attributeFilter: ['data-docs-toc', 'data-docs-tabs', 'class', 'style']
-		});
-
-		return () => {
-			resizeObserver.disconnect();
-			docsMutationObserver.disconnect();
-		};
-	});
 </script>
 
 <SearchDialogProvider
@@ -232,7 +95,7 @@
 	<TOC.Provider
 		container={getContentContainer()}
 		initialEntries={initialTocEntries}
-		topOffset={tocTopOffset}
+		topOffset={docLayoutContext.offsetTop}
 		observerOptions={tocObserverOptions}
 		debugObserver
 	>

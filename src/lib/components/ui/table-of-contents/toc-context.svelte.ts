@@ -107,7 +107,7 @@ export class TOCContext {
 			const scrolledUp = currentScrollTop < this.#lastScrollTop;
 			this.#lastScrollTop = currentScrollTop;
 
-			this.#toc.set(id, { ...item, isIntersectingPriority: entry.isIntersecting });
+			item.isIntersectingPriority = entry.isIntersecting
 
 			if (entry.isIntersecting) {
 				this.#mostRecentKey = id;
@@ -234,6 +234,7 @@ export class TOCContext {
 			this.#priorityViewObserver?.observe(heading);
 
 			const top = heading.getBoundingClientRect().top - this.#getTopOffset();
+			console.log(heading.getBoundingClientRect().top)
 			if (top <= 0) initialKey = id;
 
 			previousId = id;
@@ -253,7 +254,7 @@ export class TOCContext {
 	public handleAfterNavigate(type: string) {
 		if (type === 'enter') {
 			const element = document.getElementById(page.url.hash.replace('#', ''));
-			element?.scrollIntoView();
+			// element?.scrollIntoView();
 			return;
 		}
 
