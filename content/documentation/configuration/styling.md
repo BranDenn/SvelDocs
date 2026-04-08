@@ -4,7 +4,7 @@ description: How to style the website, docs routes, and components.
 
 ## Overview
 
-SvelDocs has a simple structure for editing styles. You can add your own variables or classes, but for common use cases, like changing the theme of the website, you can simply change css variables.
+SvelDocs has a simple structure for editing styles. You can add your own variables or classes, but for common use cases, like changing the theme of the website, you can simply change CSS variables.
 
 ## Global Website Styles / Theme
 
@@ -23,7 +23,7 @@ Here is the provided default theme:
 
 You can change the light and dark themes in the `app.css` file as shown above. You can also use the TailwindCSS `dark:` variant in specific components if needed.
 
-Themes modes are handled by [mode watcher](https://mode-watcher.sveco.dev/docs).
+Theme modes are handled by [mode watcher](https://mode-watcher.sveco.dev/docs).
 
 - `src/routes/+layout.svelte` mounts `<ModeWatcher defaultMode="dark" />`
 - `src/lib/components/docs/header/theme-switch.svelte` toggles the mode.

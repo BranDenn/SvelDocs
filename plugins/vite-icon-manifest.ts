@@ -19,17 +19,13 @@ function escapeString(value: string): string {
 	return value.replaceAll('\\', escapedBackslash).replaceAll("'", escapedSingleQuote);
 }
 
-function containsEmoji(value: string): boolean {
-	return EMOJI_PATTERN.test(value);
-}
-
 function extractIcons(source: string): string[] {
 	const matches = source.matchAll(/\bicon\s*:\s*['"]([^'"\n\r]+)['"]/g);
 	const icons = new Set<string>();
 
 	for (const match of matches) {
 		const iconName = match[1]?.trim();
-		if (iconName && !containsEmoji(iconName)) {
+		if (iconName && !EMOJI_PATTERN.test(iconName)) {
 			icons.add(iconName);
 		}
 	}

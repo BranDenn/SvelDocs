@@ -166,7 +166,7 @@ export async function getMarkdownData(rawMarkdown: string): Promise<MarkdownAstR
 
 	// get transformed raw content (markdown content with remark plugins applied) first
 	const transformedRawContent = String(
-		await remarkProcessor().use(remarkStringify).process(rawContent)
+		await remarkProcessor().use(remarkStringify).process(contentWithoutImports)
 	);
 
 	const mdast = fullProcessor.parse(contentWithoutImports) as MdastRoot;

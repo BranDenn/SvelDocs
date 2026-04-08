@@ -1,12 +1,8 @@
 <script lang="ts">
 	import './docs.css';
 	import { Header, Body } from '$components/docs';
-	import {
-		setDocNavigationContext,
-		type DocNavigationParams
-	} from '$lib/docs/client/doc-navigation-context.svelte';
+	import { setDocNavigationContext } from '$lib/docs/client/doc-navigation-context.svelte';
 	import { createSharedValueContext } from '$ui/shared-value-context.svelte';
-	import { type Snippet } from 'svelte';
 	import type { Pathname } from '$app/types';
 	import * as TOC from '$ui/table-of-contents';
 	import { SearchDialogProvider } from '$ui/search-dialog';
@@ -16,22 +12,6 @@
 	let {
 		data,
 		children
-	}: {
-		data: {
-			navigation?: DocNavigationParams;
-			searchGroups?: {
-				title: string;
-				icon?: string;
-				items: {
-					href: string;
-					title: string;
-					description: string;
-					keywords?: string[];
-					icon?: string;
-				}[];
-			}[];
-		};
-		children?: Snippet;
 	} = $props();
 
 	// Create shared context for tabs and code groups
@@ -41,19 +21,13 @@
 		useLocalStorage: true
 	});
 
-	type DocsPageData = {
-		tocEntries?: TOC.TOCSeedEntry[];
-	};
-
 	setDocNavigationContext(() => data.navigation ?? { tabs: [], groups: [], pages: [] });
 
 	const docLayoutContext = setDocLayoutContext();
 
-	const tocObserverRootMargin = $derived(`-${docLayoutContext.offsetTop}px 0px -50% 0px`);
-
-	const tocObserverOptions = $derived<IntersectionObserverInit>({
-		rootMargin: tocObserverRootMargin
-	});
+	type DocsPageData = {
+		tocEntries?: TOC.TOCSeedEntry[];
+	};
 
 	const initialTocEntries = $derived.by(
 		() => (page.data as DocsPageData | undefined)?.tocEntries ?? []
@@ -90,7 +64,7 @@
 			threshold: 1,
 			rootMargin: `-${docLayoutContext.offsetTop}px 0px -24px 0px`
 		}}
-		debug
+		debug={false}
 	>
 		<Body>
 			{@render children?.()}

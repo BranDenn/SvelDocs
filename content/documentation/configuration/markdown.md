@@ -28,7 +28,7 @@ Content can include markdown, HTML, and svelte components. If you are new to mar
 
 ## Configure Rendering
 
-You can configure how markdown is rendered in the `src/lib/markdown/markdown.config.ts` file. This allows to configure the following:
+You can configure how markdown is rendered in the `src/lib/markdown/markdown.config.ts` file. This allows you to configure the following:
 
 ```ts
 type MarkdownConfig = {
@@ -40,7 +40,7 @@ type MarkdownConfig = {
 
 ### Extensions
 
-You can configure and or add your own file extensions to be considered for the markdown rendering process. For Example:
+You can configure and / or add your own file extensions to be considered for the markdown rendering process. For example:
 
 ```ts title="src/lib/markdown/markdown.config.ts"
 const markdownConfig = defineConfig({
@@ -51,7 +51,7 @@ const markdownConfig = defineConfig({
 
 ### Remark Plugins
 
-You can configure and or add your own remark plugins that run on the markdown (MDAST) stage. Here is the provided default:
+You can configure and / or add your own remark plugins that run on the markdown (MDAST) stage. Here is the provided default:
 
 ```ts title="src/lib/markdown/markdown.config.ts"
 const markdownConfig = defineConfig({
@@ -71,7 +71,7 @@ const markdownConfig = defineConfig({
 
 ### Rehype Plugins
 
-You can configure and or add your own rehype plugins that run on the HTML-like (HAST) stage. Here is the provided default:
+You can configure and / or add your own rehype plugins that run on the HTML-like (HAST) stage. Here is the provided default:
 
 ```ts title="src/lib/markdown/markdown.config.ts"
 const markdownConfig = defineConfig({

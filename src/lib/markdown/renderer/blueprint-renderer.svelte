@@ -26,9 +26,7 @@
 				resolvedComponents
 			})
 		: null}
-	{#if node.name === 'script'}
-		<!-- Ignore MDX script blocks; import declarations cannot run from injected HTML script tags. -->
-	{:else if mappedMdxRenderer}
+	{#if mappedMdxRenderer}
 		{@const MdxComponent = mappedMdxRenderer.component}
 		{@const mdxProps = mappedMdxRenderer.inheritNodeProps ? getMdxProps(node.attributes) : {}}
 		<MdxComponent {...mdxProps} {...mappedMdxRenderer.props}>

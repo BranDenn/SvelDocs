@@ -69,7 +69,6 @@ The `processed-docs` folder contains lower-level helpers used by the higher-leve
 Current helpers:
 
 - `collect-doc-entries.ts`: collects doc pages and navigation entries from content paths
-- `layout-data.ts`: builds route-friendly layout/navigation data
 - `markdown-to-ast.ts`: parses markdown into a structured representation
 - `types.ts`: shared types for generated docs data
 

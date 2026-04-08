@@ -1,12 +1,12 @@
 ---
-description: A file tree component for displaying interactable file structures.
+description: A file tree component for displaying interactive file structures.
 ---
 
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 
 ## Overview
 
-`File Tree` renders interactable file trees with nesting support. It is useful for showing folder or directory contents.
+`File Tree` renders interactive file trees with nesting support. It is useful for showing folder or directory contents.
 
 ### Example
 
@@ -18,7 +18,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
             <TreeFile name="really-awesome-file.ts"/>
         </TreeFolder>
     </TreeFolder>
-    <TreeFile name="not-no-cool-file.ts"/>
+    <TreeFile name="not-so-cool-file.ts"/>
 </Tree>
 
 ## Markdown Usage
@@ -36,7 +36,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
             <TreeFile name="really-awesome-file.ts"/>
         </TreeFolder>
     </TreeFolder>
-    <TreeFile name="not-no-cool-file.ts"/>
+    <TreeFile name="not-so-cool-file.ts"/>
 </Tree>
 ```
 
@@ -66,7 +66,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
     </TreeFolder>
 </Tree>
 
-You can default every file to open by stating `open` in the `Tree` wrapper.
+You can default every folder to open by stating `open` in the `Tree` wrapper.
 
 ```md {3}
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
@@ -104,7 +104,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
     <TreeFolder name="Disabled Closed Folder" noInteraction>
         <TreeFile name="file.ts"/>
     </TreeFolder>
-</Tree
+</Tree>
 ```
 
 <Tree>
@@ -116,7 +116,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
     </TreeFolder>
 </Tree>
 
-You can default every file to have disabled interaction by stating `noInteraction` in the `Tree` wrapper.
+You can default every folder to have disabled interaction by stating `noInteraction` in the `Tree` wrapper.
 
 ```md {3}
 import { Tree, TreeFolder, TreeFile } from '$ui/tree';
@@ -128,7 +128,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
     <TreeFolder name="Disabled Closed Folder">
         <TreeFile name="file.ts"/>
     </TreeFolder>
-</Tree
+</Tree>
 ```
 
 <Tree noInteraction>
@@ -155,7 +155,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
             <TreeFile name="really-awesome-file.ts"/>
         </TreeFolder>
     </TreeFolder>
-    <TreeFile name="not-no-cool-file.ts"/>
+    <TreeFile name="not-so-cool-file.ts"/>
 </Tree>
 ```
 
@@ -167,7 +167,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
             <TreeFile name="really-awesome-file.ts"/>
         </TreeFolder>
     </TreeFolder>
-    <TreeFile name="not-no-cool-file.ts"/>
+    <TreeFile name="not-so-cool-file.ts"/>
 </Tree>
 
 ## Editing the Component

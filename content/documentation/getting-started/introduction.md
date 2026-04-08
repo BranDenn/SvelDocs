@@ -9,23 +9,23 @@ import Alert from '$ui/alert'
 
 SvelDocs provides you with all of the code for creating modern markdown documentation websites. In fact, this very site is the boilerplate code.
 
-The files are structured for both expansion and customization. There are  configuration files for a quick setup, but in the chance that something does not match your taste, you can always customize the code to your liking.
+The files are structured for both expansion and customization. There are configuration files for a quick setup, but if something does not match your taste, you can always customize the code to your liking.
 
 <Alert type="note">
-    This project assumes understanding with web development and frameworks. Knowledge of Svelte is a plus.
+    This project assumes familiarity with web development and frameworks. Knowledge of Svelte is a plus.
 </Alert>
 
 ## Features
 
 - Supports both Static Site Generation (SSG) and Server Side Rendering (SSR)
-- Simple structure for adding Tabs, Groups, and or Pages
+- Simple structure for adding Tabs, Groups, and / or Pages
 - Table of Contents
 - Searching
 - Remark / Rehype plugins
 - Automatically generated `.md` and `llms.txt` routes for Artificial Intelligence
 - Syntax highlighted code blocks
 - Search Engine Optimization (SEO) and `sitemap.xml`
-- Accessiblility and Tab Navigation
+- Accessibility and Tab Navigation
 - Light and Dark mode
 - Clean and Modern look
 

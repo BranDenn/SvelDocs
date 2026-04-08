@@ -8,7 +8,7 @@ SvelDocs uses [rehype-pretty-code](https://rehype-pretty.pages.dev/) in the mark
 
 ## Theme
 
-Edit the code block theme in the `src/lib/markdown/markdown.config.ts`. By default it uses the github color theme, but you can use any supported by `shiki`.
+Edit the code block theme in the `src/lib/markdown/markdown.config.ts`. By default it uses the GitHub color theme, but you can use any theme supported by `shiki`.
 
 ```ts
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -96,7 +96,7 @@ console.log('loaded');
 
 ### Highlight Lines
 
-You can higlight specific lines by using curly-brace ranges after the language:
+You can highlight specific lines by using curly-brace ranges after the language:
 
 ````md
 ```ts {2,4-6}

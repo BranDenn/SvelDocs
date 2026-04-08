@@ -52,6 +52,10 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 		Navigate to the `src/lib/configuration/site.config.ts` file to edit general site settings. These settings apply to the various parts of the site (not just docs) including SEO, `llms.txt`, and `sitemap.xml`. Feel free to add your own settings.
 
 		<FileReader file="src/lib/configuration/site.config.ts" />
+
+		<Alert type="warning">
+			Update the sitemap URL in `static/robots.txt` to match your own domain and path. This file is static and cannot import values from `site.config.ts`.
+		</Alert>
 	</Step>
 
 	<Step id="edit-docs-config" title="Edit Doc Settings / Config">
@@ -115,7 +119,7 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 	</Step>
 
 	<Step id="add-markdown" title="Add Your Own Markdown">
-		Navigate to the `content` folder to add your own markdown files. Idealy, the folder structure should correspond to your navigation structure.
+		Navigate to the `content` folder to add your own markdown files. Ideally, the folder structure should correspond to your navigation structure.
 
 		<Tabs.Root value="config">
 			<Tabs.List>

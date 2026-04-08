@@ -11,7 +11,7 @@ SvelDocs supports both:
 
 ## Global Element Overrides / Blueprints
 
-Global renderer / blueprint mapping is in the `src/lib/markdown/components/index.ts` file. This is used to convert any HTML element into a defined component and or add components that are always imported into the documentation. This is similar to blueprints in markdown compilers like mdx or mdsvex.
+Global renderer / blueprint mapping is in the `src/lib/markdown/components/index.ts` file. This is used to convert any HTML element into a defined component and / or add components that are always imported into the documentation. This is similar to blueprints in markdown compilers like mdx or mdsvex.
 
 The `blueprints` variable is used to define the data. Below is an example.
 

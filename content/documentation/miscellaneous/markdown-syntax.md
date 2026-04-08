@@ -1,5 +1,5 @@
 ---
-description: Examples of markdown and their result.
+description: Examples of markdown and the resulting output.
 ---
 
 ## Headings
@@ -13,9 +13,9 @@ description: Examples of markdown and their result.
 
 #### h4 Heading
 
-#### h5 Heading
+##### h5 Heading
 
-##### h6 Heading
+###### h6 Heading
 ```
 
 import H1 from '$lib/markdown/components/headings/h1.svelte';
@@ -52,7 +52,7 @@ This is _italic text_ (or _italic text_)
 This is ~strikethrough text~ (or ~~strikethrough text~~)
 This is **_bold & italic text_**
 This is <sub>subscript text</sub>
-This is <sup>supercript text</sup>
+This is <sup>superscript text</sup>
 This is <ins>underline text</ins>
 ```
 
@@ -61,7 +61,7 @@ This is _italic text_\
 This is ~strikethrough text~\
 This is **_bold & italic text_**\
 This is <sub>subscript text</sub>\
-This is <sup>supercript text</sup>\
+This is <sup>superscript text</sup>\
 This is <ins>underline text</ins>
 
 ---
@@ -148,7 +148,7 @@ line break
 > This is a quote block example
 ```
 
-> This a quote block example
+> This is a quote block example
 
 #### Quoting Code
 

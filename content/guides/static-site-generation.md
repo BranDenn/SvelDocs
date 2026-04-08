@@ -31,7 +31,7 @@ const config = {
 	kit: {
 		adapter: adapterStatic({
 			fallback: '404.html'
-		}),,
+		}),
 		...
 	}
 };
@@ -46,7 +46,7 @@ The adapter-static generates static `.html` and `.md` files instead of running a
 
 ## Base Path Support
 
-This project already supports a deployment base path in `svelte.config.js` for hosting on websites such as Github:
+This project already supports a deployment base path in `svelte.config.js` for hosting on websites such as GitHub:
 
 ```js title="svelte.config.js"
 const config = {
@@ -63,9 +63,9 @@ const config = {
 
 This is useful when deploying the static site under a subpath such as `your-username.github.io` instead of the domain root.
 
-### Github Pages
+### GitHub Pages
 
 
-This project provides a deploy workflow automatically for github pages. Feel free to remove it if you do not use it.
+This project provides a deploy workflow automatically for GitHub Pages. Feel free to remove it if you do not use it.
 
 <FileReader file=".github/workflows/deploy.yml" />
