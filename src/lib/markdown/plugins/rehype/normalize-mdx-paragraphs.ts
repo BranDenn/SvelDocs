@@ -65,9 +65,6 @@ function isMdxJsxNode(node: unknown): node is MdxJsxNode {
 	return String((node as MdxJsxNode).type ?? '').startsWith('mdxJsx');
 }
 
-/**
- * Factory for the MDX paragraph normalization plugin.
- */
 export default function rehypeNormalizeMdxParagraphs() {
 	return (root: Root) => {
 		visit(root, 'element', (node: Element, index, parent) => {

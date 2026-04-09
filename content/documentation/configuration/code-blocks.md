@@ -23,7 +23,8 @@ const markdownConfig = defineConfig({
 					light: 'github-light',
 					dark: 'github-dark'
 				},
-				keepBackground: false
+				keepBackground: false,
+				transformers: [transformerNotationDiff()]
 			}
 		]
 	]
@@ -164,6 +165,22 @@ const five = 5;
 const six = 6;
 ```
 
+### Diff Notation
+
+You can show added and removed lines using notation diff comments.
+
+````md
+```ts
+const text = 'hi world!'; // [!​code --]
+const text = 'hello world!'; // [!​code ++]
+```
+````
+
+```ts
+const text = 'hi world!'; // [!code --]
+const text = 'hello world!'; // [!code ++]
+```
+
 ### Kitchen Sink
 
 Here is an example of all the markdown features combined.
@@ -176,6 +193,8 @@ const three = 3;
 const four = 4;
 const five = 5;
 const six = 6;
+const text = 'hi world!'; // [!​code --]
+const text = 'hello world!'; // [!​code ++]
 ```
 ````
 
@@ -186,6 +205,8 @@ const three = 3;
 const four = 4;
 const five = 5;
 const six = 6;
+const text = 'hi world!'; // [!code --]
+const text = 'hello world!'; // [!code ++]
 ```
 
 ## File to Code Block

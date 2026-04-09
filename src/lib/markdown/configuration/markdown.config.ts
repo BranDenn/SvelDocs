@@ -12,6 +12,8 @@ import rehypePromoteCodeMeta from '../plugins/rehype/promote-code-meta';
 import rehypeNormalizeMdxParagraphs from '../plugins/rehype/normalize-mdx-paragraphs';
 import rehypeMarkPreHasCode from '../plugins/rehype/mark-pre-has-code';
 import rehypeTransformCodeGroup from '../plugins/rehype/transform-code-group';
+import rehypeClassnameToClass from '../plugins/rehype/classname-to-class';
+import rehypeTrimCodeLineWhitespace from '../plugins/rehype/trim-code-line-whitespace';
 
 // other plugins / options
 import { transformerNotationDiff } from '@shikijs/transformers';
@@ -38,9 +40,11 @@ const markdownConfig = defineConfig({
 					dark: 'github-dark'
 				},
 				keepBackground: false,
-				transformers: [transformerNotationDiff]
+				transformers: [transformerNotationDiff()]
 			}
 		],
+		rehypeTrimCodeLineWhitespace,
+		rehypeClassnameToClass,
 		rehypePromoteCodeMeta,
 		rehypeMarkPreHasCode,
 		rehypeTransformCodeGroup,

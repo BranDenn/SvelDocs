@@ -2,6 +2,7 @@
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { CopyButtonTooltip } from '$ui/copy-button';
 	import type { WithElementRef } from 'bits-ui';
+	import { cn } from '$utils';
 
 	type Props = WithElementRef<HTMLAttributes<HTMLPreElement>> & {
 		language?: string;
@@ -15,6 +16,7 @@
 		language = '',
 		hasCode = false,
 		lineNumbersMaxDigits = 1,
+		class: className,
 		...restProps
 	}: Props = $props();
 
@@ -31,7 +33,10 @@
 	<pre
 		bind:this={ref}
 		data-language={language}
-		class="scrollbar-thin bg-secondary max-h-96 overflow-auto py-4 text-sm focus-visible:ring-0"
+		class={cn(
+			'scrollbar-thin bg-secondary max-h-96 overflow-auto py-4 text-sm focus-visible:ring-0',
+			className
+		)}
 		style="--lineNumbersMaxDigits: {lineNumbersMaxDigits}ch;"
 		{...restProps}>{@render children?.()}</pre>
 	{#if language || hasCode}
@@ -78,7 +83,13 @@
 			@apply text-muted-foreground bg-primary border-t p-2 text-sm;
 		}
 		[data-line] {
-			@apply inline-block px-4 hover:bg-[color-mix(in_oklch,var(--color-background),#808080_25%)];
+			@apply inline-block px-4 hover:bg-[color-mix(in_oklch,currentColor,transparent_90%)];
+		}
+		[data-line].diff.remove {
+			@apply bg-red-500/10 opacity-75 hover:bg-[color-mix(in_oklch,var(--color-red-500),transparent_80%)];
+		}
+		[data-line].diff.add {
+			@apply bg-green-500/10 hover:bg-[color-mix(in_oklch,var(--color-green-500),transparent_80%)];
 		}
 		[data-line-numbers] {
 			counter-reset: line;
@@ -93,7 +104,7 @@
 		}
 		[data-line-numbers-max-digits] {
 			& > [data-line]:hover::before {
-				@apply text-foreground bg-[color-mix(in_oklch,var(--color-background),#808080_35%)];
+				@apply text-foreground bg-[color-mix(in_oklch,currentColor,transparent_90%)];
 			}
 			& > [data-line]::before {
 				width: calc(var(--lineNumbersMaxDigits) + 2rem);
@@ -101,7 +112,7 @@
 			}
 		}
 		[data-highlighted-line] {
-			@apply bg-accent/10!;
+			@apply bg-accent/10! hover:bg-[color-mix(in_oklch,var(--color-accent),transparent_80%)]!;
 		}
 	}
 </style>

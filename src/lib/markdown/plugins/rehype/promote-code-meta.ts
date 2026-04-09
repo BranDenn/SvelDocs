@@ -9,9 +9,6 @@
 import type { Element, Root } from 'hast';
 import { visit } from 'unist-util-visit';
 
-/**
- * Factory for the code metadata promotion plugin.
- */
 export default function rehypePromoteCodeMeta() {
 	return (root: Root) => {
 		visit(root, 'element', (node: Element) => {
