@@ -62,7 +62,7 @@ Below are the options for the `tabs` option from the above table:
 | `icon?` | `string` |  The icon to display next to the title of a tab. |
 | `folderPath?` | `string` |  The corresponding markdown folder location for the tab. This defaults to `content/{tabTitle}`. |
 | `combineHref?` | `boolean` | Determines if the tab title will be used in the link. |
-| `private?` | `boolean \| TRole \| TRole[]` | Determines if this tab and its groups/pages require auth. Read the [auth guide](/docs/guides/auth) for more info. |
+| `private?` | `boolean \| TRole \| TRole[]` | Determines if this tab and its groups/pages require auth. Read the [SSR auth section](/docs/guides/server-side-rendering#auth-protecting-docs) for more info. |
 | `pages?` | `PageItems<TRole> \| 'auto'` | A list of pages to include in the tab. Cannot be used if groups is defined. |
 | `groups?` | `DocGroup<TRole>[] \| 'auto'` | A list of groups to include in the tab. Cannot be used if pages is defined. |
 
@@ -103,7 +103,7 @@ Below are the options for the `groups` option from the above table:
 | `collapsible?` | `boolean` | Determines if the group can be collapsed in the navigation sidebar. |
 | `folderPath?` | `string` |  The corresponding markdown folder location for the group. This defaults to `content/{tabTitle?}/{groupTitle}`. |
 | `combineHref?` | `boolean` | Determines if the group title will be used in the link. |
-| `private?` | `boolean \| TRole \| TRole[]` | Determines if this group and its pages require auth. Read the [auth guide](/docs/guides/auth) for more info. |
+| `private?` | `boolean \| TRole \| TRole[]` | Determines if this group and its pages require auth. Read the [SSR auth section](/docs/guides/server-side-rendering#auth-protecting-docs) for more info. |
 | `pages` | `PageItems<TRole> \| 'auto'` | A list of pages to include in the group. |
 
 ### Defining Pages
@@ -136,4 +136,4 @@ Below are the options for the `pages` option from the above table:
 | `icon?` | `string` |  The icon displayed next to the title of a page in the navigation sidebar. |
 | `href?` | `Pathname` | The href of the page. This defaults to the page title. |
 | `filename?` | `string` | The corresponding markdown file location for the page. This defaults to `content/{tabTitle?}/{groupTitle?}/{pagetitle}`. | 
-| `private?` | `boolean \| TRole \| TRole[]` | Determines if this page requires auth. Read the [auth guide](/docs/guides/auth) for more info. |
+| `private?` | `boolean \| TRole \| TRole[]` | Determines if this page requires auth. Read the [SSR auth section](/docs/guides/server-side-rendering#auth-protecting-docs) for more info. |

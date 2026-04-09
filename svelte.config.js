@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+// import adapter from '@sveltejs/adapter-auto';
 import adapterStatic from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
@@ -9,6 +9,7 @@ const config = {
 		adapter: adapterStatic({
 			fallback: '404.html'
 		}),
+		// adapter: adapter(),
 		alias: {
 			$components: 'src/lib/components',
 			$ui: 'src/lib/components/ui',

@@ -13,6 +13,9 @@ import rehypeNormalizeMdxParagraphs from '../plugins/rehype/normalize-mdx-paragr
 import rehypeMarkPreHasCode from '../plugins/rehype/mark-pre-has-code';
 import rehypeTransformCodeGroup from '../plugins/rehype/transform-code-group';
 
+// other plugins / options
+import { transformerNotationDiff } from '@shikijs/transformers';
+
 const markdownConfig = defineConfig({
 	extensions: ['.md', '.mdx'],
 	remarkPlugins: [
@@ -34,7 +37,8 @@ const markdownConfig = defineConfig({
 					light: 'github-light',
 					dark: 'github-dark'
 				},
-				keepBackground: false
+				keepBackground: false,
+				transformers: [transformerNotationDiff]
 			}
 		],
 		rehypePromoteCodeMeta,

@@ -4,7 +4,7 @@ description: How to run SvelDocs as a prerendered static site.
 
 import Alert from '$ui/alert';
 
-## When To Use SSG
+## When To Use SSG (Static Site Generation)
 
 Use static site generation when all of your docs are public and can be built ahead of time. This is the current default provided from this project.
 
@@ -16,14 +16,15 @@ The benefits are straightforward:
 - No Runtime Server Requirements
 
 <Alert type="note">
-	If you are looking to have server side functionality like auth, please refer to the [Server Side Rendering](/docs/guides/server-side-rendering) or [Auth](/docs/guides/auth) guides.
+	If you are looking to have server side functionality like auth, please use [Server Side Rendering](/docs/guides/server-side-rendering).
 </Alert>
 
-## The Current Static Setup
+## Configuration
 
-Static output is configured in `svelte.config.js`:
+The adapter is configured in `svelte.config.js`. The static adapter is the default.
 
 ```js title="svelte.config.js"
+// import adapter from '@sveltejs/adapter-auto';
 import adapterStatic from '@sveltejs/adapter-static';
 
 const config = {
@@ -31,7 +32,8 @@ const config = {
 	kit: {
 		adapter: adapterStatic({
 			fallback: '404.html'
-		}),
+		}),						 
+		// adapter: adapter()
 		...
 	}
 };

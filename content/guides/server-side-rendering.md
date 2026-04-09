@@ -2,29 +2,38 @@
 description: How to run SvelDocs with server-side rendering and when to switch away from the static adapter.
 ---
 
-## When To Use SSR
+import Alert from '$ui/alert';
+import { Steps, Step } from '$ui/steps';
 
-Use server-side rendering when your docs need request-time behavior, such as:
+## When To Use SSR (Server Side Rendering)
 
-- authenticated docs
-- role-based access control
-- user-specific navigation
-- server-only data fetching
+Use server-side rendering when your docs need request-time behavior, such as Auth or other server-only data fetching:
 
 SvelDocs already uses server load functions for the docs routes, so the main SSR change is your adapter and deployment target.
 
-## The File To Change
+<Alert type="note">
+	If you do not need any server side functionality, it is recommended to use [Static Site Generation](/docs/guides/static-site-generation).
+</Alert>
 
-Adapter selection lives in `svelte.config.js`.
+## Configuration
 
-The starter is currently configured for static output:
+The adapter is configured in `svelte.config.js`. The static adapter is the default, so replace it with the [adapter](https://svelte.dev/docs/kit/adapters) that matches your host.
 
-```js
-// import adapter from '@sveltejs/adapter-auto';
-import adapter from '@sveltejs/adapter-static';
+```js title="svelte.config.js"
+import adapter from '@sveltejs/adapter-auto';		  // [!code ++]
+import adapterStatic from '@sveltejs/adapter-static'; // [!code --]
+
+const config = {
+	...
+	kit: {
+		adapter: adapterStatic({ // [!code --]
+			fallback: '404.html' // [!code --]
+		}),						 // [!code --]
+		adapter: adapter()		 // [!code ++]
+		...
+	}
+};
 ```
-
-For SSR, replace the static adapter with the adapter that matches your host.
 
 Common choices:
 
@@ -34,72 +43,99 @@ Common choices:
 - `@sveltejs/adapter-netlify` for Netlify functions
 - `@sveltejs/adapter-cloudflare` for Cloudflare
 
-Example with `adapter-auto`:
+## Auth
 
-```js
-import adapter from '@sveltejs/adapter-auto';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+SvelDocs does not implement auth directly because auth implementation is opinionated. However, SvelDocs includes role-based access control hooks for docs when you run SSR.
 
-const config = {
-	preprocess: vitePreprocess(),
-	extensions: ['.svelte'],
-	kit: {
-		adapter: adapter(),
-		alias: {
-			$components: 'src/lib/components',
-			$ui: 'src/lib/components/ui',
-			$utils: 'src/lib/utils',
-			$css: 'src/app.css'
-		}
-	}
-};
+<Steps>
+	<Step id="mark-private-navigation" title="Mark Tabs, Groups, Or Pages As Private">
+		Use `private` on tabs, groups, or pages for the `docNavigationConfig`. `private` supports `boolean` | `string` | `string[]`. It is recommended to update the `type Roles` for type safety and auto complete. 
 
-export default config;
-```
+		```ts title="src/lib/docs/server/navigation/doc-navigation.config.ts"
+		import { defineDocNavigation } from './define-doc-navigation';
 
-## Install The Adapter
+		type Roles =  'member' | 'proMember';
 
-If you switch to an adapter that is not already installed, add it to your project first.
+		const docNavigationConfig = defineDocNavigation<Roles>({
+			tabs: [
+				{
+					title: 'Member Documentation',
+					private: true // only logged in users can access this tab
+					groups: [
+						{
+							title: 'Every Logged in User'
+							pages: 'auto' // pages inherit tab `private`
+						},
+						{
+							title: 'Only Paid Members',
+							private: ['member', 'proMember'] // only paid members can access this group (overrides tab `private`)
+							pages: [
+								{ title: 'Member Info' }, // page inherits group `private`
+								{ title: 'Pro Member Info', private: 'proMember' } // only pro members can access this page (overrides group `private`) 
+							]
+						}
+					]
+				}
+			]
+		});
 
-Example:
+		export default docNavigationConfig;
+		```
+	</Step>
 
-```bash
-bun add -d @sveltejs/adapter-auto
-```
+	<Step id="add-auth-to-locals" title="Add User Auth State To event.locals">
+		Create (or update) `src/hooks.server.ts` and set a boolean or role on locals.
 
-Or install the adapter that matches your deployment platform.
+		```ts title="hooks.server.ts"
+		import type { Handle } from '@sveltejs/kit';
 
-## What Already Works In This Repo
+		export const handle: Handle = async ({ event, resolve }) => {
+			// Replace this with your real session lookup
+			const session = await event.locals.auth?.();
 
-The server-side docs flow is already in place:
+			// false = unauthenticated, otherwise a role string
+			event.locals.userRole = session?.user?.role ?? false;
 
-- `src/routes/(docs)/[...slug=docs]/+layout.server.ts` filters navigation and search groups on the server
-- `src/routes/(docs)/[...slug=docs]/+page.server.ts` blocks access to private pages before rendering
-- `src/lib/server/content/docs-access.ts` contains the access check
+			return resolve(event);
+		};
+		```
+	</Step>
 
-That means SSR is mostly a deployment concern, not a rendering rewrite.
+	<Step id="update-docs-loaders" title="Update The Docs Route Server Functions">
+		Update all docs server loaders/endpoints so they call `canAccessDoc(...)` with your locals value.
 
-## Important Difference From Static Output
+		```ts title="src/routes/(docs)/[...slug=docs]/+layout.server.ts"
+		export const load: LayoutServerLoad = async ({ locals }) => {
+			...
 
-The current starter is biased toward public static docs:
+			const { navigation, searchGroups } = getDocLayoutData((doc) => canAccessDoc(locals.userRole, doc.private));
 
-- `src/lib/server/content/docs-data.ts` only returns public entries from `getPublicDocEntries()`
-- `src/routes/(docs)/[...slug=docs]/+page.server.ts `uses those entries
-- `src/routes/(docs)/[...slug=docs].md/+server.ts` is explicitly prerendered
+			...
+		};
+		```
 
-If you want authenticated or role-restricted docs in SSR, stop treating those routes as public-only prerender targets. The server must be allowed to evaluate access at request time.
+		```ts title="src/routes/(docs)/[...slug=docs]/+page.server.ts"
+		export const load: PageServerLoad = async ({ locals, params }) => {
+			...
 
-In practice, that usually means:
+			if (!canAccessDoc(locals.userRole, docData.private)) {
+				throw error(404, 'Document not found');
+			}
 
-- keeping your runtime adapter instead of `adapter-static`
-- removing or reworking public-only entry generation for protected routes
-- leaving access checks in the server load and server endpoint handlers
+			...
+		};
+		```
 
-## Recommended SSR Setup
+		```ts title="src/routes/(docs)/[...slug=docs].md/+server.ts"
+		export const GET: RequestHandler = async ({ locals, params }) => {
+			...
 
-1. Choose the adapter for your host in `svelte.config.js`.
-2. Populate `event.locals` in `src/hooks.server.ts` from your real auth/session layer.
-3. Keep `canAccessDoc(...)` as the single place that decides whether a doc is visible.
-4. Only prerender routes that are genuinely public.
+			if (!canAccessDoc(locals.userRole, docData.private)) {
+				throw error(404, 'Document not found');
+			}
 
-If your docs are fully public, SSG is usually simpler. If any content depends on the current user, move to SSR.
+			...
+		};
+		```
+	</Step>
+</Steps>
