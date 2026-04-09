@@ -1,6 +1,6 @@
 <script lang="ts">
 	import BlueprintRenderer from './blueprint-renderer.svelte';
-	import type { AstNode } from '../components';
+	import type { RootContent } from 'hast';
 	import { VOID_ELEMENTS, getMappedRenderer, getMdxProps } from './utils';
 
 	let {
@@ -9,7 +9,7 @@
 		componentAliases = {},
 		resolvedComponents = {}
 	}: {
-		node: AstNode;
+		node: RootContent;
 		parentElement?: string;
 		componentAliases?: Record<string, string[]>;
 		resolvedComponents?: Record<string, unknown>;
@@ -18,7 +18,7 @@
 
 {#if node.type === 'text'}
 	{node.value}
-{:else if node.type?.startsWith('mdxJsx')}
+{:else if node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement'}
 	{@const mappedMdxRenderer = node.name
 		? getMappedRenderer(node, node.name, {
 				parentElement,
@@ -28,23 +28,24 @@
 		: null}
 	{#if mappedMdxRenderer}
 		{@const MdxComponent = mappedMdxRenderer.component}
+		{@const mdxName = node.name ?? undefined}
 		{@const mdxProps = mappedMdxRenderer.inheritNodeProps ? getMdxProps(node.attributes) : {}}
 		<MdxComponent {...mdxProps} {...mappedMdxRenderer.props}>
 			{#each node.children ?? [] as child, i (`${node.name ?? 'mdx'}-${i}`)}
 				<BlueprintRenderer
 					node={child}
-					parentElement={node.name}
+					parentElement={mdxName}
 					{componentAliases}
 					{resolvedComponents}
 				/>
 			{/each}
 		</MdxComponent>
 	{:else if node.name}
-		<svelte:element this={node.name} {...node.properties ?? {}}>
+		<svelte:element this={node.name} {...getMdxProps(node.attributes)}>
 			{#each node.children ?? [] as child, i (`${node.name}-${i}`)}
 				<BlueprintRenderer
 					node={child}
-					parentElement={node.name}
+					parentElement={node.name ?? undefined}
 					{componentAliases}
 					{resolvedComponents}
 				/>

@@ -9,10 +9,7 @@
 	import { page } from '$app/state';
 	import { setDocLayoutContext } from '$lib/components/docs/layout-context.svelte';
 
-	let {
-		data,
-		children
-	} = $props();
+	let { data, children } = $props();
 
 	// Create shared context for tabs and code groups
 	createSharedValueContext({

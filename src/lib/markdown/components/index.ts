@@ -1,4 +1,5 @@
 import type { Component } from 'svelte';
+import type { RootContent } from 'hast';
 import H1 from './headings/h1.svelte';
 import H2 from './headings/h2.svelte';
 import H3 from './headings/h3.svelte';
@@ -21,20 +22,10 @@ import Ol from './text/ol.svelte';
 import Ul from './text/ul.svelte';
 import { CodeGroup, CodeGroupContent, CodeGroupList, CodeGroupTrigger } from '$ui/code-group';
 
-export type AstNode = {
-	type?: string;
-	value?: string;
-	tagName?: string;
-	name?: string;
-	properties?: Record<string, unknown>;
-	attributes?: Array<{ name?: string; value?: unknown }>;
-	children?: AstNode[];
-};
-
 export type MarkdownNodeComponent = Component<any>;
 
 export type AstNodeContext = {
-	node: AstNode;
+	node: RootContent;
 	parentElement?: string;
 };
 

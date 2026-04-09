@@ -1,6 +1,7 @@
 import type { Component } from 'svelte';
+import type { RootContent } from 'hast';
 import astNodeRenderers from '../components';
-import { isNodeResolver, type AstNodeRendererResult, type AstNode } from '../components';
+import { isNodeResolver, type AstNodeRendererResult } from '../components';
 
 const componentMap = {
 	...astNodeRenderers
@@ -55,6 +56,11 @@ type MdxAttributeValueExpression = {
 	data?: {
 		estree?: EstreeNode;
 	};
+};
+
+type MdxJsxAttribute = {
+	name?: string;
+	value?: unknown;
 };
 
 const UNRESOLVED_MDX_EXPRESSION = Symbol('UNRESOLVED_MDX_EXPRESSION');
@@ -239,12 +245,15 @@ function resolveMdxAttributeValue(value: unknown): unknown {
 	return expressionValue.value;
 }
 
-export function getMdxProps(attrs: AstNode['attributes'] = []) {
-	return attrs.reduce<Record<string, unknown>>((acc, attr) => {
-		if (!attr?.name) return acc;
-		acc[attr.name] = attr.value == null ? true : resolveMdxAttributeValue(attr.value);
-		return acc;
-	}, {});
+export function getMdxProps(attrs: MdxJsxAttribute[] = []) {
+	return attrs.reduce<Record<string, unknown>>(
+		(acc: Record<string, unknown>, attr: MdxJsxAttribute) => {
+			if (!attr?.name) return acc;
+			acc[attr.name] = attr.value == null ? true : resolveMdxAttributeValue(attr.value);
+			return acc;
+		},
+		{}
+	);
 }
 
 function toResolvedRenderer(renderResult: unknown): ResolvedRenderer | null {
@@ -271,7 +280,7 @@ function toResolvedRenderer(renderResult: unknown): ResolvedRenderer | null {
 }
 
 export function getMappedRenderer(
-	node: AstNode,
+	node: RootContent,
 	key: string,
 	{ parentElement, componentAliases = {}, resolvedComponents = {} }: RendererOptions
 ): ResolvedRenderer | null {
