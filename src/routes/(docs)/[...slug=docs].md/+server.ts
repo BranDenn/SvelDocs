@@ -4,8 +4,8 @@ import { canAccessDoc } from '$lib/docs/server/docs-access';
 import { getDocsData } from '$lib/docs/server/docs-data';
 export { prerender, entries } from '$lib/docs/server/docs-data';
 
-export const GET: RequestHandler = async ({ locals, url }) => {
-	const docData = getDocsData(url.pathname.replace(/\.md$/i, ''));
+export const GET: RequestHandler = async ({ locals, params }) => {
+	const docData = getDocsData(params.slug);
 
 	// replace `false` with `locals` for checking authentication
 	if (!canAccessDoc(false, docData.private)) {
@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 		txt += `\n\n> ${metadata.description}`;
 	}
 
-	const body = `${txt}\n\n${docData.markdown.rawContent}`;
+	const body = `${txt}\n\n${docData.markdown.content.raw}`;
 
 	return new Response(body, {
 		headers: {

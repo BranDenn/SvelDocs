@@ -11,7 +11,7 @@ import type {
 	NavigationGroup,
 	NavigationTab
 } from '../../src/lib/docs/client/doc-navigation-context.svelte';
-import type { ManifestNavigationPage } from './types';
+import type { ManifestNavigationPage } from '../../src/lib/docs/server/types';
 import { toPosixPath } from './utils';
 
 type NavigationTabMapItem = Omit<NavigationTab, 'id'>;
@@ -220,19 +220,21 @@ export class DocEntries {
 
 		const pageData: ManifestNavigationPage = {
 			href,
-			slug: routeSlug,
 			title: page.title,
 			filepath,
 			private: privateAccess,
 			...(page.icon ? { icon: page.icon } : {})
 		};
+
 		if (tabId !== undefined) {
 			pageData.tabId = tabId;
 		}
+
 		if (groupId !== undefined) {
 			pageData.groupId = groupId;
 		}
-		this.pages.set(href, pageData);
+
+		this.pages.set(routeSlug, pageData);
 	}
 
 	private expandLoadRest(explicitPages: DocPage[], tab?: DocTab, group?: DocGroup): DocPage[] {

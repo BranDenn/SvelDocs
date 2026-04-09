@@ -11,30 +11,23 @@ import type {
 	BuiltDocRecord,
 	DocLayoutData,
 	DocSearchItem,
-	DocsManifestData,
-	ManifestDocPage
-} from '../../../../plugins/processed-docs/types';
+	DocsManifestData
+} from '$lib/docs/server/types';
 import type { EntryGenerator } from '../../../routes/(docs)/[...slug=docs]/$types';
 
-function normalizePathname(pathname: string | null | undefined): string {
-	const raw = (pathname ?? '').trim();
-	if (!raw) {
-		return '/docs';
-	}
+type FlatDocRecord = BuiltDocRecord & { slug: string };
 
-	const normalized = raw.startsWith('/') ? raw : `/${raw}`;
-	return normalized.length > 1 ? normalized.replaceAll(/\/+$/g, '') : normalized;
-}
-
-function getAllDocRecords(): BuiltDocRecord[] {
-	const pages = Array.from(searchJsonData.pages.values() as Iterable<ManifestDocPage>);
-	return pages.map((page) => page.docData);
+function getAllDocRecords(): FlatDocRecord[] {
+	const pages = Array.from(searchJsonData.pages.entries()).map(([slug, page]) => ({
+		...page,
+		slug
+	}));
+	return pages;
 }
 
 type DocSearchGroup = DocLayoutData['searchGroups'][number];
-type IndexedNavigationTab = NavigationTab & { id: number };
-type IndexedNavigationGroup = NavigationGroup & { id: number };
-type IndexedNavigationPage = NavigationPage & { id: number };
+type ManifestTab = NavigationTab;
+type ManifestGroup = NavigationGroup;
 
 function applyPrevNextAcrossAllPages<T extends { href: string; prev?: string; next?: string }>(
 	pages: T[]
@@ -79,40 +72,7 @@ function applyDocPrevNext<T extends { href: string; tabId?: number; prev?: strin
 	applyPrevNextWithinTabs(pages, pagesByTab);
 }
 
-function toNavigationPage(page: NavigationPage): NavigationPage {
-	const pageData: NavigationPage = {
-		href: page.href,
-		title: page.title,
-		...(page.icon ? { icon: page.icon } : {})
-	};
-
-	if (page.groupId !== undefined) {
-		pageData.groupId = page.groupId;
-	}
-
-	if (page.tabId !== undefined) {
-		pageData.tabId = page.tabId;
-	}
-
-	return pageData;
-}
-
-function toIndexedTabs(tabs: DocsManifestData['tabs']): IndexedNavigationTab[] {
-	return Array.from(tabs.entries())
-		.map(([id, tab]) => ({ id, ...tab }))
-		.sort((a, b) => a.id - b.id);
-}
-
-function toIndexedGroups(groups: DocsManifestData['groups']): IndexedNavigationGroup[] {
-	return Array.from(groups.entries())
-		.map(([id, group]) => ({ id, ...group }))
-		.sort((a, b) => a.id - b.id);
-}
-
-function filterNavigationTabs(
-	pages: NavigationPage[],
-	tabs: IndexedNavigationTab[]
-): IndexedNavigationTab[] {
+function filterNavigationTabs(pages: NavigationPage[], tabs: ManifestTab[]): ManifestTab[] {
 	const pageHrefsByTab = new Map<number, string[]>();
 
 	for (const page of pages) {
@@ -136,45 +96,28 @@ function filterNavigationTabs(
 		}));
 }
 
-function toSearchItem(page: ManifestDocPage): DocSearchItem {
-	const doc = page.docData;
-
-	const metadata = doc.markdown.metadata ?? {};
-	const metadataDescription =
-		typeof metadata.description === 'string' ? metadata.description.trim() : '';
-	const content =
-		typeof doc.markdown.searchContent === 'string' ? doc.markdown.searchContent.trim() : '';
-	const description = [metadataDescription, content].filter(Boolean).join(' ');
-	const rawKeywords = metadata.keywords;
-	let keywords: string[] = [];
-	if (Array.isArray(rawKeywords)) {
-		keywords = rawKeywords
-			.filter((item): item is string => typeof item === 'string')
-			.map((item) => item.trim())
-			.filter(Boolean);
-	} else if (typeof rawKeywords === 'string') {
-		keywords = rawKeywords
-			.split(',')
-			.map((item) => item.trim())
-			.filter(Boolean);
-	}
+function toSearchItem(page: BuiltDocRecord): DocSearchItem {
+	const { metadata, content } = page.markdown;
+	const title = [page.title, metadata.title ? `(${metadata.title})` : ''].filter(Boolean).join(' ');
+	const description = [metadata.description, content.search].filter(Boolean).join(' ');
+	const keywords = Array.from(new Set(metadata.keywords)).filter(Boolean);
 
 	return {
 		href: page.href,
-		title: doc.title,
+		title,
 		description,
 		...(keywords.length ? { keywords } : {}),
-		...(doc.icon ? { icon: doc.icon } : {})
+		...(page.icon ? { icon: page.icon } : {})
 	};
 }
 
-function toSearchItems(pages: ManifestDocPage[]): DocSearchItem[] {
+function toSearchItems(pages: BuiltDocRecord[]): DocSearchItem[] {
 	return pages.map((page) => toSearchItem(page));
 }
 
 function createGroupedSearchGroup(
 	title: string,
-	pages: ManifestDocPage[],
+	pages: BuiltDocRecord[],
 	icon?: string
 ): DocSearchGroup | null {
 	const items = toSearchItems(pages);
@@ -190,9 +133,9 @@ function createGroupedSearchGroup(
 }
 
 function createSingleTabSearchGroups(
-	tab: IndexedNavigationTab,
-	tabPages: ManifestDocPage[],
-	groups: IndexedNavigationGroup[]
+	tab: ManifestTab,
+	tabPages: BuiltDocRecord[],
+	groups: ManifestGroup[]
 ): DocSearchGroup[] {
 	if (tab.mode === 'group') {
 		return groups
@@ -217,9 +160,9 @@ function createSingleTabSearchGroups(
 }
 
 function createTabSearchGroups(
-	pages: ManifestDocPage[],
-	tabs: IndexedNavigationTab[],
-	groups: IndexedNavigationGroup[]
+	pages: BuiltDocRecord[],
+	tabs: ManifestTab[],
+	groups: ManifestGroup[]
 ): DocSearchGroup[] {
 	const searchGroups: DocSearchGroup[] = [];
 
@@ -232,8 +175,8 @@ function createTabSearchGroups(
 }
 
 function createStandaloneGroupSearchGroups(
-	pages: ManifestDocPage[],
-	groups: IndexedNavigationGroup[]
+	pages: BuiltDocRecord[],
+	groups: ManifestGroup[]
 ): DocSearchGroup[] {
 	return groups
 		.map((group) =>
@@ -247,9 +190,9 @@ function createStandaloneGroupSearchGroups(
 }
 
 function createSearchGroups(
-	pages: ManifestDocPage[],
-	tabs: IndexedNavigationTab[],
-	groups: IndexedNavigationGroup[]
+	pages: BuiltDocRecord[],
+	tabs: ManifestTab[],
+	groups: ManifestGroup[]
 ): DocSearchGroup[] {
 	if (tabs.length) {
 		return createTabSearchGroups(pages, tabs, groups);
@@ -268,16 +211,22 @@ function createSearchGroups(
 }
 
 export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () => true) {
-	const manifest = searchJsonData as DocsManifestData;
-	const indexedTabs = toIndexedTabs(manifest.tabs);
-	const indexedGroups = toIndexedGroups(manifest.groups);
+	const manifest: DocsManifestData = searchJsonData;
+	const tabs = Array.from(manifest.tabs.entries())
+		.map(([id, tab]) => ({ id, ...tab }))
+		.sort((a, b) => a.id - b.id);
+	const groups = Array.from(manifest.groups.entries())
+		.map(([id, group]) => ({ id, ...group }))
+		.sort((a, b) => a.id - b.id);
 	const allManifestPages = Array.from(manifest.pages.values());
-	const visibleManifestPages = allManifestPages.filter((page) => filter(page.docData));
-	const visiblePages: IndexedNavigationPage[] = visibleManifestPages
-		.map(({ docData: _docData, filepath: _filepath, private: _private, ...page }) =>
-			toNavigationPage(page)
-		)
-		.map((page, id) => ({ id, ...page, prev: undefined, next: undefined }));
+	const visibleManifestPages = allManifestPages.filter((page) => filter(page));
+	const visiblePages: NavigationPage[] = visibleManifestPages.map(
+		({ markdown: _markdown, filepath: _filepath, private: _private, ...page }) => ({
+			...page,
+			prev: undefined,
+			next: undefined
+		})
+	);
 	const config = docNavigationConfig as DocNavigationConfig;
 	const tabNextPrevEnabled = 'tabs' in config && config.tabNextPrev === true;
 
@@ -287,13 +236,13 @@ export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () =
 		applyDocPrevNext(visiblePages);
 	}
 
-	const navigationTabs = filterNavigationTabs(visiblePages, indexedTabs);
+	const navigationTabs = filterNavigationTabs(visiblePages, tabs);
 	const visibleGroupIds = new Set(
 		visiblePages
 			.map((page) => page.groupId)
 			.filter((groupId): groupId is number => groupId !== undefined)
 	);
-	const navigationGroups = indexedGroups.filter((group) => visibleGroupIds.has(group.id));
+	const navigationGroups = groups.filter((group) => visibleGroupIds.has(group.id));
 
 	return {
 		navigation: {
@@ -328,10 +277,8 @@ export function isAllPublic() {
 
 export const prerender: true | 'auto' = isAllPublic() ? true : 'auto';
 
-export function getDocsData(pathname: string): BuiltDocRecord {
-	const normalizedPathname = normalizePathname(pathname);
-	const page = searchJsonData.pages.get(normalizedPathname);
-	const data = page?.docData;
+export function getDocsData(slug: string): BuiltDocRecord {
+	const data = searchJsonData.pages.get(slug);
 
 	if (!data) {
 		throw error(404, 'Document not found');
@@ -341,7 +288,7 @@ export function getDocsData(pathname: string): BuiltDocRecord {
 }
 
 export function getDocPageData(doc: BuiltDocRecord) {
-	const ast = doc.markdown.ast;
+	const { metadata, ast, imports, tableOfContents } = doc.markdown;
 
 	if (!ast) {
 		throw error(500, 'Document AST was not generated');
@@ -349,9 +296,9 @@ export function getDocPageData(doc: BuiltDocRecord) {
 
 	return {
 		ast,
-		metadata: doc.markdown.metadata ?? {},
-		imports: doc.markdown.imports ?? {},
-		title: doc.title,
-		tocEntries: doc.markdown.tableOfContents
+		imports,
+		title: metadata.title ?? doc.title,
+		description: metadata.description,
+		tocEntries: tableOfContents
 	} as const;
 }

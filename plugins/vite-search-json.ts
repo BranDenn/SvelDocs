@@ -3,15 +3,13 @@ import path from 'node:path';
 import type { PluginOption } from 'vite';
 import { getMarkdownData } from './processed-docs/markdown-to-ast.js';
 import { DocEntries } from './processed-docs/collect-doc-entries.js';
-import markdownConfig from '../src/lib/markdown/configuration/markdown.config.js';
-import { toPosixPath } from './processed-docs/utils.js';
+import { toPosixPath, MARKDOWN_EXTENSIONS } from './processed-docs/utils.js';
 import type { DocPrivateAccess } from '../src/lib/docs/server/navigation/define-doc-navigation.js';
 import type {
 	BuiltDocRecord,
 	DocsManifestData,
-	ManifestDocPage,
 	ManifestNavigationPage
-} from './processed-docs/types';
+} from '$lib/docs/server/types';
 
 const VIRTUAL_SEARCH_JSON_ID = 'virtual:doc-search-json';
 const RESOLVED_VIRTUAL_SEARCH_JSON_ID = '\0virtual:doc-search-json';
@@ -19,10 +17,6 @@ const RESOLVED_VIRTUAL_SEARCH_JSON_ID = '\0virtual:doc-search-json';
 type DocSearchJsonOptions = {
 	markdownFolderPath: string;
 };
-
-const MARKDOWN_EXTENSIONS = new Set(
-	(markdownConfig.extensions ?? []).map((extension) => extension.toLowerCase())
-);
 
 export function isMarkdownModulePath(filePath: string): boolean {
 	return MARKDOWN_EXTENSIONS.has(path.extname(filePath).toLowerCase());
@@ -96,37 +90,21 @@ function resolveMetadataAccess(metadata: Record<string, unknown>): DocPrivateAcc
 	return Boolean(metadata.private);
 }
 
-async function buildDocRecord(page: ManifestNavigationPage, raw: string): Promise<BuiltDocRecord> {
-	const markdown = await getMarkdownData(raw);
-	const metadata = markdown.metadata;
-
-	return {
-		slug: page.slug,
-		href: page.href,
-		filepath: page.filepath,
-		title: metadata.title ? `${page.title} (${metadata.title})` : page.title,
-		private: resolveMetadataAccess(markdown.metadata) ?? page.private,
-		icon: page.icon ?? metadata.icon,
-		markdown
-	};
-}
-
 async function createPagesWithDocData(
 	navigationPages: Map<string, ManifestNavigationPage>,
 	rawMarkdownByPath: Record<string, string>
-): Promise<Map<string, ManifestDocPage>> {
-	const pages = new Map<string, ManifestDocPage>();
+): Promise<Map<string, BuiltDocRecord>> {
+	const pages = new Map<string, BuiltDocRecord>();
 
 	for (const [href, page] of navigationPages.entries()) {
-		const raw = rawMarkdownByPath[toPosixPath(page.filepath)];
+		const raw = rawMarkdownByPath[page.filepath];
 
 		if (raw === undefined) continue;
-		const docData = await buildDocRecord(page, raw);
+		const markdown = await getMarkdownData(raw);
 
 		pages.set(href, {
 			...page,
-			icon: page.icon ?? docData.icon,
-			docData
+			markdown
 		});
 	}
 

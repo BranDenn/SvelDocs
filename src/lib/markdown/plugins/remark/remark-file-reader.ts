@@ -5,11 +5,14 @@ import type { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 import type { VFile } from 'vfile';
 import type { Transformer } from 'unified';
-import { toPosixPath } from '../../../../../plugins/processed-docs/utils';
 
 type AttrValue = string | boolean;
 type AttrMap = Record<string, AttrValue>;
 const REGEX_LITERAL_REGEX = /^\/(.*)\/([a-z]*)$/i;
+
+function toPosixPath(filePath: string): string {
+	return filePath.replaceAll('\\', '/');
+}
 
 function escapeCodeMetaValue(value: string): string {
 	return value.replaceAll('"', String.raw`\"`);

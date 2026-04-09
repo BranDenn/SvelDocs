@@ -2,10 +2,13 @@ export type {
 	MarkdownMetadata,
 	MarkdownContent,
 	TableOfContentsHeading,
-	MarkdownAstResult,
+	MarkdownAstResult
+} from './markdown';
+
+export type {
 	DocSearchItem,
 	ManifestNavigationPage,
 	BuiltDocRecord,
 	DocsManifestData,
 	DocLayoutData
-} from '../../src/lib/docs/server/types';
+} from './manifest';

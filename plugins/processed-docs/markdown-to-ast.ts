@@ -7,6 +7,11 @@ import remarkMdx from 'remark-mdx';
 import remarkStringify from 'remark-stringify';
 import remarkRehype, { type Options as RemarkRehypeOptions } from 'remark-rehype';
 import markdownConfig from '../../src/lib/markdown/configuration/markdown.config';
+import type {
+	MarkdownAstResult,
+	MarkdownMetadata,
+	TableOfContentsHeading
+} from '../../src/lib/docs/server/types';
 import { extractImportDataFromRaw, stripImportLines } from './mdx-import-utils.js';
 import { visit } from 'unist-util-visit';
 
@@ -83,54 +88,6 @@ function extractTocHeadingsFromAst(tree: HastRoot): TableOfContentsHeading[] {
 	return Array.from(headingNodes.values());
 }
 
-export type MarkdownMetadata = {
-	title?: string;
-	description?: string;
-	keywords?: string[] | string;
-	icon?: string;
-	private: boolean;
-};
-
-type TableOfContentsHeading = {
-	id: string;
-	text: string;
-	tagLevel: number;
-};
-
-export type MarkdownAstResult = {
-	/**
-	 * The transformed raw content after applying remark plugins, but before remark-rehype conversion.
-	 * This is used for `[...docs].md` routes to ensure consistent content for Artificial Intelligence.
-	 * For example, the `<FileReader />` component would be transformed into an actual code block since the file is not actually accessible.
-	 */
-	rawContent: string;
-	/**
-	 * A plain text representation of the markdown content, extracted from the HAST.
-	 * This is used for search indexing and should not contain any markdown syntax or HTML tags.
-	 */
-	searchContent: string;
-	/**
-	 * The list of headings extracted from the markdown content, which can be used to generate a table of contents on the client side.
-	 * Each heading includes its text, id, and tag level (e.g., h1, h2).
-	 */
-	tableOfContents: TableOfContentsHeading[];
-	/**
-	 * The metadata extracted from the markdown frontmatter.
-	 */
-	metadata: MarkdownMetadata;
-	/**
-	 * A mapping of import source to variable name for all js imports found in the raw markdown content.
-	 * For example, if the markdown contains `import MyComponent from './MyComponent.svelte'`, this would include an entry like `{ './MyComponent.svelte': 'MyComponent' }`.
-	 * This allows downstream processing to understand which components are being used and where they come from.
-	 */
-	imports: Record<string, string>;
-	/**
-	 * The final HAST (Hypertext Abstract Syntax Tree) representation of the markdown content after processing with remark and rehype plugins.
-	 * This is required to pass markdown content safely from the server to client. This is neccessary for server side rendering.
-	 */
-	ast: HastRoot;
-};
-
 export async function getMarkdownData(rawMarkdown: string): Promise<MarkdownAstResult> {
 	const { data, content: rawContent } = matter(rawMarkdown);
 	const metadata = data as MarkdownMetadata;
@@ -173,11 +130,15 @@ export async function getMarkdownData(rawMarkdown: string): Promise<MarkdownAstR
 	const mdxImportData = extractImportDataFromRaw(rawContent);
 	const hast = await fullProcessor.run(mdast);
 
+	const content = {
+		raw: transformedRawContent,
+		search: extractTextFromAst(hast)
+	};
+
 	return {
-		rawContent: transformedRawContent,
-		searchContent: extractTextFromAst(hast),
-		tableOfContents: extractTocHeadingsFromAst(hast),
 		metadata,
+		content,
+		tableOfContents: extractTocHeadingsFromAst(hast),
 		imports: mdxImportData.imports,
 		ast: hast
 	};
