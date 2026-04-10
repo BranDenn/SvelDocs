@@ -1,6 +1,7 @@
 import { createContext } from 'svelte';
 import { page } from '$app/state';
 import { SvelteMap } from 'svelte/reactivity';
+import { resolve } from '$app/paths';
 
 export type NavigationPage = {
 	href: string;
@@ -205,7 +206,7 @@ export class DocNavigationContext {
 		}
 
 		for (const pageItem of params.pages ?? []) {
-			const href = normalizePathname(pageItem.href);
+			const href = resolve(`/${normalizePathname(pageItem.href)}`);
 			this.pagesByHref.set(href, { ...pageItem, href });
 
 			if (pageItem.tabId !== undefined) {
