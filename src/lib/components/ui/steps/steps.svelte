@@ -6,7 +6,6 @@
 	let {
 		start = 1,
 		class: className,
-		style,
 		children,
 		...restProps
 	}: HTMLAttributes<HTMLOListElement> & {

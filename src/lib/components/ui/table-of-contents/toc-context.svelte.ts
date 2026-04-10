@@ -1,7 +1,7 @@
 import { createContext } from 'svelte';
 import { page } from '$app/state';
 import { goto, afterNavigate } from '$app/navigation';
-import { SvelteMap } from 'svelte/reactivity';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import type { Attachment } from 'svelte/attachments';
 
 type TOCItem = {
@@ -50,7 +50,7 @@ export class TOCContext {
 	readonly #getReachedBottomObserverOptions: TOCContextProps['getReachedBottomObserverOptions'];
 
 	readonly #toc = new SvelteMap<string, TOCItem>();
-	readonly #warnedDuplicateIds = new Set<string>();
+	readonly #warnedDuplicateIds = new SvelteSet<string>();
 
 	#reachedBottom = $state(false);
 	#mostRecentKey = $state<string | null>(null);
@@ -123,7 +123,7 @@ export class TOCContext {
 	}
 
 	private buildParentSet(stack: Array<{ id: string; level: number }>) {
-		const parentIds = new Set<string>();
+		const parentIds = new SvelteSet<string>();
 		const highlightLevels = this.#getHighlightParentLevels();
 		if (highlightLevels <= 0) return parentIds;
 
@@ -237,7 +237,7 @@ export class TOCContext {
 		);
 
 		const stack: Array<{ id: string; level: number }> = [];
-		const seenIds = new Set<string>();
+		const seenIds = new SvelteSet<string>();
 		const nextEntries: Array<[string, TOCItem]> = [];
 		let initialKey: string | null = null;
 		let previousId: string | undefined;
@@ -309,7 +309,7 @@ export class TOCContext {
 
 		const nextEntries: Array<[string, TOCItem]> = [];
 		const stack: Array<{ id: string; level: number }> = [];
-		const seenIds = new Set<string>();
+		const seenIds = new SvelteSet<string>();
 		let previousId: string | undefined;
 		let finalKey: string | null = null;
 

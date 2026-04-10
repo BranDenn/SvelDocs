@@ -2,6 +2,7 @@ import { createContext, type Component } from 'svelte';
 import { Document } from 'flexsearch';
 import type { Pathname } from '$app/types';
 import { stripContent } from '$utils';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 export const SEARCH_KEYBOARD_SHORTCUT = 'k';
 
@@ -52,15 +53,15 @@ export class Search {
 	// dialog
 	readonly #getOpen: SearchProps['getOpen'];
 	readonly #setOpen: SearchProps['setOpen'];
-	readonly #updateCallbacks = new Set<() => void>();
+	readonly #updateCallbacks = new SvelteSet<() => void>();
 
 	// search
 	public index = this.createSearchIndex();
 
 	// store data locally to ensure consistency and O(1) retrieval of data
 	// allows for data that flexsearch doesn't provide (like custom types such as Components for icons)
-	private readonly itemMap = new Map<Pathname, Omit<ItemInputData, 'href'>>();
-	private readonly groupMap = new Map<string, Omit<GroupInputData, 'title' | 'items'>>();
+	private readonly itemMap = new SvelteMap<Pathname, Omit<ItemInputData, 'href'>>();
+	private readonly groupMap = new SvelteMap<string, Omit<GroupInputData, 'title' | 'items'>>();
 
 	public query = $state('');
 	public cleanQuery = $derived(this.query.replaceAll(/\s+/g, ' ').trim());
@@ -100,7 +101,7 @@ export class Search {
 	}
 
 	public getDefaultResults() {
-		const groupedResults: Map<string, OutputData> = new Map();
+		const groupedResults: SvelteMap<string, OutputData> = new SvelteMap();
 
 		for (const [href, data] of this.itemMap.entries()) {
 			if (!groupedResults.has(data.group)) {
@@ -117,7 +118,7 @@ export class Search {
 
 	private normalizeQueries(query: SearchQuery): string[] {
 		if (Array.isArray(query)) {
-			return [...new Set(query.map((value) => value.trim()).filter(Boolean))];
+			return [...new SvelteSet(query.map((value) => value.trim()).filter(Boolean))];
 		}
 
 		const clean = query.trim();
@@ -131,12 +132,12 @@ export class Search {
 
 	public getResults(q: SearchQuery, limit = 10) {
 		// create a map to group the results
-		const groupedResults: Map<string, OutputData> = new Map();
+		const groupedResults: SvelteMap<string, OutputData> = new SvelteMap();
 		const queries = this.normalizeQueries(q);
 
 		if (!queries.length) return groupedResults;
 
-		const uniqueHrefs = new Set<Pathname>();
+		const uniqueHrefs = new SvelteSet<Pathname>();
 
 		for (const query of queries) {
 			// return most relevant results for each query term

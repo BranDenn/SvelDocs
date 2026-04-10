@@ -4,7 +4,6 @@ export type MarkdownMetadata = {
 	title?: string;
 	description?: string;
 	keywords?: string[];
-	icon?: string;
 };
 
 export type TableOfContentsHeading = {

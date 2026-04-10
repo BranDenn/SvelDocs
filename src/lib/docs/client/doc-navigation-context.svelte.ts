@@ -5,6 +5,7 @@ import { SvelteMap } from 'svelte/reactivity';
 export type NavigationPage = {
 	href: string;
 	title: string;
+	description?: string;
 	groupId?: number;
 	tabId?: number;
 	icon?: string;
@@ -156,7 +157,7 @@ export class DocNavigationContext {
 			return visiblePages.filter((pageItem) => !pageItem.groupId);
 		}
 
-		const grouped = new Map<number, NavigationPage[]>();
+		const grouped = new SvelteMap<number, NavigationPage[]>();
 
 		for (const pageItem of visiblePages) {
 			if (pageItem.groupId === undefined) continue;

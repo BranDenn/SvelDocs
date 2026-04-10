@@ -25,6 +25,7 @@
 	import { mergeProps, type WithElementRef } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import Link from '$ui/link';
 
 	type SidebarMenuButtonElement = HTMLElement;
 	type SidebarMenuButtonAttributes = HTMLAttributes<HTMLElement>;
@@ -61,9 +62,9 @@
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else if href}
-		<a bind:this={ref} {href} {...mergedProps}>
+		<Link bind:ref {href} {...mergedProps}>
 			{@render children?.()}
-		</a>
+		</Link>
 	{:else}
 		<button bind:this={ref} {...mergedProps}>
 			{@render children?.()}

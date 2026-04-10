@@ -4,7 +4,6 @@ import type { PluginOption } from 'vite';
 import { getMarkdownData } from './processed-docs/markdown-to-ast.js';
 import { DocEntries } from './processed-docs/collect-doc-entries.js';
 import { toPosixPath, MARKDOWN_EXTENSIONS } from './processed-docs/utils.js';
-import type { DocPrivateAccess } from '../src/lib/docs/server/navigation/define-doc-navigation.js';
 import type {
 	BuiltDocRecord,
 	DocsManifestData,
@@ -57,37 +56,6 @@ function getMarkdownRecord(rootPath: string): Record<string, string> {
 	walk(rootPath);
 
 	return Object.fromEntries(map);
-}
-
-function normalizeRoleList(value: unknown): string[] {
-	if (!Array.isArray(value)) {
-		return [];
-	}
-
-	const normalizedRoles = value
-		.filter((role): role is string => typeof role === 'string')
-		.map((role) => role.trim().toLowerCase())
-		.filter(Boolean);
-
-	return Array.from(new Set(normalizedRoles));
-}
-
-function resolveMetadataAccess(metadata: Record<string, unknown>): DocPrivateAccess | undefined {
-	if (metadata.private === undefined) {
-		return undefined;
-	}
-
-	if (Array.isArray(metadata.private)) {
-		const roles = normalizeRoleList(metadata.private);
-		return roles.length > 0 ? roles : false;
-	}
-
-	if (typeof metadata.private === 'string') {
-		const role = metadata.private.trim();
-		return role || false;
-	}
-
-	return Boolean(metadata.private);
 }
 
 async function createPagesWithDocData(

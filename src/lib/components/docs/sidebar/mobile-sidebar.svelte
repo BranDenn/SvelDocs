@@ -3,8 +3,7 @@
 	import {
 		getDocNavigationContext,
 		type GroupedPages,
-		type NavigationPage,
-		type NavigationTab
+		type NavigationPage
 	} from '$lib/docs/client/doc-navigation-context.svelte';
 	import * as Sheet from '$ui/sheet';
 	import * as Select from '$ui/select';

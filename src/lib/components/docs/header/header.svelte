@@ -2,7 +2,7 @@
 	import MenuIcon from '@lucide/svelte/icons/menu';
 	import { onNavigate } from '$app/navigation';
 	import Logo from './logo.svelte';
-	import GithubLink from './github.svelte';
+	import Github from './github.svelte';
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
 	import { MobileSidebar } from '$components/docs/sidebar';
@@ -14,6 +14,7 @@
 		SearchDialogTriggerDesktop,
 		SearchDialogTriggerMobile
 	} from '$components/ui/search-dialog';
+	import Link from '$ui/link';
 
 	const docNavigation = getDocNavigationContext();
 
@@ -35,7 +36,7 @@
 		<div class="flex items-center gap-2 justify-self-end">
 			<SearchDialogTriggerMobile />
 			<ThemeSwitch />
-			<GithubLink />
+			<Github />
 			<Button
 				variant="ghost"
 				size="icon"
@@ -53,7 +54,7 @@
 		<div class={cn('h-docs-header-tabs container hidden items-center gap-4 px-4 sm:flex')}>
 			{#each docNavigation.tabs as tab, index (index)}
 				{@const active = docNavigation.currentTab?.href === tab.href}
-				<a
+				<Link
 					href={tab.href}
 					class={cn(
 						'text-muted-foreground hidden h-full items-center gap-2 text-sm font-medium transition-colors sm:flex',
@@ -66,7 +67,7 @@
 						<Icon name={tab.icon} class="size-4 shrink-0" />
 					{/if}
 					{tab.title}
-				</a>
+				</Link>
 			{/each}
 		</div>
 	{/if}

@@ -73,7 +73,6 @@
 			<div class="from-background h-6 bg-linear-to-b"></div>
 		</div>
 		<main
-			id="$main"
 			class="relative flex min-w-0 grow flex-col gap-16 overflow-hidden px-6 transition-[padding] lg:px-14 lg:py-8"
 			{@attach docLayoutContext.attachMainElement}
 		>

@@ -5,7 +5,6 @@
 	import type { CopyButtonProps } from './copy-button.svelte';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import CheckIcon from '@lucide/svelte/icons/check';
-	import { cn } from '$utils';
 
 	type Props = CopyButtonProps;
 

@@ -4,7 +4,6 @@
 	import type { Snippet } from 'svelte';
 	import { CollapsibleTrigger } from '$ui/collapsible';
 	import { getSidebarGroupCollapsibleContext } from './sidebar-group-collapsible-context';
-	import { fly } from 'svelte/transition';
 
 	let {
 		ref = $bindable(null),

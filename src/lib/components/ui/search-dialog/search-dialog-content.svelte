@@ -7,7 +7,7 @@
 	import CornerDownLeftIcon from '@lucide/svelte/icons/corner-down-left';
 	import MoveUpIcon from '@lucide/svelte/icons/move-up';
 	import MoveDownIcon from '@lucide/svelte/icons/move-down';
-	import { fly, scale } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 
 	const searchContext = getSearch();
 

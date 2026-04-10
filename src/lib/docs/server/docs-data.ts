@@ -221,8 +221,9 @@ export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () =
 	const allManifestPages = Array.from(manifest.pages.values());
 	const visibleManifestPages = allManifestPages.filter((page) => filter(page));
 	const visiblePages: NavigationPage[] = visibleManifestPages.map(
-		({ markdown: _markdown, filepath: _filepath, private: _private, ...page }) => ({
+		({ markdown, filepath: _filepath, private: _private, ...page }) => ({
 			...page,
+			description: markdown.metadata.description,
 			prev: undefined,
 			next: undefined
 		})
@@ -242,7 +243,9 @@ export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () =
 			.map((page) => page.groupId)
 			.filter((groupId): groupId is number => groupId !== undefined)
 	);
-	const navigationGroups = groups.filter((group) => visibleGroupIds.has(group.id));
+	const navigationGroups: NavigationGroup[] = groups.filter((group) =>
+		visibleGroupIds.has(group.id)
+	);
 
 	return {
 		navigation: {

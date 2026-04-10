@@ -12,7 +12,7 @@
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-xs',
 				destructive: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow',
 				outline:
-					'bg-background text-muted-foreground hover:bg-primary hover:text-foreground border shadow disabled:hover:bg-secondary/90 aria-disabled:hover:bg-secondary/90 focus-visible:bg-primary focus-visible:text-foreground',
+					'bg-background text-muted-foreground hover:bg-secondary hover:text-foreground border shadow disabled:hover:bg-secondary/90 aria-disabled:hover:bg-secondary/90 focus-visible:bg-secondary focus-visible:text-foreground',
 				ghost:
 					'bg-background hover:bg-secondary rounded-sm hover:shadow text-muted-foreground hover:text-foreground focus-visible:bg-secondary focus-visible:text-foreground',
 				link: 'text-primary underline-offset-4 hover:underline',

@@ -129,7 +129,6 @@ function resolveFile(fileRef: string): string | null {
 		return fs.existsSync(repoResolved) ? repoResolved : null;
 	} catch (err) {
 		// avoid throwing in the transformer — report and continue
-		// eslint-disable-next-line no-console
 		console.error('remark-file-reader.resolveFile error', err);
 		return null;
 	}
