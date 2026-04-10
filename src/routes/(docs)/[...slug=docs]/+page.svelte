@@ -199,7 +199,7 @@
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>
 						{#snippet child({ props })}
-							<Link href={`/${page.params.slug}.md`} target="_blank" {...props}>
+							<Link href={`/${page.params.slug!.replace(/\/$/, '')}.md`} target="_blank" {...props}>
 								<svg
 									width="18"
 									height="18"
