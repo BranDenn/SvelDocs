@@ -21,7 +21,7 @@
 </script>
 
 <div
-	class="relative container flex grow"
+	class="relative container flex min-w-0 grow overflow-x-clip"
 	data-docs-tabs={docNavigation.tabs.length > 0}
 	data-docs-toc={toc.tocEntries.length > 0}
 >
@@ -37,13 +37,17 @@
 						class="h-docs-content-header-toc text-muted-foreground group hover:text-foreground flex w-full items-center gap-2 px-4 py-2 text-sm transition-[color]"
 					>
 						<TOC.RadialProgress class="mr-2" />
-						{#if docNavigation.currentGroup}
+						<!-- {#if docNavigation.currentGroup}
 							<span class="block lg:hidden">{docNavigation.currentGroup?.title}</span>
 							<ChevronRightIcon class="block size-4 shrink-0 lg:hidden" />
-						{/if}
-						<span class="block lg:hidden">{docNavigation.currentPage?.title}</span>
-						<ChevronRightIcon class="block size-4 shrink-0 lg:hidden" />
-						<span>{toc.activeItem?.text}</span>
+						{/if} -->
+						<div class="flex items-center gap-2">
+							<div class="flex shrink-0 items-center gap-2 lg:hidden">
+								<span>{docNavigation.currentPage?.title}</span>
+								<ChevronRightIcon class="size-4 shrink-0" />
+							</div>
+							<span class="truncate">{toc.activeItem?.text}</span>
+						</div>
 						<ChevronRightIcon
 							class=" ml-auto size-4 shrink-0 transition-[rotate] group-data-[state=open]:rotate-90"
 						/>

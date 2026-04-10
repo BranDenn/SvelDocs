@@ -27,7 +27,7 @@
 	<span
 		data-slot="step-index"
 		aria-hidden="true"
-		class="bg-secondary grid size-6 place-content-center rounded-full border text-xs font-semibold"
+		class="bg-secondary grid size-6 shrink-0 place-content-center rounded-full border text-xs font-semibold"
 	>
 		{index}
 	</span>

@@ -14,7 +14,7 @@
 		'border-l-[length:var(--b-width)] [--b-width:1px]',
 		'transition-[margin-right,opacity,visibility] duration-300 xl:transition-[margin-right,opacity]',
 		'-mr-[calc(16rem+var(--b-width))] xl:mr-0',
-		'overflow-y-hidden xl:overflow-y-auto',
+		'overflow-hidden xl:overflow-y-auto',
 		'invisible xl:visible',
 		'opacity-0 xl:opacity-100',
 		'bg-background top-docs-header h-[calc(100dvh-var(--spacing-docs-header))]'

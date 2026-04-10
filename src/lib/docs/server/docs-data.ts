@@ -14,6 +14,7 @@ import type {
 	DocsManifestData
 } from '$lib/docs/server/types';
 import type { EntryGenerator } from '../../../routes/(docs)/[...slug=docs]/$types';
+import { resolve } from '$app/paths';
 
 type FlatDocRecord = BuiltDocRecord & { slug: string };
 

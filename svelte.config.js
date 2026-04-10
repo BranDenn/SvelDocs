@@ -2,6 +2,8 @@
 import adapterStatic from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
+export const BASE_PATH = process.argv.includes('dev') ? '' : process.env.BASE_PATH;
+
 const config = {
 	preprocess: vitePreprocess(),
 	extensions: ['.svelte'],
@@ -17,7 +19,7 @@ const config = {
 			$css: 'src/app.css'
 		},
 		paths: {
-			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
+			base: BASE_PATH
 		},
 		prerender: {
 			handleHttpError: 'warn',

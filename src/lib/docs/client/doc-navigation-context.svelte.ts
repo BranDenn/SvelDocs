@@ -206,7 +206,7 @@ export class DocNavigationContext {
 		}
 
 		for (const pageItem of params.pages ?? []) {
-			const href = resolve(`/${normalizePathname(pageItem.href)}`);
+			const href = normalizePathname(pageItem.href);
 			this.pagesByHref.set(href, { ...pageItem, href });
 
 			if (pageItem.tabId !== undefined) {
