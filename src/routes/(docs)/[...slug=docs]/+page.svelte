@@ -69,8 +69,6 @@
 		icon: Snippet;
 	};
 
-	const markdownHref = $derived(page.url.pathname + '.md');
-
 	const aiProviders: AiProvider[] = [
 		{ name: 'ChatGPT', urlPrefix: 'https://chatgpt.com/?q=', icon: ChatGptIcon },
 		{ name: 'Claude', urlPrefix: 'https://claude.ai/new?q=', icon: ClaudeIcon },
@@ -78,7 +76,7 @@
 	];
 
 	function getAiProviderHref(urlPrefix: string) {
-		const prompt = `Read and explain this docs page: ${markdownHref}`;
+		const prompt = `Read and explain this docs page: ${page.url.href}.md`;
 		return `${urlPrefix}${encodeURIComponent(prompt)}`;
 	}
 
@@ -201,7 +199,7 @@
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>
 						{#snippet child({ props })}
-							<Link href={markdownHref} target="_blank" {...props}>
+							<Link href={`/${page.params.slug}.md`} target="_blank" {...props}>
 								<svg
 									width="18"
 									height="18"
