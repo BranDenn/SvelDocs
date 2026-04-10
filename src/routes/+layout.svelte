@@ -1,14 +1,20 @@
 <script lang="ts">
-	import '../app.css';
-
+	import '$css';
+	import favicon from '$lib/assets/favicon.png';
+	import siteConfig from '$lib/configuration/site.config';
 	import { ModeWatcher } from 'mode-watcher';
-	import { Tooltip } from 'bits-ui';
+	import * as Tooltip from '$ui/tooltip';
 
 	let { children } = $props();
 </script>
 
-<ModeWatcher defaultMode="dark" />
+<svelte:head>
+	<meta property="og:site_name" content={siteConfig.name} />
+	<link rel="icon" href={favicon} />
+</svelte:head>
+
+<ModeWatcher />
 
 <Tooltip.Provider delayDuration={150} disableCloseOnTriggerClick={true}>
-	{@render children()}
+	{@render children?.()}
 </Tooltip.Provider>

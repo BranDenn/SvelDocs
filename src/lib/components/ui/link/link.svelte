@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import type { Pathname } from '$app/types';
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
+	import type { WithElementRef } from 'bits-ui';
 
-	let { href, children, ...restProps }: HTMLAnchorAttributes = $props();
+	type Props = WithElementRef<HTMLAnchorAttributes>;
 
-	const hasSlash = href?.startsWith('/');
-	const hasHash = href?.startsWith('#');
-	const isExternal = !hasSlash && !hasHash;
-	const target = isExternal ? '_blank' : undefined;
-	const rel = isExternal ? 'noopener noreferrer' : undefined;
+	let { ref = $bindable(null), href, children, ...restProps }: Props = $props();
+
+	const hasSlash = $derived(href?.startsWith('/'));
+	const hasHash = $derived(href?.startsWith('#'));
+	const isExternal = $derived(!hasSlash && !hasHash);
+	const target = $derived(isExternal ? '_blank' : undefined);
+	const rel = $derived(isExternal ? 'external noopener noreferrer' : undefined);
+	const resolvedHref = $derived(hasSlash ? resolve(href as Pathname) : href);
 </script>
 
-<a href={hasSlash ? resolve(`/${href}`) : href} {target} {rel} {...restProps}>
-	{@render children?.()}</a
->
+<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+<a bind:this={ref} href={resolvedHref} {target} {rel} {...restProps}>
+	{@render children?.()}
+</a>

@@ -1,22 +1,19 @@
 // import adapter from '@sveltejs/adapter-auto';
-import adapter from '@sveltejs/adapter-static';
+import adapterStatic from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { mdsx } from 'mdsx';
-import { mdsxConfig } from './mdsx.config.js';
 
 const config = {
-	preprocess: [mdsx(mdsxConfig), vitePreprocess()],
-	extensions: ['.svelte', ...mdsxConfig.extensions],
+	preprocess: vitePreprocess(),
+	extensions: ['.svelte'],
 	kit: {
-		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: '404.html',
-			precompress: false,
-			strict: true
+		adapter: adapterStatic({
+			fallback: '404.html'
 		}),
+		// adapter: adapter(),
 		alias: {
-			$settings: 'doc.config.ts',
+			$components: 'src/lib/components',
+			$ui: 'src/lib/components/ui',
+			$utils: 'src/lib/utils',
 			$css: 'src/app.css'
 		},
 		paths: {

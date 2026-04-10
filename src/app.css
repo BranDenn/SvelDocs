@@ -1,61 +1,75 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* default theme */
 @theme {
 	--font-inter: 'Inter', var(--default-font-family);
-	--spacing-header: 3.5rem;
-	--spacing-sidebar-nav: 18rem;
-	--spacing-sidebar-toc: 14rem;
 
 	/* light mode colors */
-	--color-background: var(--color-zinc-50);
-	--color-foreground: var(--color-zinc-100);
-	--color-border: var(--color-zinc-200);
-	--color-primary: var(--color-zinc-800);
-	--color-secondary: var(--color-zinc-700);
-	--color-accent: var(--color-blue-600);
+	--color-background: var(--color-zinc-50); /* background */
+	--color-foreground: var(--color-zinc-800); /* default font color */
+	--color-muted-foreground: var(--color-zinc-600); /* muted font color */
+	--color-primary: var(--color-zinc-100); /* color 1 */
+	--color-border: var(--color-zinc-200); /* border color */
+	--color-accent: var(--color-indigo-600); /* accent color */
+	--color-destructive: var(--color-red-500);
 
-	--color-block: color-mix(in oklab, var(--color-background), var(--color-foreground));
+	--color-secondary: color-mix(
+		in oklch,
+		var(--color-background),
+		var(--color-primary)
+	); /* color 2 */
 }
 
-@layer base {
+@layer theme {
 	.dark {
 		/* dark mode colors */
-		--color-background: var(--color-zinc-900);
-		--color-foreground: var(--color-zinc-800);
-		--color-border: var(--color-zinc-700);
-		--color-primary: var(--color-zinc-200);
-		--color-secondary: var(--color-zinc-300);
-		--color-accent: var(--color-blue-400);
+		--color-background: var(--color-zinc-950); /* background */
+		--color-foreground: var(--color-zinc-200); /* default font color */
+		--color-muted-foreground: var(--color-zinc-400); /* muted font color */
+		--color-primary: var(--color-zinc-900); /* color 1 */
+		--color-border: var(--color-zinc-800); /* border color */
+		--color-accent: var(--color-emerald-400); /* accent color */
 	}
 }
 
 @layer utilities {
 	.container {
-		@apply mx-auto max-w-[1440px];
+		@apply mx-auto max-w-360;
 	}
 }
 
 @layer base {
-	/* ensure hrefs to elements are not hidden by the header when clicking them */
-	html {
-		@apply scroll-pt-[calc(var(--spacing-header)+1px+1rem)];
-	}
-
 	body {
-		@apply bg-background text-primary font-inter flex min-h-dvh flex-col;
+		@apply bg-background text-foreground font-inter flex min-h-dvh flex-col overflow-x-hidden;
+		scrollbar-color: var(--color-border) var(--color-background);
 	}
 
-	*, *::before, *::after {
+	*,
+	*::before,
+	*::after {
 		@apply border-border;
 	}
 
+	:disabled,
+	[aria-disabled='true'] {
+		@apply cursor-default opacity-50;
+	}
+
+	:invalid {
+		@apply border-destructive ring-destructive/50;
+	}
+
+	:focus-visible {
+		@apply border-accent/75 ring-accent/50 ring-2 transition-[border-color,box-shadow] outline-none;
+	}
+
 	kbd {
-		@apply font-[inherit];
+		@apply rounded-full border px-1.5 text-xs shadow;
 	}
 
 	a,
@@ -71,8 +85,7 @@
 		@apply cursor-pointer;
 	}
 
-	.scrollbar {
+	.scrollbar-thin {
 		scrollbar-width: thin;
-		scrollbar-color: var(--color-border) transparent;
 	}
 }
