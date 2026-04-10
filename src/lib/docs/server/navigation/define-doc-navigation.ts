@@ -32,9 +32,9 @@ export type DocPage<TRole extends string = string> = {
 	 */
 	title: string;
 	/**
-	 * The href of the page. This defaults to being created from the page title if not defined.
+	 * The slug of the page. This defaults to being created from the page title if not defined.
 	 */
-	href?: Pathname;
+	slug?: string;
 	/**
 	 * The corresponding markdown file location for the page.\
 	 * This defaults to `content/{tabTitle?}/{groupTitle?}/{pageTitle}.md` but can be overridden.

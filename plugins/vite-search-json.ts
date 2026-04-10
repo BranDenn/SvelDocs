@@ -15,7 +15,6 @@ const RESOLVED_VIRTUAL_SEARCH_JSON_ID = '\0virtual:doc-search-json';
 
 type DocSearchJsonOptions = {
 	markdownFolderPath: string;
-	basePath?: string;
 };
 
 export function isMarkdownModulePath(filePath: string): boolean {
@@ -80,10 +79,7 @@ async function createPagesWithDocData(
 	return pages;
 }
 
-async function generateSearchData(
-	markdownFolderPath: string,
-	basePath = ''
-): Promise<DocsManifestData> {
+async function generateSearchData(markdownFolderPath: string): Promise<DocsManifestData> {
 	markdownFolderPath = toPosixPath(markdownFolderPath);
 
 	// get all markdown files in the configured markdown folder
@@ -91,7 +87,7 @@ async function generateSearchData(
 	const rawMarkdownByPath = getMarkdownRecord(markdownFolderPath);
 
 	// get doc entries from config and match with markdown files
-	const docEntries = new DocEntries(rawMarkdownByPath, markdownFolderPath, basePath);
+	const docEntries = new DocEntries(rawMarkdownByPath, markdownFolderPath);
 
 	const pages = await createPagesWithDocData(docEntries.pages, rawMarkdownByPath);
 
@@ -110,7 +106,6 @@ export function docSearchJson(options: DocSearchJsonOptions): PluginOption {
 	const absoluteMarkdownFolderPath = toPosixPath(
 		path.resolve(process.cwd(), options.markdownFolderPath)
 	);
-	const configuredBasePath = options.basePath ?? '';
 
 	return {
 		name: 'vite-plugin-doc-search-json',
@@ -124,7 +119,7 @@ export function docSearchJson(options: DocSearchJsonOptions): PluginOption {
 				return null;
 			}
 
-			searchData ??= await generateSearchData(absoluteMarkdownFolderPath, configuredBasePath);
+			searchData ??= await generateSearchData(absoluteMarkdownFolderPath);
 
 			const tabs = JSON.stringify(Array.from(searchData.tabs.entries()));
 			const groups = JSON.stringify(Array.from(searchData.groups.entries()));

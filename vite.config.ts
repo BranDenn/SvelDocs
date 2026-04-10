@@ -5,7 +5,6 @@ import { iconManifest } from './plugins/vite-icon-manifest';
 import { mdxComponentManifest } from './plugins/vite-mdx-component-manifest';
 import { docSearchJson } from './plugins/vite-search-json';
 import { protectServerAssets } from './plugins/vite-server-only';
-import { BASE_PATH } from './svelte.config.js';
 
 export default defineConfig({
 	plugins: [
@@ -14,7 +13,7 @@ export default defineConfig({
 			iconPackage: '@lucide/svelte/icons'
 		}),
 		mdxComponentManifest(),
-		docSearchJson({ markdownFolderPath: 'content', basePath: BASE_PATH }),
+		docSearchJson({ markdownFolderPath: 'content' }),
 		tailwindcss(),
 		sveltekit(),
 		protectServerAssets({ folders: ['src/lib/docs/server'], files: [] })

@@ -14,9 +14,9 @@ import type {
 	DocsManifestData
 } from '$lib/docs/server/types';
 import type { EntryGenerator } from '../../../routes/(docs)/[...slug=docs]/$types';
-import { resolve } from '$app/paths';
 
 type FlatDocRecord = BuiltDocRecord & { slug: string };
+type NavigationDocPage = NavigationPage & { slug: string };
 
 function getAllDocRecords(): FlatDocRecord[] {
 	const pages = Array.from(searchJsonData.pages.entries()).map(([slug, page]) => ({
@@ -30,32 +30,32 @@ type DocSearchGroup = DocLayoutData['searchGroups'][number];
 type ManifestTab = NavigationTab;
 type ManifestGroup = NavigationGroup;
 
-function applyPrevNextAcrossAllPages<T extends { href: string; prev?: string; next?: string }>(
+function applyPrevNextAcrossAllPages<T extends { slug: string; prev?: string; next?: string }>(
 	pages: T[]
 ) {
 	for (let i = 0; i < pages.length; i++) {
-		pages[i].prev = i > 0 ? pages[i - 1]?.href : undefined;
-		pages[i].next = i < pages.length - 1 ? pages[i + 1]?.href : undefined;
+		pages[i].prev = i > 0 ? pages[i - 1]?.slug : undefined;
+		pages[i].next = i < pages.length - 1 ? pages[i + 1]?.slug : undefined;
 	}
 }
 
 function applyPrevNextWithinTabs<
-	T extends { href: string; tabId?: number; prev?: string; next?: string }
+	T extends { slug: string; tabId?: number; prev?: string; next?: string }
 >(pages: T[], pagesByTab: Map<number | string, number[]>) {
 	for (const indexes of pagesByTab.values()) {
 		for (let i = 0; i < indexes.length; i++) {
 			const current = indexes[i];
 			const prev = indexes[i - 1];
 			const next = indexes[i + 1];
-			const prevHref = prev === undefined ? undefined : pages[prev]?.href;
-			const nextHref = next === undefined ? undefined : pages[next]?.href;
-			pages[current].prev = prevHref;
-			pages[current].next = nextHref;
+			const prevSlug = prev === undefined ? undefined : pages[prev]?.slug;
+			const nextSlug = next === undefined ? undefined : pages[next]?.slug;
+			pages[current].prev = prevSlug;
+			pages[current].next = nextSlug;
 		}
 	}
 }
 
-function applyDocPrevNext<T extends { href: string; tabId?: number; prev?: string; next?: string }>(
+function applyDocPrevNext<T extends { slug: string; tabId?: number; prev?: string; next?: string }>(
 	pages: T[]
 ) {
 	const pagesByTab = new Map<number | string, number[]>();
@@ -219,9 +219,12 @@ export function getDocLayoutData(filter: (doc: BuiltDocRecord) => boolean = () =
 	const groups = Array.from(manifest.groups.entries())
 		.map(([id, group]) => ({ id, ...group }))
 		.sort((a, b) => a.id - b.id);
-	const allManifestPages = Array.from(manifest.pages.values());
+	const allManifestPages = Array.from(manifest.pages.entries()).map(([slug, page]) => ({
+		...page,
+		slug
+	}));
 	const visibleManifestPages = allManifestPages.filter((page) => filter(page));
-	const visiblePages: NavigationPage[] = visibleManifestPages.map(
+	const visiblePages: NavigationDocPage[] = visibleManifestPages.map(
 		({ markdown, filepath: _filepath, private: _private, ...page }) => ({
 			...page,
 			description: markdown.metadata.description,

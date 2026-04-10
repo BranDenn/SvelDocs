@@ -16,6 +16,7 @@ export type DocSearchItem = {
 };
 
 export type ManifestNavigationPage = NavigationPage & {
+	slug: string;
 	filepath: string;
 	title: string;
 	icon?: string;

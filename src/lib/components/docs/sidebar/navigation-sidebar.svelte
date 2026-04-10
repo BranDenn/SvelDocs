@@ -49,7 +49,7 @@
 						<Sidebar.MenuItem>
 							<Sidebar.MenuButton
 								href={navPage.href}
-								isActive={navPage.href === docNavigation.currentPage?.href}
+								isActive={navPage.slug === docNavigation.currentPage?.slug}
 							>
 								{#if navPage.icon}
 									<Icon name={navPage.icon} class="size-4 shrink-0" />
@@ -73,7 +73,7 @@
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton
 					href={pageItem.href}
-					isActive={pageItem.href === docNavigation.currentPage?.href}
+					isActive={pageItem.slug === docNavigation.currentPage?.slug}
 				>
 					{#if pageItem.icon}
 						<Icon name={pageItem.icon} class="size-4 shrink-0" />

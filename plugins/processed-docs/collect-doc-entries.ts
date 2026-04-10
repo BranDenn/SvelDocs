@@ -20,7 +20,6 @@ type NavigationGroupMapItem = Omit<NavigationGroup, 'id'>;
 export class DocEntries {
 	private readonly rawMarkdownByPath: Record<string, string>;
 	private readonly markdownFolderPath: string;
-	private readonly basePath: string;
 
 	// hold tabs, groups, and pages in separate maps for easy lookup and to maintain insertion order
 	public readonly tabs = new Map<number, NavigationTabMapItem>();
@@ -31,37 +30,12 @@ export class DocEntries {
 	private nextTabId = 0;
 	private nextGroupId = 0;
 
-	public constructor(
-		rawMarkdownByPath: Record<string, string>,
-		markdownFolderPath: string,
-		basePath = ''
-	) {
+	public constructor(rawMarkdownByPath: Record<string, string>, markdownFolderPath: string) {
 		this.rawMarkdownByPath = rawMarkdownByPath;
 		this.markdownFolderPath = markdownFolderPath;
-		this.basePath = this.normalizeBasePath(basePath);
 		this.collectTabs();
 		this.collectGroups();
 		this.collectPages();
-	}
-
-	private normalizeBasePath(value: string | null | undefined): string {
-		const trimmed = this.trimSlashes(value);
-		if (!trimmed) return '';
-		return `/${trimmed}`;
-	}
-
-	private withBasePath(href: string): string {
-		const normalizedHref = href.startsWith('/') ? href : `/${this.trimSlashes(href)}`;
-
-		if (!this.basePath) {
-			return normalizedHref;
-		}
-
-		if (normalizedHref === this.basePath || normalizedHref.startsWith(`${this.basePath}/`)) {
-			return normalizedHref;
-		}
-
-		return `${this.basePath}${normalizedHref}`;
 	}
 
 	private normalizeSegment(value: string): string {
@@ -101,8 +75,8 @@ export class DocEntries {
 	}
 
 	private resolveRouteSlug(page: DocPage, tab?: DocTab, group?: DocGroup): string {
-		if (page.href) {
-			return this.normalizeRouteSlug(page.href);
+		if (page.slug) {
+			return page.slug;
 		}
 
 		const parts: string[] = ['docs'];
@@ -235,7 +209,7 @@ export class DocEntries {
 		const filepath = this.resolveFilePath(fileName, folderSegments);
 
 		const privateAccess = this.resolvePageAccess(page, group, tab);
-		const href = this.withBasePath(`/${routeSlug}`);
+		const href = `/${routeSlug}`;
 
 		if (tabId !== undefined) {
 			const tabData = this.tabs.get(tabId);
@@ -245,6 +219,7 @@ export class DocEntries {
 		}
 
 		const pageData: ManifestNavigationPage = {
+			slug: routeSlug,
 			href,
 			title: page.title,
 			filepath,
