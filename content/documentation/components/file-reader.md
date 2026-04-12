@@ -20,9 +20,9 @@ Place the tag directly in your markdown like the following:
 
 ```md
 <FileReader 
-    file="/absolute/path/to/src/lib/markdown/plugins/remark/remark-file-reader.ts" 
-    title="remark-file-reader.ts" 
-    caption="Remark plugin file" 
+    file="src/app.css"
+    title="app.css" 
+    caption="Website style sheet" 
     highlight="2,4-6" 
     showLineNumbers 
 />
@@ -31,7 +31,7 @@ Place the tag directly in your markdown like the following:
 The plugin converts that into a fenced code block:
 
 ````md
-```ts {2,4-6} showLineNumbers title="remark-file-reader.ts" caption="Remark plugin file"
+```ts {2,4-6} showLineNumbers title="app.css" caption="Website style sheet"
 // (file contents...)
 ```
 ````

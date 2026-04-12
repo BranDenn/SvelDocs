@@ -5,7 +5,7 @@
 </script>
 
 <code
-	class="bg-primary text-foreground rounded border px-1 py-0.5 text-sm text-nowrap shadow-xs"
+	class="bg-primary text-foreground rounded border px-1 py-0.5 text-sm shadow-xs"
 	{...restProps}
 >
 	{@render children?.()}

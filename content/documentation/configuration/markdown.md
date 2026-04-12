@@ -40,7 +40,7 @@ type MarkdownConfig = {
 
 ### Extensions
 
-You can configure and / or add your own file extensions to be considered for the markdown rendering process. For example:
+You can configure and add your own file extensions to be considered for the markdown rendering process. For example:
 
 ```ts title="src/lib/markdown/markdown.config.ts"
 const markdownConfig = defineConfig({

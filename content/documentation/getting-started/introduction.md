@@ -12,13 +12,13 @@ SvelDocs provides you with all of the code for creating modern markdown document
 The files are structured for both expansion and customization. There are configuration files for a quick setup, but if something does not match your taste, you can always customize the code to your liking.
 
 <Alert type="note">
-    This project assumes familiarity with web development and frameworks. Knowledge of Svelte is a plus.
+    This project assumes knowledge of web development and web frameworks. Familiarity with [Svelte](https://svelte.dev/) is a plus.
 </Alert>
 
 ## Features
 
 - Supports both Static Site Generation (SSG) and Server Side Rendering (SSR)
-- Simple structure for adding Tabs, Groups, and / or Pages
+- Simple structure for adding Tabs, Groups, and Pages
 - Table of Contents
 - Searching
 - Remark / Rehype plugins

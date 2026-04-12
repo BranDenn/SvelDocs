@@ -18,7 +18,8 @@ type TOCItem = {
 export type TOCSeedEntry = {
 	id: string;
 	text: string;
-	level: number;
+	level?: number;
+	tagLevel?: number;
 };
 
 export type TOCProps = {
@@ -133,6 +134,13 @@ export class TOCContext {
 		}
 
 		return parentIds;
+	}
+
+	private getSeedEntryTagLevel(entry: TOCSeedEntry) {
+		const rawLevel = entry.tagLevel ?? entry.level;
+		const level = Number(rawLevel);
+		if (!Number.isFinite(level)) return 1;
+		return Math.min(6, Math.max(1, Math.floor(level)));
 	}
 
 	readonly priorityIntersectionCallback = (entries: IntersectionObserverEntry[]) => {
@@ -317,7 +325,7 @@ export class TOCContext {
 			const id = entry.id.trim();
 			if (!id || seenIds.has(id)) continue;
 
-			const level = Math.max(1, Math.floor(entry.level));
+			const level = this.getSeedEntryTagLevel(entry);
 			while (stack.length > 0 && level <= (stack.at(-1)?.level ?? 0)) stack.pop();
 
 			const item: TOCItem = {

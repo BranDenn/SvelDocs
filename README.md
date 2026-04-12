@@ -8,7 +8,7 @@ SvelDocs is a free boilerplate project for creating documentation websites with 
 SvelDocs is built for a quick and easy setup, but still leaves plenty of room for deep customization when you want to shape the experience to your own style and workflow.
 
 > [!NOTE]
-> This project assumes knowledge of web development and web frameworks. Knowledge of Svelte is a plus.
+> This project assumes knowledge of web development and web frameworks. Familiarity with [Svelte](https://svelte.dev/) is a plus.
 
 ## ✨ Features
 

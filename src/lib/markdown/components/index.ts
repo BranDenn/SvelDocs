@@ -18,8 +18,9 @@ import Td from './table/td.svelte';
 import Hr from './separators/hr.svelte';
 import P from './text/p.svelte';
 import Blockquote from './code/blockquote.svelte';
-import Ol from './text/ol.svelte';
-import Ul from './text/ul.svelte';
+import Ol from './lists/ol.svelte';
+import Ul from './lists/ul.svelte';
+import Li from './lists/li.svelte';
 import { CodeGroup, CodeGroupContent, CodeGroupList, CodeGroupTrigger } from '$ui/code-group';
 
 export type MarkdownNodeComponent = Component<any>;
@@ -92,6 +93,7 @@ export const astNodeRenderers = {
 	blockquote: Blockquote,
 	ol: Ol,
 	ul: Ul,
+	li: Li,
 	CodeGroup,
 	CodeGroupList,
 	CodeGroupTrigger,

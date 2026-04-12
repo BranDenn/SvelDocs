@@ -17,7 +17,6 @@
 			const regex = new RegExp(`(${escapeRegex(lowerQuery)})`, 'gi');
 			return text.split(regex);
 		} catch (e) {
-			console.log('Invalid regex query', e);
 			return [text];
 		}
 	});

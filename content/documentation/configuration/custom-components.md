@@ -45,7 +45,7 @@ export const blueprints = {
 
 ## Import Components Inside Markdown Files
 
-You can import components directly into markdown files just like javascript. This should be used for most custom components that are NOT converted from an HTML element.
+You can import components directly into markdown files just like javascript imports. This should be used for most custom components that are NOT converted from an HTML element.
 
 ```md
 import Alert from '$ui/alert';

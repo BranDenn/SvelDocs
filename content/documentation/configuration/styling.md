@@ -30,7 +30,7 @@ Theme modes are handled by [mode watcher](https://mode-watcher.sveco.dev/docs).
 
 ## Docs Specific Styles
 
-Docs specific styling is defined in the `src/routes/(docs)/[...slug=docs]/docs.css` file. This is meant to configure the styling specific to the `/docs` routes. This only configures the size of the heading.
+Docs specific styling is defined in the `src/routes/(docs)/[...slug=docs]/docs.css` file. This is meant to configure the styling specific to the `/docs` routes such as the size of the headers.
 
 Here is the provided default theme:
 

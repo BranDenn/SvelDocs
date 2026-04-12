@@ -28,3 +28,13 @@
 		@apply lg:[--spacing-docs-content-header:0px];
 	}
 }
+
+@layer base {
+	section.footnotes {
+		@apply mt-8! border-t border-dashed pt-2;
+
+		#footnote-label {
+			@apply hidden;
+		}
+	}
+}

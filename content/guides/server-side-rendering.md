@@ -60,15 +60,15 @@ SvelDocs does not implement auth directly because auth implementation is opinion
 			tabs: [
 				{
 					title: 'Member Documentation',
-					private: true // only logged in users can access this tab
+					private: true, // only logged in users can access this tab
 					groups: [
 						{
-							title: 'Every Logged in User'
+							title: 'Every Logged in User',
 							pages: 'auto' // pages inherit tab `private`
 						},
 						{
 							title: 'Only Paid Members',
-							private: ['member', 'proMember'] // only paid members can access this group (overrides tab `private`)
+							private: ['member', 'proMember'], // only paid members can access this group (overrides tab `private`)
 							pages: [
 								{ title: 'Member Info' }, // page inherits group `private`
 								{ title: 'Pro Member Info', private: 'proMember' } // only pro members can access this page (overrides group `private`) 

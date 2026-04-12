@@ -47,9 +47,9 @@ import H6 from '$lib/markdown/components/headings/h6.svelte';
 ## Styling Text
 
 ```md
-This is **bold text** (or **bold text**)
-This is _italic text_ (or _italic text_)
-This is ~strikethrough text~ (or ~~strikethrough text~~)
+This is **bold text**
+This is _italic text_
+This is ~strikethrough text~
 This is **_bold & italic text_**
 This is <sub>subscript text</sub>
 This is <sup>superscript text</sup>
@@ -120,13 +120,19 @@ line break
 
 ```md
 1. First
-	- Second
-    	- Third
+	- This explains the first
+	2. Second
+    	- This explains the second
+		3. Third
+			- This explains the third
 ```
 
 1. First
-	- Second
-    	- Third
+	- This explains the first
+	2. Second
+    	- This explains the second
+		3. Third
+			- This explains the third
 
 #### Task List
 

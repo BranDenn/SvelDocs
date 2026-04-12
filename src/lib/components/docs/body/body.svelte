@@ -41,7 +41,7 @@
 							<span class="block lg:hidden">{docNavigation.currentGroup?.title}</span>
 							<ChevronRightIcon class="block size-4 shrink-0 lg:hidden" />
 						{/if} -->
-						<div class="flex items-center gap-2">
+						<div class="flex min-w-0 items-center gap-2">
 							<div class="flex shrink-0 items-center gap-2 lg:hidden">
 								<span>{docNavigation.currentPage?.title}</span>
 								<ChevronRightIcon class="size-4 shrink-0" />
@@ -71,7 +71,7 @@
 						<span>{docNavigation.currentGroup?.title}</span>
 						<ChevronRightIcon class="size-4 shrink-0" />
 					{/if}
-					<span>{docNavigation.currentPage?.title}</span>
+					<span class="truncate">{docNavigation.currentPage?.title}</span>
 				</div>
 			{/if}
 			<div class="from-background h-6 bg-linear-to-b"></div>

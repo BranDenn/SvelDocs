@@ -65,13 +65,13 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 	</Step>
 
 	<Step id="edit-doc-navigation-config" title="Edit Document Navigation Settings / Config">
-		Navigate to the `src/lib/server/navigation/doc-navigation.config.ts` file to edit the document navigation settings. Refer to the [Doc Navigation](/docs/configuration/doc-navigation) for more detail.
+		Navigate to the `src/lib/docs/server/navigation/doc-navigation.config.ts` file to edit the document navigation settings. Refer to the [Doc Navigation](/docs/configuration/doc-navigation) for more detail.
 
 		<Alert type="caution">
-			The navigation config should always be under the `src/lib/server` folder to prevent exposure of potential private documents.
+			The navigation config should always be under a `server` folder to prevent exposure of potential private documents.
 		</Alert>
 
-		```ts title="src/lib/server/navigation/doc-navigation.config.ts"
+		```ts title="src/lib/docs/server/navigation/doc-navigation.config.ts"
 		const docNavigationConfig = defineDocNavigation({
 			tabNextPrev: true,
 			tabs: [
