@@ -8,7 +8,7 @@
 	import * as Sheet from '$ui/sheet';
 	import * as Select from '$ui/select';
 	import * as Sidebar from '$ui/sidebar';
-	import Logo from '../header/logo.svelte';
+	import Logo from '../header/header-logo.svelte';
 
 	const docNavigation = getDocNavigationContext();
 

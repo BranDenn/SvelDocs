@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '$css';
-	import favicon from '$lib/assets/favicon.png';
+	import favicon from '$lib/assets/favicon.svg';
 	import siteConfig from '$lib/configuration/site.config';
 	import { ModeWatcher } from 'mode-watcher';
 	import * as Tooltip from '$ui/tooltip';

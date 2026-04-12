@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MenuIcon from '@lucide/svelte/icons/menu';
 	import { onNavigate } from '$app/navigation';
-	import Logo from './logo.svelte';
+	import Logo from './header-logo.svelte';
 	import Github from './github.svelte';
 	import { cn } from '$utils';
 	import Icon from '$components/icon';
