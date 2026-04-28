@@ -49,13 +49,9 @@ import { Tree, TreeFolder, TreeFile } from '$ui/tree';
 	</Step>
 
 	<Step id="edit-site-config" title="Edit Site Settings / Config">
-		Navigate to the `src/lib/configuration/site.config.ts` file to edit general site settings. These settings apply to the various parts of the site (not just docs) including SEO, `llms.txt`, and `sitemap.xml`. Feel free to add your own settings.
+		Navigate to the `src/lib/configuration/site.config.ts` file to edit general site settings. These settings apply to the various parts of the site (not just docs) including SEO, `llms.txt`, `sitemap.xml`, and `robots.txt`. Feel free to add your own settings.
 
 		<FileReader file="src/lib/configuration/site.config.ts" />
-
-		<Alert type="warning">
-			Update the sitemap URL in `static/robots.txt` to match your own domain and path. This file is static and cannot import values from `site.config.ts`.
-		</Alert>
 	</Step>
 
 	<Step id="edit-docs-config" title="Edit Doc Settings / Config">
