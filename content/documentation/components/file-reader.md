@@ -6,10 +6,10 @@ import Alert from '$ui/alert';
 
 ## Overview
 
-`FileReader` is a pseudo-component used to read a file and convert it into a markdown code block. This solves the issue of changing code blocks manually if a file you are referencing changes.
+`FileReader` reads a file and displays it as a code block. When the file changes, the code block updates the next time you build the site.
 
 <Alert type="warning">
-    This is not a Svelte component — it is processed at build time by a remark plugin and replaced with a code fence.
+    This is not a Svelte component. A remark plugin turns it into a code block during development and builds.
 </Alert>
 
 ## Usage
@@ -40,10 +40,30 @@ The plugin converts that into a fenced code block:
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `file` | `string` | Absolute path to the file on disk. The path must be accessible during the build. |
+| `file` | `string` | Relative or absolute path to a file. Relative paths start from the documentation project folder. |
 | `title?` | `string` |  Override the displayed title (defaults to the file path). |
 | `caption?` | `string` |  Optional caption / footer text for the code block. |
-| `highlight?` | `string` | Line ranges to highlight, e.g. `2,4-6` will highlight lines `2, 4, 5, & 6`.
+| `highlight?` | `string` | Line ranges to highlight. For example, `2,4-6` highlights lines 2, 4, 5, and 6. |
 | `showLineNumbers?` | `boolean` | When present, enables line numbers for the block. |
 | `regex?` | `string` | Extract only a regex match. Supports either `pattern` or `/pattern/flags` format. |
 | `regexFlags?` | `string` | Optional regex flags (e.g. `im` or `s`). Ignored when flags are already provided inside `/.../flags`. |
+
+## Filesystem Access
+
+By default, `FileReader` can use `..` and absolute paths. This lets you show files from another project, such as an app next to your documentation site.
+
+The file contents are published with your documentation. Do not use it to read passwords, environment files, or other private files.
+
+To restrict access, configure one or more allowed roots in `src/lib/markdown/configuration/markdown.config.ts`:
+
+```ts title="src/lib/markdown/configuration/markdown.config.ts"
+const markdownConfig = defineConfig({
+    remarkPlugins: [
+        remarkGfm,
+        [remarkFileReader, { allowedRoots: ['.', '../game'] }],
+        remarkRehype
+    ]
+});
+```
+
+When `allowedRoots` is set, files must be inside one of those folders. This also applies to symbolic links. Relative paths start from the documentation project folder.

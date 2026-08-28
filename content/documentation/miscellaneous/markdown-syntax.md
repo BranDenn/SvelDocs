@@ -70,11 +70,11 @@ This is <ins>underline text</ins>
 
 ```md
 This is an [internal link](/docs)
-This is an [external link](https://sveldocs.com)
+This is an [external link](https://example.com)
 ```
 
 This is an [internal link](/docs)\
-This is an [external link](https://sveldocs.com)
+This is an [external link](https://example.com)
 
 ---
 

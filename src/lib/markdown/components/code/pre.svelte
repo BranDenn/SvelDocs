@@ -34,7 +34,7 @@
 		bind:this={ref}
 		data-language={language}
 		class={cn(
-			'scrollbar-thin bg-secondary max-h-96 overflow-auto py-4 text-sm focus-visible:ring-0',
+			'bg-secondary max-h-96 scrollbar-thin overflow-auto py-4 text-sm focus-visible:ring-0',
 			className
 		)}
 		style="--lineNumbersMaxDigits: {lineNumbersMaxDigits}ch;"

@@ -26,7 +26,7 @@ const docNavigationConfig = defineDocNavigation({
 				{
 					title: 'Configuration',
 					icon: 'cog',
-					pages: 'auto'
+					pages: [{ title: 'AI and LLMs' }, 'loadRest']
 				},
 				{
 					title: 'Components',

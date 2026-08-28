@@ -4,7 +4,7 @@ description: How to configure and write in markdown files.
 
 ## Writing Markdown
 
-Markdown is basically split into two sections, one for the metadata of the file or `frontmatter`, and the other for the actual content.
+A Markdown file has two main sections: optional metadata, called frontmatter, and the document content.
 
 ### Frontmatter
 
@@ -28,7 +28,7 @@ Content can include markdown, HTML, and svelte components. If you are new to mar
 
 ## Configure Rendering
 
-You can configure how markdown is rendered in the `src/lib/markdown/markdown.config.ts` file. This allows you to configure the following:
+You can configure how Markdown is rendered in `src/lib/markdown/configuration/markdown.config.ts`. The configuration supports the following options:
 
 ```ts
 type MarkdownConfig = {
@@ -42,7 +42,7 @@ type MarkdownConfig = {
 
 You can configure and add your own file extensions to be considered for the markdown rendering process. For example:
 
-```ts title="src/lib/markdown/markdown.config.ts"
+```ts title="src/lib/markdown/configuration/markdown.config.ts"
 const markdownConfig = defineConfig({
 	extensions: ['.md', '.mdx'],
 	...
@@ -51,9 +51,9 @@ const markdownConfig = defineConfig({
 
 ### Remark Plugins
 
-You can configure and / or add your own remark plugins that run on the markdown (MDAST) stage. Here is the provided default:
+You can configure or add remark plugins that run during the Markdown (MDAST) stage. Here is part of the provided default:
 
-```ts title="src/lib/markdown/markdown.config.ts"
+```ts title="src/lib/markdown/configuration/markdown.config.ts"
 const markdownConfig = defineConfig({
 	...
 	remarkPlugins: [
@@ -71,9 +71,9 @@ const markdownConfig = defineConfig({
 
 ### Rehype Plugins
 
-You can configure and / or add your own rehype plugins that run on the HTML-like (HAST) stage. Here is the provided default:
+You can configure or add rehype plugins that run during the HTML-like (HAST) stage. Here is part of the provided default:
 
-```ts title="src/lib/markdown/markdown.config.ts"
+```ts title="src/lib/markdown/configuration/markdown.config.ts"
 const markdownConfig = defineConfig({
 	...
 	rehypePlugins: [
@@ -102,4 +102,4 @@ The markdown config is consumed by the `plugins/processed-docs/markdown-to-ast.t
 3. Applies configured rehype plugins.
 4. Produces an AST used by the docs page renderer.
 
-The generated AST is then rendered by `src/lib/markdown/BlueprintRenderer.svelte`.
+The generated AST is then rendered by `src/lib/markdown/renderer/blueprint-renderer.svelte`.

@@ -8,7 +8,7 @@ SvelDocs uses [rehype-pretty-code](https://rehype-pretty.pages.dev/) in the mark
 
 ## Theme
 
-Edit the code block theme in the `src/lib/markdown/markdown.config.ts`. By default it uses the GitHub color theme, but you can use any theme supported by `shiki`.
+Edit the code block theme in `src/lib/markdown/configuration/markdown.config.ts`. By default, it uses the GitHub color theme, but you can use any theme supported by Shiki.
 
 ```ts
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -33,11 +33,11 @@ const markdownConfig = defineConfig({
 
 ## Component
 
-`src/lib/markdown/components/code/pre.svelte` is the component that replaces the default html `<pre>` element. This allows for:
+`src/lib/markdown/components/code/pre.svelte` replaces the default HTML `<pre>` element. This provides:
 
-- Language Badge
-- Code Copy Button
-- CSS Styling
+- Language badge
+- Copy button
+- CSS styling
 
 ### Styling
 

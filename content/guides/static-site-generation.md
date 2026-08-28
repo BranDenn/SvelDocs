@@ -10,13 +10,13 @@ Use static site generation when all of your docs are public and can be built ahe
 
 The benefits are straightforward:
 
-- Simple (typically free) Hosting
-- Fast Page Loads
-- CDN-friendly Output
-- No Runtime Server Requirements
+- Simple, typically free hosting
+- Fast page loads
+- CDN-friendly output
+- No runtime server requirements
 
 <Alert type="note">
-	If you are looking to have server side functionality like auth, please use [Server Side Rendering](/docs/guides/server-side-rendering).
+	For server-side functionality such as authentication, use [Server-Side Rendering](/docs/guides/server-side-rendering).
 </Alert>
 
 ## Configuration
@@ -39,7 +39,7 @@ const config = {
 };
 ```
 
-The adapter-static generates static `.html` and `.md` files instead of running a server for each request.
+The static adapter generates `.html` and `.md` files instead of running a server for each request.
 
 <Alert type="warning">
 	If any of the docs are private, the build will fail and result in this error:
@@ -67,7 +67,6 @@ This is useful when deploying the static site under a subpath such as `your-user
 
 ### GitHub Pages
 
-
-This project provides a deploy workflow automatically for GitHub Pages. Feel free to remove it if you do not use it.
+This project includes a GitHub Pages deployment workflow. You can remove it if you use a different host.
 
 <FileReader file=".github/workflows/deploy.yml" />

@@ -63,14 +63,14 @@ import { Steps, Step } from '$ui/steps';
     </Step>
     
     <Step title="Build-Time Custom Component Processing">
-        During the build, imports written in markdown files are extracted and added to the component manifest via the `plugins/vite-mdx-component-manifest.ts`. Blueprints are registered globally and become available to all doc pages.
+        During development and builds, imports written in Markdown files are extracted and added to the component manifest by `plugins/vite-mdx-component-manifest.ts`. Blueprints are registered globally and become available to all documentation pages.
     </Step>
 
     <Step title="Build-Time AST Generation & Rendering">
-        All markdown is parsed into AST during the build via the `plugins/vite-search-json.ts`. The AST is a JSON structure that is passed from the server to the client where it is rendered via the `BlueprintRenderer.svelte` component.
+        Markdown is parsed into an AST by `plugins/vite-search-json.ts`. The serializable AST is loaded by the documentation route and rendered by `src/lib/markdown/renderer/blueprint-renderer.svelte` during SSR, prerendering, or client navigation.
     </Step>
 
     <Step title="Component Output">
-        The component `BlueprintRenderer.svelte` reads through the AST JSON to map HTML element tags into Blueprints and renders everything accordingly.
+        The blueprint renderer maps HTML element tags and imported MDX components to Svelte components, then renders their children recursively.
     </Step>
 </Steps>

@@ -12,7 +12,7 @@ SvelDocs is built for a quick and easy setup, but still leaves plenty of room fo
 
 ## ✨ Features
 
-- Supports both Static Site Generation (SSG) and Server Side Rendering (SSR)
+- Supports both static site generation (SSG) and server-side rendering (SSR)
 - Simple structure for adding tabs, groups, and pages
 - Table of contents
 - Built-in search
@@ -56,7 +56,7 @@ After the app is running, the main starting points are:
 
 - `src/lib/configuration/site.config.ts` for global site settings
 - `src/lib/configuration/docs.config.ts` for docs-specific settings
-- `src/lib/server/navigation/doc-navigation.config.ts` for doc navigation tabs, groups, and pages
+- `src/lib/docs/server/navigation/doc-navigation.config.ts` for doc navigation tabs, groups, and pages
 
 Add your own markdown content in the `content` folder. As a best practice, keep your folder structure aligned with your navigation structure.
 

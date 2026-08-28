@@ -17,25 +17,23 @@ The files are structured for both expansion and customization. There are configu
 
 ## Features
 
-- Supports both Static Site Generation (SSG) and Server Side Rendering (SSR)
-- Simple structure for adding Tabs, Groups, and Pages
-- Table of Contents
-- Searching
-- Remark / Rehype plugins
-- Automatically generated `.md` and `llms.txt` routes for Artificial Intelligence
+- Supports both static site generation (SSG) and server-side rendering (SSR)
+- Simple structure for adding tabs, groups, and pages
+- Table of contents
+- Built-in search
+- Remark and rehype plugins
+- Automatically generated `.md` and `llms.txt` routes for AI tools
 - Syntax highlighted code blocks
-- Search Engine Optimization (SEO) and `sitemap.xml`
-- Accessibility and Tab Navigation
-- Light and Dark mode
-- Clean and Modern look
+- Search engine optimization (SEO) and `sitemap.xml`
+- Accessibility and keyboard navigation
+- Light and dark mode
+- Clean, modern design
 
 ## Ready to Dive In?
 
 Head over to the [Quick Start](/docs/quick-start) section to clone the repository and launch your own documentation.
 
-OR
-
-Explore the rest of the documentation to see SvelDocs's options and capabilities.
+You can also explore the rest of the documentation to see SvelDocs's options and capabilities.
 
 ## Inspiration
 

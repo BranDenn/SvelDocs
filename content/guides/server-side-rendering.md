@@ -5,15 +5,17 @@ description: How to run SvelDocs with server-side rendering and when to switch a
 import Alert from '$ui/alert';
 import { Steps, Step } from '$ui/steps';
 
-## When To Use SSR (Server Side Rendering)
+## When To Use SSR (Server-Side Rendering)
 
-Use server-side rendering when your docs need request-time behavior, such as Auth or other server-only data fetching:
+Use server-side rendering when your docs need request-time behavior, such as authentication or other server-only data fetching.
 
 SvelDocs already uses server load functions for the docs routes, so the main SSR change is your adapter and deployment target.
 
 <Alert type="note">
-	If you do not need any server side functionality, it is recommended to use [Static Site Generation](/docs/guides/static-site-generation).
+	If you do not need any server-side functionality, use [Static Site Generation](/docs/guides/static-site-generation).
 </Alert>
+
+Markdown is still processed into an AST during Vite development and builds. SSR controls when SvelteKit renders the route and runs authorization or data loading; it does not parse untrusted Markdown on each request.
 
 ## Configuration
 
@@ -49,7 +51,7 @@ SvelDocs does not implement auth directly because auth implementation is opinion
 
 <Steps>
 	<Step id="mark-private-navigation" title="Mark Tabs, Groups, Or Pages As Private">
-		Use `private` on tabs, groups, or pages for the `docNavigationConfig`. `private` supports `boolean` | `string` | `string[]`. It is recommended to update the `type Roles` for type safety and auto complete. 
+		Use `private` on tabs, groups, or pages in `docNavigationConfig`. `private` supports `boolean` | `string` | `string[]`. Update the `Roles` type for type safety and autocomplete.
 
 		```ts title="src/lib/docs/server/navigation/doc-navigation.config.ts"
 		import { defineDocNavigation } from './define-doc-navigation';
