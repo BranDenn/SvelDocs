@@ -83,13 +83,13 @@
 			@apply text-muted-foreground bg-primary border-t p-2 text-sm;
 		}
 		[data-line] {
-			@apply inline-block px-4 hover:bg-[color-mix(in_oklch,currentColor,transparent_90%)];
+			@apply inline-block px-4 hover:bg-[color-mix(in_oklch,currentColor,var(--color-background)_90%)];
 		}
 		[data-line].diff.remove {
-			@apply bg-red-500/10 opacity-75 hover:bg-[color-mix(in_oklch,var(--color-red-500),transparent_80%)];
+			@apply bg-red-500/10 opacity-75 hover:bg-red-500/20;
 		}
 		[data-line].diff.add {
-			@apply bg-green-500/10 hover:bg-[color-mix(in_oklch,var(--color-green-500),transparent_80%)];
+			@apply bg-green-500/10 hover:bg-green-500/20;
 		}
 		[data-line-numbers] {
 			counter-reset: line;
@@ -104,7 +104,7 @@
 		}
 		[data-line-numbers-max-digits] {
 			& > [data-line]:hover::before {
-				@apply text-foreground bg-[color-mix(in_oklch,currentColor,transparent_90%)];
+				@apply text-foreground bg-[color-mix(in_oklch,currentColor,var(--color-primary)_80%)];
 			}
 			& > [data-line]::before {
 				width: calc(var(--lineNumbersMaxDigits) + 2rem);
@@ -112,7 +112,7 @@
 			}
 		}
 		[data-highlighted-line] {
-			@apply bg-accent/10! hover:bg-[color-mix(in_oklch,var(--color-accent),transparent_80%)]!;
+			@apply bg-accent/10! hover:bg-accent/20!;
 		}
 	}
 </style>
