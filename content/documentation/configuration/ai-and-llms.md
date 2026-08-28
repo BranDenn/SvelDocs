@@ -1,5 +1,4 @@
 ---
-title: AI and LLMs
 description: Configure the Markdown and llms.txt routes used by AI tools.
 ---
 
