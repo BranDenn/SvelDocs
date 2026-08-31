@@ -87,7 +87,17 @@ The `.templatesyncpaths` file explicitly lists the template-owned files and dire
 
 <FileReader file=".templatesyncpaths" />
 
-Everything outside that list remains untouched, including documentation content, site configuration, branding, styling, environment files, and unrelated monorepo applications. Keep local customizations outside the managed paths where possible. Files removed from a managed directory in the template are also removed from that directory in the update pull request.
+Everything outside that list remains untouched, including documentation content, site configuration, styling, environment files, and unrelated monorepo applications. Files removed from a managed directory in the template are also removed from that directory in the update pull request.
+
+## Preserve Custom Files
+
+Use `.templatesyncignore` for site-specific files that are located inside a managed directory. Paths are relative to the SvelDocs app, regardless of whether `SVELDOCS_PATH` is `.` or `docs`:
+
+<FileReader file=".templatesyncignore" />
+
+For example, use `src/lib/docs/server/navigation/doc-navigation.config.ts`, not `docs/src/lib/docs/server/navigation/doc-navigation.config.ts`, when the app is under `docs`. Add one exact file or directory path per line. The workflow preserves those paths when synchronizing their parent directories.
+
+The default exclusions protect the navigation configuration, header logo wrapper, and shared logo component. Add other locally customized files before running the workflow. Because `.templatesyncignore` is downstream-owned, template update pull requests do not replace it.
 
 ## Workflow Updates
 
