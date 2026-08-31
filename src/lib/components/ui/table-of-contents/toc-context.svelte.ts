@@ -124,8 +124,8 @@ export class TOCContext {
 	}
 
 	private clearRouteHash() {
-		// page.url.pathname already includes the configured base path.
 		const currentPath = `${page.url.pathname}${page.url.search}` as `/${string}`;
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- pathname already includes the configured base path
 		goto(currentPath, {
 			replaceState: true,
 			noScroll: true,
