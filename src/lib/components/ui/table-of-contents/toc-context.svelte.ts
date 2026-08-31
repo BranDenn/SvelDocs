@@ -1,7 +1,6 @@
 import { createContext } from 'svelte';
 import { page } from '$app/state';
 import { afterNavigate, goto } from '$app/navigation';
-import { resolve } from '$app/paths';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import type { Attachment } from 'svelte/attachments';
 
@@ -125,8 +124,9 @@ export class TOCContext {
 	}
 
 	private clearRouteHash() {
+		// page.url.pathname already includes the configured base path.
 		const currentPath = `${page.url.pathname}${page.url.search}` as `/${string}`;
-		void goto(resolve(currentPath), {
+		goto(currentPath, {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
