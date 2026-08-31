@@ -44,7 +44,18 @@ const docNavigationConfig = defineDocNavigation({
 			title: 'Guides',
 			combineHref: true,
 			icon: 'book',
-			pages: 'auto'
+			groups: [
+				{
+					title: 'Rendering',
+					icon: 'spotlight',
+					pages: 'auto'
+				},
+				{
+					title: 'Workflows',
+					icon: 'workflow',
+					pages: 'auto'
+				}
+			]
 		}
 	]
 });

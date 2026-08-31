@@ -16,7 +16,7 @@ The benefits are straightforward:
 - No runtime server requirements
 
 <Alert type="note">
-	For server-side functionality such as authentication, use [Server-Side Rendering](/docs/guides/server-side-rendering).
+	For server-side functionality such as authentication, use [Server-Side Rendering](/docs/guides/rendering/server-side-rendering).
 </Alert>
 
 ## Configuration
@@ -65,8 +65,4 @@ const config = {
 
 This is useful when deploying the static site under a subpath such as `your-username.github.io` instead of the domain root.
 
-### GitHub Pages
-
-This project includes a GitHub Pages deployment workflow. You can remove it if you use a different host.
-
-<FileReader file=".github/workflows/deploy.yml" />
+For deployment instructions, see [Deploy To GitHub Pages](/docs/guides/workflows/github-pages).

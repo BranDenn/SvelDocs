@@ -33,4 +33,4 @@ Use [`allowedRoots`](/docs/components/file-reader#filesystem-access) to limit wh
 
 ## Server-Side Rendering
 
-SSR lets you check authorization and load server data for each request. Your Markdown files are still processed by Vite and must come from a trusted source. See [Server-Side Rendering](/docs/guides/server-side-rendering) for adapter and authentication setup.
+SSR lets you check authorization and load server data for each request. Your Markdown files are still processed by Vite and must come from a trusted source. See [Server-Side Rendering](/docs/guides/rendering/server-side-rendering) for adapter and authentication setup.

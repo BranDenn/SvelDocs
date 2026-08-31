@@ -12,7 +12,7 @@ Use server-side rendering when your docs need request-time behavior, such as aut
 SvelDocs already uses server load functions for the docs routes, so the main SSR change is your adapter and deployment target.
 
 <Alert type="note">
-	If you do not need any server-side functionality, use [Static Site Generation](/docs/guides/static-site-generation).
+	If you do not need any server-side functionality, use [Static Site Generation](/docs/guides/rendering/static-site-generation).
 </Alert>
 
 Markdown is still processed into an AST during Vite development and builds. SSR controls when SvelteKit renders the route and runs authorization or data loading; it does not parse untrusted Markdown on each request.

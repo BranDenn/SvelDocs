@@ -1,0 +1,37 @@
+name: Sync Template Updates
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  sync-template:
+    if: github.repository != 'BranDenn/SvelDocs'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Sync template updates
+        uses: AndreasAugustin/actions-template-sync@v2
+        with:
+          source_gh_token: ${{ secrets.GITHUB_TOKEN }}
+          target_gh_token: ${{ secrets.GITHUB_TOKEN }}
+          source_repo_path: BranDenn/SvelDocs
+          upstream_branch: main
+          pr_branch_name_prefix: chore/template-sync
+          pr_title: 'chore: sync SvelDocs template updates'
+          pr_body: |
+            Sync infrastructure updates from `BranDenn/SvelDocs`.
+
+            Review the changes and resolve any conflicts before merging. Site content,
+            configuration, branding, generated output, and workflow files are excluded.
+          pr_labels: template-sync
+          is_pr_cleanup: true
