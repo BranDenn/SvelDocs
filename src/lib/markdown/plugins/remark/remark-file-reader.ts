@@ -295,8 +295,12 @@ function readAndTrimFile(resolved: string, file?: VFile): string | null {
 	}
 }
 
+export function inferCodeLanguage(fileRef: string): string {
+	return path.extname(fileRef).replace(/^\./, '') || 'txt';
+}
+
 function createCodeNode(fileRef: string, content: string, attrs: AttrMap): Code {
-	const ext = path.extname(fileRef).replace(/^\./, '') || undefined;
+	const ext = inferCodeLanguage(fileRef);
 	const meta = buildMeta(attrs, fileRef);
 	return { type: 'code', lang: ext, meta, value: content } as Code;
 }

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { resolveFileReference } from './remark-file-reader';
+import { inferCodeLanguage, resolveFileReference } from './remark-file-reader';
 
 const temporaryDirectories: string[] = [];
 
@@ -16,6 +16,18 @@ afterEach(() => {
 	for (const directory of temporaryDirectories.splice(0)) {
 		fs.rmSync(directory, { recursive: true, force: true });
 	}
+});
+
+describe('inferCodeLanguage', () => {
+	test('defaults extensionless files and dotfiles to text', () => {
+		expect(inferCodeLanguage('LICENSE')).toBe('txt');
+		expect(inferCodeLanguage('.templatesyncignore')).toBe('txt');
+	});
+
+	test('uses the file extension when present', () => {
+		expect(inferCodeLanguage('src/app.ts')).toBe('ts');
+		expect(inferCodeLanguage('.env.example')).toBe('example');
+	});
 });
 
 describe('resolveFileReference', () => {
