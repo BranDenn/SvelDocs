@@ -55,7 +55,7 @@ The scheduled check runs weekly. To check immediately:
 2. Select **Sync Template Updates**.
 3. Select **Run workflow**.
 
-If updates are available, the workflow creates a pull request from the `chore/template-sync` branch. Review its checks and resolve any conflicts before merging it. Repeated runs update the same open pull request instead of creating duplicates.
+If updates are available, the workflow creates a pull request from a uniquely named `chore/template-sync-*` branch. Review its checks and resolve any conflicts before merging it. Repeated runs update the same open pull request instead of creating duplicates. If you close one without merging, a later update uses a new branch and pull request, so the closed pull request cannot block future updates.
 
 <FileReader file=".github/workflows/template-sync.yml" />
 

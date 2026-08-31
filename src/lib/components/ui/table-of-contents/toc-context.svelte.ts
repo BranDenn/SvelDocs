@@ -1,6 +1,6 @@
 import { createContext } from 'svelte';
 import { page } from '$app/state';
-import { afterNavigate, replaceState } from '$app/navigation';
+import { afterNavigate, goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import type { Attachment } from 'svelte/attachments';
@@ -126,7 +126,11 @@ export class TOCContext {
 
 	private clearRouteHash() {
 		const currentPath = `${page.url.pathname}${page.url.search}` as `/${string}`;
-		replaceState(resolve(currentPath), page.state);
+		void goto(resolve(currentPath), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
 	}
 
 	private buildParentSet(stack: Array<{ id: string; level: number }>) {
