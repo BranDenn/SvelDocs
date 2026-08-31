@@ -25,6 +25,28 @@ GitHub may prevent workflows from creating pull requests until you enable the re
 
 No personal access token is required. The workflow uses the repository's temporary `GITHUB_TOKEN` and reads the public SvelDocs template.
 
+## Choose The SvelDocs Directory
+
+The workflow supports both standalone repositories and monorepos. Set `SVELDOCS_PATH` near the top of `.github/workflows/template-sync.yml` to the directory that contains the SvelDocs app:
+
+```yaml title=".github/workflows/template-sync.yml"
+env:
+	SVELDOCS_PATH: '.' # SvelDocs is at the repository root
+```
+
+For a monorepo with the SvelDocs app under `docs`, use:
+
+```yaml title=".github/workflows/template-sync.yml"
+env:
+	SVELDOCS_PATH: 'docs'
+```
+
+This setting applies to scheduled and manual runs. It must be a relative path and cannot contain `..` segments.
+
+<Alert type="warning">
+	Keep `template-sync.yml` under the repository root's `.github/workflows` directory, even when the SvelDocs app is under `docs`. GitHub does not discover workflow files inside `docs/.github/workflows`.
+</Alert>
+
 ## Run An Update Check
 
 The scheduled check runs weekly. To check immediately:
@@ -33,7 +55,7 @@ The scheduled check runs weekly. To check immediately:
 2. Select **Sync Template Updates**.
 3. Select **Run workflow**.
 
-If updates are available, the workflow creates a pull request labeled `template-sync`. Review its checks and resolve any conflicts before merging it. Repeated runs do not create another pull request for the same template revision.
+If updates are available, the workflow creates a pull request from the `chore/template-sync` branch. Review its checks and resolve any conflicts before merging it. Repeated runs update the same open pull request instead of creating duplicates.
 
 <FileReader file=".github/workflows/template-sync.yml" />
 
@@ -61,11 +83,11 @@ on:
 
 Update pull requests include shared application code, routes, Markdown processing plugins, dependencies, and build configuration.
 
-The `.templatesyncignore` file protects files that commonly belong to each documentation site:
+The `.templatesyncpaths` file explicitly lists the template-owned files and directories that can be changed:
 
-<FileReader file=".templatesyncignore" />
+<FileReader file=".templatesyncpaths" />
 
-Changes to ignored paths must be applied manually when you want them. Keep local customizations inside the protected paths where possible to reduce merge conflicts in future updates.
+Everything outside that list remains untouched, including documentation content, site configuration, branding, styling, environment files, and unrelated monorepo applications. Keep local customizations outside the managed paths where possible. Files removed from a managed directory in the template are also removed from that directory in the update pull request.
 
 ## Workflow Updates
 

@@ -5,6 +5,10 @@ on:
     - cron: '0 9 * * 1'
   workflow_dispatch:
 
+env:
+  # Set to 'docs' when SvelDocs is located in a monorepo subdirectory.
+  SVELDOCS_PATH: '.'
+
 jobs:
   sync-template:
     if: github.repository != 'BranDenn/SvelDocs'
@@ -17,21 +21,77 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          fetch-depth: 0
 
-      - name: Sync template updates
-        uses: AndreasAugustin/actions-template-sync@v2
-        with:
-          source_gh_token: ${{ secrets.GITHUB_TOKEN }}
-          target_gh_token: ${{ secrets.GITHUB_TOKEN }}
-          source_repo_path: BranDenn/SvelDocs
-          upstream_branch: main
-          pr_branch_name_prefix: chore/template-sync
-          pr_title: 'chore: sync SvelDocs template updates'
-          pr_body: |
-            Sync infrastructure updates from `BranDenn/SvelDocs`.
+      - name: Sync template-owned paths
+        id: sync
+        env:
+          SOURCE_REPOSITORY: https://github.com/BranDenn/SvelDocs.git
+        run: |
+          if [[ "$SVELDOCS_PATH" = /* || "$SVELDOCS_PATH" =~ (^|/)\.\.(/|$) ]]; then
+            echo "SVELDOCS_PATH must be a relative path without '..' segments" >&2
+            exit 1
+          fi
 
-            Review the changes and resolve any conflicts before merging. Site content,
-            configuration, branding, generated output, and workflow files are excluded.
-          pr_labels: template-sync
-          is_pr_cleanup: true
+          target_path="${SVELDOCS_PATH%/}"
+          [[ -n "$target_path" ]] || target_path='.'
+          source_path="$(mktemp -d)"
+          git clone --depth 1 "$SOURCE_REPOSITORY" "$source_path"
+
+          branch='chore/template-sync'
+          git checkout -B "$branch"
+
+          while IFS= read -r managed_path; do
+            [[ -n "$managed_path" && "$managed_path" != \#* ]] || continue
+            if [[ "$managed_path" = /* || "$managed_path" =~ (^|/)\.\.(/|$) ]]; then
+              echo "Invalid managed path: $managed_path" >&2
+              exit 1
+            fi
+
+            source_item="$source_path/$managed_path"
+            target_item="$target_path/$managed_path"
+
+            if [[ -d "$source_item" ]]; then
+              mkdir -p "$target_item"
+              rsync --archive --delete "$source_item/" "$target_item/"
+            elif [[ -f "$source_item" ]]; then
+              mkdir -p "$(dirname "$target_item")"
+              cp "$source_item" "$target_item"
+            else
+              rm -rf "$target_item"
+            fi
+          done < "$source_path/.templatesyncpaths"
+
+          git add -A -- "$target_path"
+          if git diff --cached --quiet; then
+            echo 'has_changes=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          template_revision="$(git -C "$source_path" rev-parse --short HEAD)"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "chore: sync SvelDocs template ($template_revision)"
+          git push --force-with-lease origin "$branch"
+
+          echo 'has_changes=true' >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+      - name: Create update pull request
+        if: steps.sync.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: ${{ steps.sync.outputs.branch }}
+        run: |
+          if gh pr view "$HEAD_BRANCH" >/dev/null 2>&1; then
+            exit 0
+          fi
+
+          gh pr create \
+            --base "$GITHUB_REF_NAME" \
+            --head "$HEAD_BRANCH" \
+            --title 'chore: sync SvelDocs template updates' \
+            --body "Sync template-owned infrastructure from \`BranDenn/SvelDocs\` into \`$SVELDOCS_PATH\`.
+
+          Review the changes and resolve any conflicts before merging. Site content,
+          configuration, branding, styling, and workflow files are not managed."
